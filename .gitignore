@@ -14,8 +14,9 @@ dist/
 .docx_work/
 
 # data: raw archives, third-party clones, and processed windows are large;
-# everything is re-derivable from scripts + committed manifests (checksums recorded)
-data/
+# everything is re-derivable from scripts + committed manifests (checksums recorded).
+# Leading slash is required so src/physio_placebo/data/ (the Python package) is tracked.
+/data/
 
 # large raw arrays inside results are kept on disk but not in git
 # (metrics, manifests, and JSON results ARE committed)

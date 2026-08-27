@@ -14,8 +14,6 @@ neurokit2==0.2.13
 numpy==2.4.6
 packaging==26.3
 pandas==2.3.3
-# Editable Git install with no remote (physio-placebo==0.1.0)
--e /Users/owlxshri/Desktop/indep
 pillow==12.3.0
 pluggy==1.6.0
 pyarrow==25.0.1

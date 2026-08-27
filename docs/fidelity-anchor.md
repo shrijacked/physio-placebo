@@ -29,9 +29,11 @@ few-shot GPT-3.5, MAE 0.94 ± 0.1.
    (their lines 716–784), written to `eval/data/pmdata_stress/step1.json`.
 3. **Inference with their (patched) code:** zero-shot mode of `inference.py`, MedAlpaca-7b via
    `transformers` pipeline, seeds {0, 1, 2}, `max_tokens≈120`.
-4. **Scoring:** their MAE convention — parse the first number in the generated answer; items with
-   no parsable number are dropped (their eval scripts' behavior; to be confirmed against
-   `eval/` when run).
+4. **Scoring:** the repository releases **no evaluation code at all** (verified 2026-08-27:
+   no `eval/` directory; `medalpaca/` holds only training/inference utilities). The MAE the
+   paper reports must be re-implemented: we will parse the first number in the generated
+   answer, drop unparsable items, and report MAE with the parse-failure rate. This
+   re-implementation is itself part of the reproduction gap and is disclosed as such.
 5. **Report:** MAE mean ± sd over 3 seeds, plus reproduction gap vs 0.76, plus (our addition,
    clearly separated) the constant-3 baseline MAE ≈ 0.434 on their own label distribution.
 
@@ -53,19 +55,19 @@ improvements. The reproduction gap is reported with these patches disclosed.
 
 ## 4. Compute plan
 
-MedAlpaca-7b needs ~14 GB in fp16. Options, in preference order:
+MedAlpaca-7b needs ~14 GB in fp16. **This Mac is ruled out** (verified 2026-08-27: 16 GB
+unified memory, 13 GiB free disk — neither holds the fp16 weights). Options:
 
-1. The GPU box provisioned for Week 4+ vLLM work (16 GB card is sufficient) — recommended; no
-   extra cost or setup.
-2. This Mac via `transformers` + MPS if it has ≥24 GB unified memory (slow but workable for
-   ≤299 items × 3 seeds).
+1. The GPU box provisioned for Week 4+ vLLM work (16 GB card is sufficient) — required path.
+2. Last resort only: 4-bit quantized weights locally (~4 GB) — this deviates from their
+   `transformers` fp16 pipeline and would confound the reproduction; if ever used, the
+   quantization is disclosed next to the number and the run is repeated on the GPU box.
 
 ## 5. User actions required
 
-- [ ] Download PMData from <https://datasets.simula.no/pmdata/> into `data/raw/pmdata/`
-      (or approve the agent downloading it — public, no login; ~several GB, disk budget must be
-      checked first).
-- [ ] Decide compute: GPU box vs local MPS (see §4).
+- [x] PMData: public zip is only 1.4 GB — agent download started 2026-08-27 into
+      `data/raw/pmdata/pmdata.zip` (sha256 recorded on completion).
+- [ ] Provide the GPU box (§4) — the anchor run cannot execute on this Mac.
 - [ ] (Fallback only) provide OpenAI key if the MedAlpaca run fails.
 
 ## 6. Results (to be filled by the run)

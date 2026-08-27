@@ -72,14 +72,15 @@
   `data/raw/maus/` so `scripts/prepare_maus.py` can run on real data.
 - **CogWear download** — PhysioNet static zip (187,856,113 bytes) keeps resetting mid-stream;
   a 40-attempt resume loop is running. If it dies, rerun the same command (it resumes).
-- **PMData** (fidelity anchor input) — public at <https://datasets.simula.no/pmdata/>; needs
-  disk-budget check before download (~several GB; WESAD zip already consumes 2.25 GB).
+- **PMData** (fidelity anchor input) — zip is only 1.4 GB; download started 2026-08-27
+  (background, resume-capable) into `data/raw/pmdata/`. Verify sha256 sidecar exists before use.
 - **Prof sign-off** — verbalizer variant (iv) (SensorLM templates) still pending
   (PROJECT_PLAN.md §11); vendoring done regardless as planned.
 - **OSF filing** — user reviews `docs/osf-prereg.md`, resolves ⟨placeholders⟩, files, and
   records the OSF URL here.
 - **GPU hardware** — still unconfirmed (PROJECT_PLAN.md §12); needed from Week 4 (vLLM) and
-  for the anchor run (MedAlpaca-7b, ~14 GB fp16).
+  **required for the anchor run**: this Mac has 16 GB RAM and 13 GiB free disk, which cannot
+  hold MedAlpaca-7b fp16 (~14 GB). Verified 2026-08-27.
 
 ## Decisions log
 - 2026-08-27: Skipped gstack office-hours/autoplan for this session — `CURSOR_SEMESTER_AGENT.md`
@@ -108,5 +109,7 @@
   absent until after prereg (Weeks 4+).
 - `pip install -e .` required `required_permissions=all` in this sandbox (a `.pth` write);
   fresh-clone install on the target GPU machine still unverified.
-- Health-LLM eval-scripts' exact MAE/parse conventions not yet read (only `inference.py` +
-  `gen_dataset.py` audited); confirm before the anchor run.
+- Health-LLM releases **no evaluation code** (verified 2026-08-27: no `eval/` dir;
+  `medalpaca/` = training/inference utilities only). The paper's MAE must be re-implemented
+  for the anchor; convention fixed in `docs/fidelity-anchor.md` §2 and disclosed as part of
+  the reproduction gap.

@@ -66,8 +66,9 @@
 - [ ] Week 3 — fidelity anchor + OSF pre-registration (**documents drafted; runs pending**)
   - [x] Anchor chosen + recipe + patch list: `docs/fidelity-anchor.md` (PMData stress,
         zero-shot MedAlpaca-7b, target MAE 0.76 ± 0.1) — **reproduction NOT RUN yet**
-  - [x] OSF prereg full draft: `docs/osf-prereg.md` (placeholders: OSF URL, repo URL,
-        anchor-run disclosure) — **not filed; user files it**
+  - [x] OSF prereg full draft: `docs/osf-prereg.md` (placeholders: OSF URL,
+        anchor-run disclosure; GitHub: https://github.com/shrijacked/physio-placebo)
+        — **not filed; user files it**
 - [ ] Weeks 4–15: not started (by design — post-prereg)
 
 ## Open blockers

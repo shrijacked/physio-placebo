@@ -175,7 +175,7 @@ not asserted.
 ## Analysis code and provenance
 
 All experiments are config-driven; every results directory embeds git SHA, config hash, library
-versions, and input-file hashes. Repository: ⟨GitHub/OSF component URL⟩. The full grid is
+versions, and input-file hashes. Repository: https://github.com/shrijacked/physio-placebo (OSF component URL still ⟨pending⟩). The full grid is
 runnable end-to-end by `scripts/` runners; the report card generator applies the SDS validity gate
 mechanically.
 

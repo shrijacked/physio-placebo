@@ -1,0 +1,12 @@
+# Week-2 classical floor configuration. Locked BEFORE any LLM inference is run.
+seed: 1337
+n_permutations: 1000
+# Permutation scheme: window labels are shuffled independently WITHIN each subject
+# (preserves per-subject class balance, destroys signal-label alignment), and the
+# full LOSO train/predict pipeline is re-run per permutation.
+permutation_scope: within_subject
+models:
+  - logreg_l2      # L2 logistic regression, C=1.0, lbfgs, max_iter=5000
+  - tree_depth3    # decision tree, max_depth=3
+# Preprocessing inside every fold: median imputation (fit on train only) + z-scoring
+# (fit on train only). No global statistics cross the subject boundary.

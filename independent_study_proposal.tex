@@ -1,0 +1,362 @@
+% ============================================================
+% Independent Study Proposal
+% physio-placebo: Is the LLM Reading the Signal, or Is the
+% Verbalizer Doing the Classifying?
+%
+% Compile with: tectonic independent_study_proposal.tex
+% or:           pdflatex independent_study_proposal.tex
+% ============================================================
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{lmodern}
+\else
+  \usepackage{fontspec}
+\fi
+\usepackage{microtype}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+
+% Quiet academic accents — body text stays black
+\definecolor{Accent}{HTML}{0F4C5C}
+\definecolor{AccentSoft}{HTML}{1B6B7A}
+\definecolor{RuleGray}{HTML}{B8C4C8}
+\definecolor{TableHead}{HTML}{E8F1F3}
+
+\hypersetup{
+  pdftitle={physio-placebo: Is the LLM Reading the Signal, or Is the Verbalizer Doing the Classifying? (Independent Study Proposal)},
+  pdfauthor={Shrijak Kumar},
+  pdfsubject={Independent Study Proposal},
+  linkcolor=Accent,
+  urlcolor=AccentSoft,
+}
+
+\titleformat{\section}
+  {\Large\bfseries\color{Accent}}
+  {\thesection}{0.8em}{}
+\titlespacing*{\section}{0pt}{1.4em}{0.55em}
+
+\arrayrulecolor{Accent!55}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\linespread{1.06}
+\setlength{\emergencystretch}{1.5em}
+
+\newcolumntype{L}[1]{>{\RaggedRight}p{#1}}
+
+\begin{document}
+
+% ------------------------------------------------------------
+% Title page
+% ------------------------------------------------------------
+\begin{titlepage}
+  \centering
+  \vspace*{2.2cm}
+  {\large\scshape\color{AccentSoft} Independent Study Proposal\par}
+  \vspace{1.2cm}
+  {\color{Accent}\hrule height 1.1pt}
+  \vspace{1.0cm}
+  {\LARGE\bfseries\color{Accent} physio-placebo: Is the LLM Reading the Signal,\\[4pt]
+   or Is the Verbalizer Doing the Classifying?\par}
+  \vspace{1.0cm}
+  {\color{Accent}\hrule height 1.1pt}
+  \vspace{1.6cm}
+  {\large Proposed by\\[2pt]\textbf{\color{Accent} Shrijak Kumar}\par}
+  \vspace{1.1cm}
+  {\large Prepared for Dr.\ Siddharth\\[3pt] Plaksha University\par}
+  \vspace{0.6cm}
+  {\large\color{AccentSoft} August 2026\par}
+  \vfill
+\end{titlepage}
+
+% ------------------------------------------------------------
+% 1. Overview
+% ------------------------------------------------------------
+\section{Overview}
+
+\textbf{physio-placebo: Is the LLM Reading the Signal, or Is the Verbalizer
+Doing the Classifying?}
+
+It is a surrogate-controlled audit of the fast-growing ``LLMs reason over your
+physiology'' literature: take published prompting pipelines (Health-LLM style),
+run them under strict leave-one-subject-out on WESAD / MAUS / CogWear, then
+systematically replace the physiological signal with spectrum-matched noise,
+a wrong subject's recording, a flatline, or nothing at all, and measure how
+much of the above-chance margin survives. The sharp part is the second move:
+separating \textbf{verbalizer leakage} (the template says ``elevated skin
+conductance, stress-typical'') from actual signal information, which nobody
+has done.
+
+% ------------------------------------------------------------
+% 2. The falsifiable core question
+% ------------------------------------------------------------
+\section{The falsifiable core question}
+
+\begin{quote}
+\textbf{Does an LLM's above-chance performance on physiological state
+classification survive replacing the signal with spectrum-matched noise,
+another subject's recording, or nothing at all, and does the
+feature-verbalized condition keep its advantage once class-suggestive
+adjectives are stripped from the template --- or is the measured performance
+produced by the prompt scaffolding and the label prior rather than by the
+physiology?}
+\end{quote}
+
+% ------------------------------------------------------------
+% 3. Why it is not generic
+% ------------------------------------------------------------
+\section{Why it is not generic}
+
+\begin{longtable}{@{}L{0.25\textwidth}L{0.31\textwidth}L{0.34\textwidth}@{}}
+\toprule
+\textbf{\color{Accent}Closest work} & \textbf{\color{Accent}What it does} & \textbf{\color{Accent}What it does not do}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{\color{Accent}Closest work} & \textbf{\color{Accent}What it does} & \textbf{\color{Accent}What it does not do}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\textbf{Health-LLM} and the PPG/HRV LLM-agent line &
+Verbalizes wearable-derived features into prompts, reports gains over
+baselines &
+Reports \textbf{no signal ablation}: no noise-matched, no wrong-subject, no
+signal-deleted condition. The reported margin is never decomposed into signal
+vs template.\\
+\addlinespace
+\textbf{Jo et al., ``Are EEG-to-Text Models Working?'' (2405.06459)} &
+Invented the discipline this project imports: showed EEG-to-text results
+survive pure-noise input, i.e.\ teacher forcing was doing the work &
+Applies only to EEG$\rightarrow$\textbf{text generation}. Never touches
+feature-verbalized LLM reasoning, never touches PPG/EDA/HRV, and has no
+verbalizer concept because there is no verbalizer in that pipeline.\\
+\addlinespace
+\textbf{SensorLM / NormWear-style sensor foundation models} &
+Learn representations from physiological streams, benchmark against task
+baselines &
+Benchmark against \emph{other models}, never against \emph{surrogate signals}.
+A model that beats a weak baseline while ignoring the input passes their
+evaluation.\\
+\end{longtable}
+
+\textbf{The unclaimed thing:} nobody has measured how much of ``the LLM read
+your physiology'' is the adjectives in the template. Strip ``elevated'' and
+``stress-typical,'' leave the numbers and population percentiles, and see what
+is left. That single ablation is the paper.
+
+% ------------------------------------------------------------
+% 4. Concrete semester plan (15 weeks)
+% ------------------------------------------------------------
+\section{Concrete semester plan (15 weeks)}
+
+\textbf{Compute reality check:} every condition is scored by reading
+\textbf{logprobs over the label tokens in a single forward pass}, not free
+generation. At 8B in 4-bit with vLLM batching, the full grid is roughly
+20--40 GPU-hours. A 16GB card is sufficient.
+
+\textbf{Datasets (all downloadable week 1, no gatekeeper):} WESAD (UCI, 15
+subjects, ECG\slash EDA\slash BVP\slash RESP, binary stress vs non-stress as
+the standard task),
+MAUS (IEEE DataPort, 22 subjects, wrist PPG under n-back), CogWear (PhysioNet,
+11 subjects, Empatica E4 + Muse S, Stroop vs baseline). Stretch: DD-Database
+(Dryad), OpenNeuro ds003838.
+
+\textbf{Models:} Qwen3-8B-Instruct and Llama-3.1-8B-Instruct (4-bit);
+Qwen2.5-VL-7B-Instruct for the plot paradigm; optional GPT-class API as a paid
+upper bound ($<$\$50).
+
+\begin{longtable}{@{}>{\bfseries\RaggedRight}p{0.085\textwidth}L{0.865\textwidth}@{}}
+\toprule
+\textbf{\color{Accent}Weeks} & \textbf{\color{Accent}Work}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{\color{Accent}Weeks} & \textbf{\color{Accent}Work}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+1 & Pull all three datasets. NeuroKit2 extraction frozen and version-pinned:
+HRV time+frequency, EDA tonic/phasic via cvxEDA, respiration. Build the LOSO
+harness. Read the Health-LLM released code.\\
+\addlinespace
+2 & \textbf{Classical floor, locked before any LLM runs:} L2 logistic
+regression and a depth-3 decision tree on the identical features, LOSO,
+per-subject variance reported. Define chance two ways: majority-class, and an
+empirical floor from 1000 label permutations.\\
+\addlinespace
+3 & \textbf{Fidelity anchor:} reproduce exactly one Health-LLM headline number
+using their released code. Report the reproduction gap in the paper regardless
+of size. \textbf{OSF pre-registration} of SDS, the surrogate ladder, the
+SDS-validity gate (\S5), and the two directional predictions.\\
+\addlinespace
+4--5 & Paradigm A (raw numeric series in prompt) and Paradigm B (verbalized
+features) x 2 open models x 3 datasets. \textbf{Prompt-robustness sweep
+first:} 3 templates x \{0-shot, 4-shot\}, selected on a held-out subject fold,
+then \textbf{frozen} before any surrogate is run. Each condition gets its own
+best prompt so ``you prompted it badly'' is off the table.\\
+\addlinespace
+6 & Paradigm C (matplotlib plot image $\rightarrow$ Qwen2.5-VL-7B) on WESAD
+and MAUS.\\
+\addlinespace
+7--8 & \textbf{Surrogate ladder}, applied identically to every paradigm:
+(1) Gaussian noise matched to \emph{globally pooled} mean/variance, (2) IAAFT
+phase-randomized, (3) subject-permuted \textbf{with label alignment broken}
+(wrong person, independently sampled condition), (4) flatline, (5) signal
+deleted, scaffolding only. Plus the \textbf{information-preservation ledger}:
+run the classical LR on every surrogate to quantify how much class information
+each surrogate actually retains.\\
+\addlinespace
+9 & \textbf{Verbalizer-leakage ablation --- promoted into the core, not a
+stretch.} Three template variants on Paradigm B: (i) original adjectives,
+(ii) neutralized (raw values + population percentile, no evaluative words),
+(iii) \textbf{adversarially mis-signed adjectives} (say ``low'' where the
+value is high) to test whether the model follows the number or the word. This
+costs three days of compute and is the intellectual centre of the paper.\\
+\addlinespace
+10 & \textbf{$\bigstar$ WEEK-10 MINIMUM VIABLE RESULT $\bigstar$} The SDS
+report card: \textbf{3 paradigms x 2 open models x 3 datasets x 6 signal
+conditions}, macro-F1 under strict LOSO, paired-over-subjects bootstrap CIs
+(1000 resamples, subject as the resampling unit) and Wilcoxon signed-rank
+across subjects, with the classical-baseline delta and the verbalizer-ablation
+panel. This is a complete workshop paper whichever direction it points, and it
+does not depend on any external party.\\
+\addlinespace
+11--12 & Cross-dataset generalization (train verbalizer on WESAD, evaluate on
+MAUS/CogWear); stretch datasets DD-Database and ds003838 if the pipeline is
+clean.\\
+\addlinespace
+13 & QLoRA-tuned condition via Unsloth ($\sim$6.6GB peak at 8B/2048 tokens)
+--- does fine-tuning make the model \emph{start} using the signal? Then
+GPT-class API upper bound.\\
+\addlinespace
+14 & Writeup. Target: ACII or ICMI for the affect framing; ML4H /
+GenAI4Health workshop for the audit framing.\\
+\addlinespace
+15 & Release \textbf{\texttt{physio-placebo}}: pip-installable, wraps any HF
+model + any physiological dataset into an SDS report card, plus a reporting
+checklist modelled on the EEG-to-text mandatory-noise-baseline recommendation.
+Email the reproduction script to the original author group before
+submission.\\
+\end{longtable}
+
+\textbf{Stretch goals, in priority order:} (i) cross-dataset generalization,
+(ii) QLoRA condition, (iii) API upper bound, (iv) EEG channel from
+CogWear/ds003838 as a fourth modality.
+
+\textbf{Pre-registered predictions (to be falsified):} SDS $<$ 0.3 for
+raw-series and plot paradigms; the feature-verbalized paradigm loses
+$>$50\% of its margin under adjective neutralization; the mis-signed-adjective
+condition flips predictions in $>$40\% of items.
+
+% ------------------------------------------------------------
+% 5. What could kill it, and the fix
+% ------------------------------------------------------------
+\section{What could kill it, and the fix}
+
+\textbf{Objection 1: ``Your surrogates are not nulls, so your audit is
+measuring nothing.''}\\
+Moment-matched Gaussian noise and IAAFT phase-randomization both
+\textbf{preserve per-channel mean and variance} --- and mean HR and tonic EDA
+level are exactly where most of the class information in this data lives. A
+surrogate that preserves those is leaking the label, which \emph{deflates} SDS
+and makes a working model look like a placebo. The label-preserving subject
+permutation as originally specified has the opposite bug: wrong person but
+right condition is a real, correctly-labelled physiological signal, so high
+performance there is not evidence of cheating at all.\\
+\textbf{Fix, built into the design:} (a) moments are matched to the
+\textbf{globally pooled} distribution, never per-class; (b) subject
+permutation draws a wrong subject \textbf{and} an independently sampled
+condition, so label alignment is destroyed; (c) the label-preserving
+permutation is retained as a \emph{separate, differently-named} condition
+(``population-level vs individual-level information''), reported but never
+counted as a null; (d) the \textbf{information-preservation ledger} runs the
+classical LR on every surrogate and publishes exactly how much class
+information each one retains, so no surrogate's status is asserted, it is
+measured.
+
+\textbf{Objection 2: ``You built it wrong / your SDS is unstable, so the
+negative result is your bug.''}\\
+Two failure modes. First, prompt quality: any null can be dismissed as bad
+prompting. Second and more serious, \textbf{SDS
+$= (M_{\mathrm{real}} - M_{\mathrm{surrogate}}) \, / \,
+(M_{\mathrm{real}} - M_{\mathrm{chance}})$ explodes or inverts when
+$M_{\mathrm{real}}$ is near chance} --- precisely the case for the
+raw-numeric-series paradigm, where the denominator is close to zero and the
+ratio becomes meaningless noise.\\
+\textbf{Fix:} (a) the week-3 reproduce-before-audit fidelity anchor against
+released code, with the reproduction gap reported honestly; (b) each condition
+is evaluated at \textbf{its own best prompt}, selected on a held-out fold and
+frozen before surrogates run; (c) a pre-registered \textbf{SDS validity gate}
+--- if a condition's real-signal macro-F1 does not exceed the
+label-permutation chance floor by a margin whose bootstrap CI excludes zero,
+SDS is declared undefined for that cell and only the raw delta with CI is
+reported. No ratio is ever printed on top of a near-zero denominator;
+(d) subject is the unit of resampling throughout, so the n=11--22 subject
+counts are honestly reflected in every interval.
+
+\emph{Secondary risk: ``everyone already knew LLMs
+can't read raw PPG.'' The defence is that the published literature claims
+otherwise and reports gains, and the verbalizer arm has a genuinely
+non-obvious answer either way. If results come out positive, this becomes the
+first evidence that LLM physiological reasoning survives surrogate controls
+--- still publishable, which is why week-3 pre-registration matters.}
+
+% ------------------------------------------------------------
+% 6. The project in one sentence
+% ------------------------------------------------------------
+\section{The project in one sentence}
+
+\begin{quote}
+I'd like to test whether the LLMs that claim to reason over physiology are
+actually using the signal: take WESAD and MAUS, run the published prompting
+pipelines, then swap the real recording for phase-randomized noise or another
+subject's data and see how much accuracy survives, because if it survives then
+the LLM layer people are bolting onto sensors like ours is mostly reading the
+prompt template.
+\end{quote}
+
+\textbf{More technically:}
+\begin{quote}
+I want to build a surrogate-control harness for LLM physiological inference:
+IAAFT phase-randomization, subject permutation and signal deletion across
+WESAD, MAUS and CogWear under leave-one-subject-out, with a logistic
+regression on the same HRV and EDA features as the floor, so we can report how
+much of a paper's claimed margin is signal and how much is the verbalizer's
+adjectives.
+\end{quote}
+
+\textbf{The underlying curiosity:}
+\begin{quote}
+I keep noticing that every ``LLM reads your biosignals'' paper turns the
+features into sentences like ``elevated skin conductance, stress-typical''
+before the model ever sees them, and I really want to find out whether the
+model is classifying the person or just reading that adjective back to us.
+\end{quote}
+
+% ------------------------------------------------------------
+% 7. A second idea, in brief
+% ------------------------------------------------------------
+\section{A second idea, in brief}
+
+\textbf{A gaze-grounded reward-model audit:} does the reward-model margin
+favour responses that cost more to read, after residualizing out length, word
+frequency, word length and surprisal, using OASST-ETC's real fixation data
+scored by Skywork-Reward-V2-8B, ArmoRM and a Qwen3-8B judge. Week 1 must be a
+hard go/no-go on actually obtaining the OASST-ETC fixation files, since no
+substitute corpus exists.
+
+\end{document}

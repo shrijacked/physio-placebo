@@ -1,0 +1,23 @@
+# environments
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# OS / editor cruft
+.DS_Store
+~$*.docx
+.docx_work/
+
+# data: raw archives, third-party clones, and processed windows are large;
+# everything is re-derivable from scripts + committed manifests (checksums recorded)
+data/
+
+# large raw arrays inside results are kept on disk but not in git
+# (metrics, manifests, and JSON results ARE committed)
+results/**/*.npz
+.claude/

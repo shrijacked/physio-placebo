@@ -72,8 +72,9 @@
   `data/raw/maus/` so `scripts/prepare_maus.py` can run on real data.
 - **CogWear download** — PhysioNet static zip (187,856,113 bytes) keeps resetting mid-stream;
   a 40-attempt resume loop is running. If it dies, rerun the same command (it resumes).
-- **PMData** (fidelity anchor input) — zip is only 1.4 GB; download started 2026-08-27
-  (background, resume-capable) into `data/raw/pmdata/`. Verify sha256 sidecar exists before use.
+- ~~PMData~~ **RESOLVED 2026-08-27**: `data/raw/pmdata/pmdata.zip` downloaded complete
+  (1,416,129,266 bytes, 912 files, sha256 `53a49d94…` in sidecar). Anchor data side is ready;
+  only the GPU box remains for the anchor run.
 - **Prof sign-off** — verbalizer variant (iv) (SensorLM templates) still pending
   (PROJECT_PLAN.md §11); vendoring done regardless as planned.
 - **OSF filing** — user reviews `docs/osf-prereg.md`, resolves ⟨placeholders⟩, files, and

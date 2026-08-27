@@ -62,9 +62,13 @@ exclusion rules, and the analysis pipeline are fixed here before any LLM inferen
 At the time of filing:
 
 - All datasets are public, previously published (WESAD, MAUS, CogWear).
-- Data preparation (windowing), feature extraction (frozen, hash `⟨frozen_features.lock.json
-  sha256⟩`), and the **classical baselines/chance floors have already been computed**
-  (Week-2 artifact, `results/classical_floor/`, locked before this filing by design).
+- Data preparation (windowing), feature extraction (frozen, source hash `702d5f37…`,
+  `configs/frozen_features.lock.json`), and the **classical baselines/chance floors have
+  already been computed for WESAD and CogWear** (Week-2 artifact, `results/classical_floor/`,
+  locked before this filing by design); the MAUS floor will be locked the same way before any
+  LLM run on MAUS. Observed floors: WESAD logreg macro-F1 0.918 vs permutation chance ≈ 0.42;
+  CogWear logreg 0.569 vs permutation p95 0.541 (weak classical signal — the SDS validity
+  gate is expected to bind for many CogWear cells).
 - **No LLM inference of any kind has been run on any dataset** at filing time. The LLM
   experimental grid — the subject of this pre-registration — is untouched.
 - One reproduction of a published Health-LLM number (fidelity anchor, PMData/MedAlpaca) ⟨has /
@@ -77,7 +81,11 @@ At the time of filing:
 |---|---|---|---|---|
 | WESAD | UCI | 15 | chest ECG, EDA, Resp @700 Hz; wrist BVP @64 Hz, EDA @4 Hz | stress (TSST) vs non-stress (baseline + amusement) |
 | MAUS | IEEE DataPort | 22 | wrist PixArt PPG @100/128 Hz | n-back workload: 0-back (low) vs 2-/3-back (high) |
-| CogWear | PhysioNet | 11 | Empatica E4 BVP @64 Hz, EDA @4 Hz | Stroop (cognitive load) vs resting baseline |
+| CogWear | PhysioNet | 11 pilot (10 usable*) | Empatica E4 BVP @64 Hz, EDA @4 Hz | Stroop (cognitive load) vs resting baseline |
+
+\* CogWear pilot subject 3 has no `cognitive_load/empatica_eda.csv` upstream (verified against
+the published SHA256SUMS.txt, 2026-08-27) and is excluded by the missing-channels
+data-integrity rule below, before any model run.
 
 Windowing (fixed, `configs/windowing.yaml`): 60 s windows, 30 s stride, cut strictly inside one
 labeled protocol segment (no mixed-condition windows); windows containing NaNs dropped and counted.

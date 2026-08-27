@@ -102,3 +102,35 @@ def fake_maus_rawdir(tmp_path_factory) -> Path:
         (root / sid).mkdir(parents=True)
         pd.DataFrame(cols).to_csv(root / sid / "pixart.csv", index=False)
     return root
+
+
+@pytest.fixture(scope="session")
+def fake_cogwear_rawdir(tmp_path_factory) -> Path:
+    """Pilot cohort, two subjects: '0' and '3'. Baseline ~200 s, cognitive_load
+    ~310 s. Channel clocks are intentionally misaligned (BVP starts 0.3125 s
+    early, EDA runs 2 s longer) to exercise overlap trimming. Subject '0' has
+    interior NaNs in the cognitive_load EDA to exercise window drops."""
+    root = tmp_path_factory.mktemp("cogwear_raw")
+    epoch = 1_767_084_700.0
+    for j, sid in enumerate(["0", "3"]):
+        for session, dur, off in [("baseline", 200.0, 0.0), ("cognitive_load", 310.0, 1000.0)]:
+            d = root / "pilot" / sid / session
+            d.mkdir(parents=True)
+            t0 = epoch + 5000 * j + off
+
+            n_bvp = int((dur + 1.0) * 64)
+            t_bvp = t0 - 0.3125 + np.arange(n_bvp) / 64.0
+            bvp = nk.ppg_simulate(duration=int(dur + 2), sampling_rate=64,
+                                  heart_rate=72 + 6 * j, random_state=91 + 10 * j)
+            bvp = np.resize(bvp, n_bvp).astype(np.float64)
+            pd.DataFrame({"bvp": bvp, "time": t_bvp}).to_csv(d / "empatica_bvp.csv", index=False)
+
+            n_eda = int((dur + 2.0) * 4)
+            t_eda = t0 + np.arange(n_eda) / 4.0
+            rng = np.random.default_rng(37 + 10 * j)
+            eda = 0.3 + 0.02 * np.arange(n_eda) / n_eda + 0.01 * rng.standard_normal(n_eda)
+            if sid == "0" and session == "cognitive_load":
+                bad = int(150.5 * 4)
+                eda[bad : bad + 5] = np.nan  # hits windows starting at 120 s and 150 s
+            pd.DataFrame({"eda": eda, "time": t_eda}).to_csv(d / "empatica_eda.csv", index=False)
+    return root

@@ -28,8 +28,18 @@
   - [x] SensorLM `captioning.py`/`constants.py` vendored (commit `7d087e9`, Apache-2.0 per
         upstream README), excluded from lint, **templates render on a real WESAD window**
         (4 passing tests in `tests/test_sensorlm_render.py`)
-  - [ ] CogWear: download in progress (PhysioNet connection resets; resume loop at ~36% as of
-        session end); loader NOT WRITTEN until real zip is inspected
+  - [x] CogWear loader + windowing (pilot cohort, baseline=0 vs Stroop=1; E4 BVP@64Hz +
+        EDA@4Hz overlap-trimmed; clock validation), written against the published
+        SHA256SUMS.txt/README/sample files; 6 fixture tests pass. **Upstream gap:**
+        `pilot/3/cognitive_load/empatica_eda.csv` does not exist on PhysioNet → subject 3
+        excluded by the missing-channels rule → **10 usable of 11** (recorded in prereg + manifest)
+  - [x] CogWear real data downloaded via per-file HTTPS (43/43 CSVs, each SHA256-verified
+        against the published SHA256SUMS.txt; `scripts/download_cogwear.py` — the monolithic
+        zip kept resetting and retries were served non-resumable). Windowed end-to-end:
+        **10 subjects, 114 windows (39 baseline / 75 Stroop), 0 NaN drops**
+        (`data/processed/cogwear/prepare_manifest.json`)
+  - [x] CogWear features: all 114 windows, zero NaNs in all 15 features
+        (`results/features/cogwear/20260827T134111Z_d5b1bd65/`)
   - [ ] MAUS raw data: requires IEEE DataPort login → **user action**
 - [ ] Week 2 — classical floor (**WESAD done and locked; other datasets pending their data**)
   - [x] WESAD floor locked before any LLM run
@@ -38,7 +48,15 @@
         depth-3 tree **0.8477** (0.8456 ± 0.1286);
         majority-class **0.4123**; permutation floor (n=1000, within-subject):
         logreg mean 0.4193 / p95 0.4327, tree mean 0.4388 / p95 0.4690
-  - [ ] MAUS + CogWear floors (blocked on data)
+  - [x] CogWear floor locked
+        (`results/classical_floor/cogwear/20260827T134224Z_842011b7/floor.json`, seed 1337):
+        logreg L2 pooled macro-F1 **0.5692** (per-subject 0.5069 ± 0.2275);
+        depth-3 tree **0.5598** (0.4986 ± 0.1649); majority **0.3968**;
+        permutation floor: logreg mean 0.4681 / **p95 0.5412**, tree mean 0.4783 / p95 0.5656.
+        **Note:** classical signal is weak — logreg barely clears the permutation p95 and the
+        tree does not; CogWear cells are likely to trigger the pre-registered SDS validity
+        gate. WESAD is the strong-signal dataset (0.92 vs ~0.42).
+  - [ ] MAUS floor (blocked on data)
   - [ ] Byte-identity test (baselines vs LLM feature matrices) — LLM side does not exist yet;
         test lands with the LLM scorer (Week 4)
 - [ ] Week 3 — fidelity anchor + OSF pre-registration (**documents drafted; runs pending**)

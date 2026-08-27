@@ -37,6 +37,8 @@ addopts = "-q"
 line-length = 110
 target-version = "py311"
 src = ["src", "tests", "scripts"]
+# Vendored third-party code is kept byte-identical to upstream; never lint or reformat it.
+extend-exclude = ["src/physio_placebo/prompts/vendor"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W", "UP", "B"]

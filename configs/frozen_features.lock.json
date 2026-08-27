@@ -1,0 +1,8 @@
+{
+  "frozen_at_utc": "2026-08-27T13:05:23.648730+00:00",
+  "git_sha_at_freeze": "ffb81a7b7a0f92bb3b04adebc3633d09734a7613",
+  "frozen_py_sha256": "702d5f37ebb6cf2c864c85e0cb7c4f840fddfcdaf39c6138933fbaed32d178e1",
+  "neurokit2": "0.2.13",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1"
+}

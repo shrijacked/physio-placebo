@@ -35,7 +35,11 @@
         excluded by the missing-channels rule → **10 usable of 11** (recorded in prereg + manifest)
   - [x] CogWear real data downloaded via per-file HTTPS (43/43 CSVs, each SHA256-verified
         against the published SHA256SUMS.txt; `scripts/download_cogwear.py` — the monolithic
-        zip kept resetting and retries were served non-resumable). Windowed end-to-end:
+        zip kept resetting and retries were served non-resumable). The abandoned zip resume
+        loop eventually completed too (2026-08-27 23:07 IST): the full official archive is
+        also on disk at `data/raw/cogwear/cogwear-1.0.0.zip` (187,856,113 bytes, `unzip -t`
+        clean, sha256 sidecar) — kept as canonical backup; processed windows remain built
+        from the per-file-verified CSVs. Windowed end-to-end:
         **10 subjects, 114 windows (39 baseline / 75 Stroop), 0 NaN drops**
         (`data/processed/cogwear/prepare_manifest.json`)
   - [x] CogWear features: all 114 windows, zero NaNs in all 15 features

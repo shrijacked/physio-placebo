@@ -79,7 +79,8 @@
   a 40-attempt resume loop is running. If it dies, rerun the same command (it resumes).
 - ~~PMData~~ **RESOLVED 2026-08-27**: `data/raw/pmdata/pmdata.zip` downloaded complete
   (1,416,129,266 bytes, 912 files, sha256 `53a49d94…` in sidecar). Anchor data side is ready;
-  only the GPU box remains for the anchor run.
+  the primary (MedAlpaca) run still needs a GPU box; the fallback anchor
+  (few-shot `gpt-3.5-turbo-instruct`, API-only) is runnable on this Mac as of 2026-08-30.
 - **Prof sign-off** — verbalizer variant (iv) (SensorLM templates) still pending
   (PROJECT_PLAN.md §11); vendoring done regardless as planned.
 - **OSF filing** — all placeholders resolved (author: Shrijak Kumar; supervisor: Dr. Siddharth,
@@ -125,14 +126,14 @@
   upstream README (no root LICENSE file exists upstream); vendor dir excluded from ruff.
 
 ## NOT IMPLEMENTED / known gaps
-- CogWear loader/windowing/floor — pending the download (loader will be written against the
-  real zip, not guessed).
+- ~~CogWear loader/windowing/floor~~ RESOLVED 2026-08-27 (per-file download; loader, windows,
+  and floor all landed — this line was stale).
 - MAUS on real data (loader is fixture-tested only) — pending user download.
 - Fidelity-anchor reproduction run — recipe + patches documented, nothing executed.
-- Everything LLM-side (paradigms, prompts, surrogates, vLLM scoring, SDS) — intentionally
-  absent until after prereg (Weeks 4+).
+- Everything LLM-side (paradigms, prompts, surrogates, API logprob scoring, SDS) —
+  intentionally absent until after prereg (Weeks 4+).
 - `pip install -e .` required `required_permissions=all` in this sandbox (a `.pth` write);
-  fresh-clone install on the target GPU machine still unverified.
+  fresh-clone install on a second machine still unverified (GPU box now optional).
 - Health-LLM releases **no evaluation code** (verified 2026-08-27: no `eval/` dir;
   `medalpaca/` = training/inference utilities only). The paper's MAE must be re-implemented
   for the anchor; convention fixed in `docs/fidelity-anchor.md` §2 and disclosed as part of

@@ -44,24 +44,29 @@ A surrogate-controlled audit of the fast-growing "LLMs reason over your physiolo
 
 ## 4. Models & compute
 
+> **AMENDED 2026-08-30 (user-directed, before prereg filing):** grid swapped to OpenAI dated
+> snapshots — user's API key in hand (git-ignored `.env`), no GPU dependency for the grid, and
+> the audited literature itself used OpenAI models. gpt-5.x rejected: no logprob support
+> (verified empirically). Open-weights stack demoted to an optional extension.
+
 | Role | Model | Config |
 |---|---|---|
-| Text LLM #1 | Qwen3-8B-Instruct | 4-bit, vLLM, logprob scoring |
-| Text LLM #2 | Llama-3.1-8B-Instruct | 4-bit, vLLM, logprob scoring |
-| VLM (plot paradigm) | Qwen2.5-VL-7B-Instruct | 4-bit |
-| Fine-tuned condition (Week 13) | QLoRA via Unsloth on one 8B model | ~6.6 GB peak at 8B/2048 tokens |
-| Paid upper bound (optional) | GPT-class API | Budget < $50 |
+| Text LLM #1 (flagship) | `gpt-4.1-2025-04-14` | Chat Completions, temp 0, fixed seed, logprob scoring |
+| Text LLM #2 (mini) | `gpt-4.1-mini-2025-04-14` | same |
+| VLM (plot paradigm) | `gpt-4.1-2025-04-14` | image input |
+| Fine-tuned condition (Week 13, stretch) | QLoRA via Unsloth on one open 8B model | GPU-gated |
+| Open-weights extension (optional) | one 8B instruct, 4-bit, vLLM | only if a GPU materializes |
 
-**Compute reality check:** every condition is scored by reading **logprobs over the label tokens in a single forward pass**, not free generation. Full grid ≈ 20–40 GPU-hours at 8B/4-bit with vLLM batching. A 16 GB card is sufficient. Verbalizer ablation ≈ 3 days of compute on top.
+**Compute reality check:** every condition is scored by reading **logprobs of the label tokens from the top-20 at the single answer position** (`max_completion_tokens=1`), not free generation. The grid needs no GPU. API budget cap US$150: the mini model runs the full grid; the flagship falls back to a pre-specified subset if projected cost exceeds the cap (rule fixed in the prereg).
 
-**Open item:** confirm which GPU we actually have (local card vs university cluster vs rented). → §12 Open questions.
+**Open item (downgraded 2026-08-30):** a GPU is needed only for the MedAlpaca anchor run and the optional open-weights/QLoRA work. → §12 Open questions.
 
 ## 5. Experimental design
 
 ### 5.1 Paradigms (how the signal reaches the model)
 - **Paradigm A — raw numeric series:** downsampled numeric time series pasted into the prompt. *Known risk:* no principled downsampling choice exists (700 Hz ECG / 64 Hz BVP → prompt-sized series is arbitrary); document the chosen scheme, sweep at least two window/rate settings, and report both so "you built it wrong" has an answer.
 - **Paradigm B — verbalized features:** NeuroKit2-extracted features rendered into sentences by a template (the condition the literature actually uses). This is where the verbalizer ablation lives.
-- **Paradigm C — plot image:** matplotlib rendering of the window → Qwen2.5-VL-7B. WESAD and MAUS only.
+- **Paradigm C — plot image:** matplotlib rendering of the window → `gpt-4.1-2025-04-14` image input. WESAD and MAUS only.
 
 ### 5.2 Feature extraction (freeze in Week 1)
 - NeuroKit2, version-pinned. HRV time + frequency domain; EDA tonic/phasic via cvxEDA; respiration features.
@@ -126,8 +131,9 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 - [x] SensorLM open-source status investigated; verbalizer-variant idea proposed to prof (2026-08-10)
 - [ ] Prof approval to proceed · **Done means:** explicit yes + agreed start date recorded at top of this doc
 - [ ] Prof sign-off on verbalizer variant (iv) · **Done means:** yes/no recorded in §11
-- [ ] Hardware confirmed · **Done means:** GPU model + VRAM + access path written in §12
-- [ ] Repo scaffolded (`physio-placebo/`) with env pinning (Python version, `requirements.txt`/`uv.lock`, NeuroKit2 + cvxEDA + vLLM versions) · **Done means:** fresh-clone install runs on the target machine
+- [x] Hardware resolved (amended 2026-08-30) · grid runs via OpenAI API on the local Mac, no
+  GPU; a GPU is needed only for the anchor/extension (§12)
+- [ ] Repo scaffolded (`physio-placebo/`) with env pinning (Python version, `requirements.txt`/`uv.lock`, NeuroKit2 + cvxEDA + OpenAI client versions) · **Done means:** fresh-clone install runs on the target machine
 
 ### Week 1 — data + harness skeleton
 - [ ] Download WESAD, MAUS, CogWear; record versions/checksums in this doc · **Done means:** loader script parses all three, per-subject window counts printed and pasted here
@@ -154,7 +160,7 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 
 ### Week 6 — Paradigm C
 - [ ] Plot rendering pipeline (fixed style, resolution, axes policy) · **Done means:** rendering config committed
-- [ ] Paradigm C on WESAD + MAUS with Qwen2.5-VL-7B, real signal · **Done means:** results rows appended
+- [ ] Paradigm C on WESAD + MAUS with `gpt-4.1-2025-04-14` image input, real signal · **Done means:** results rows appended
 
 ### Weeks 7–8 — surrogate ladder
 - [ ] Implement all 5 surrogates + the separate label-preserving condition exactly per §5.4 · **Done means:** each surrogate unit-tested (moments/spectrum/label-alignment assertions)
@@ -205,7 +211,7 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 | **Done (latest first)** | 2026-08-10 · Independent Study Registration form filled from this plan + Amol's ref structure (grading adapted, not copied); PDF exported. 2026-08-10 · SensorLM/LSM-2 openness verified (code-only / paper-only; no weights) — reply sent to prof; verbalizer variant (iv) proposed. 2026-08-10 · Proposal PDF finalized (colored, named) and shared with prof. 2026-07-28 · Idea selection completed; winner + runner-up fixed. |
 | **In progress** | Awaiting student ID No / course-no confirmation for the registration form; awaiting prof approval + start date. |
 | **Blocked** | Registration form PDF ready except ID No (blank until confirmed). |
-| **Next 3 actions** | 1) Confirm ID No + Course No (CS4002 vs CS4003) + Major/Category → regenerate form PDF. 2) Get prof approval + start date → fill in semester clock. 3) Confirm GPU hardware (§12). |
+| **Next 3 actions** | 1) Confirm ID No + Course No (CS4002 vs CS4003) + Major/Category → regenerate form PDF. 2) Get prof approval + start date → fill in semester clock. 3) GPU (downgraded 2026-08-30): needed only for anchor/extension (§12). |
 
 ## 11. Decision log  *(append-only; date every entry)*
 
@@ -221,7 +227,9 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 ## 12. Open questions  *(resolve and move answers to §11)*
 
 1. **Start date / semester alignment** — which week is Week 1?
-2. **Hardware** — exact GPU (need ≥16 GB VRAM); local vs cluster; vLLM compatibility.
+2. **Hardware** — downgraded 2026-08-30: the grid runs through the OpenAI API (no GPU). A
+   ≥16 GB GPU is needed only for the MedAlpaca anchor run and the optional open-weights /
+   QLoRA extension.
 3. **Health-LLM anchor** — exact paper, repo URL, and which headline number we reproduce (decide in Week 1 after reading the released code; do not cite from memory).
 4. **Prof sign-off** on verbalizer variant (iv) and on the Week-10 check-in format.
 5. **OSF account** — create under Shrijak's name; decide whether prof is listed as collaborator on the registration.

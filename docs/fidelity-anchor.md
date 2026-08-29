@@ -16,8 +16,10 @@ Why this cell (full reasoning in `docs/health-llm-notes.md` §5):
   so the API cells are unreproducible in 2026 by anyone.
 - Zero-shot avoids the few-shot exemplar-leakage confound in their released `inference.py`.
 
-Fallback (needs user's OpenAI key + the legacy `gpt-3.5-turbo-instruct` engine to still exist):
-few-shot GPT-3.5, MAE 0.94 ± 0.1.
+Fallback — **VIABLE as of 2026-08-30** (user's OpenAI key stored in git-ignored `.env`;
+`gpt-3.5-turbo-instruct` verified present in the account's model list): few-shot GPT-3.5,
+MAE 0.94 ± 0.1. Runs API-only on this Mac (≈$1). Caveat: this cell inherits their few-shot
+exemplar-leakage confound, which is disclosed wherever the number is reported.
 
 ## 2. Reproduction recipe (planned, not yet run)
 
@@ -58,7 +60,9 @@ improvements. The reproduction gap is reported with these patches disclosed.
 MedAlpaca-7b needs ~14 GB in fp16. **This Mac is ruled out** (verified 2026-08-27: 16 GB
 unified memory, 13 GiB free disk — neither holds the fp16 weights). Options:
 
-1. The GPU box provisioned for Week 4+ vLLM work (16 GB card is sufficient) — required path.
+1. A GPU box (16 GB card is sufficient) — required for the primary (MedAlpaca) run. Note: no
+   longer implied by the main grid, which moved to the OpenAI API on 2026-08-30; a GPU must be
+   provisioned specifically for this run (or the run waits).
 2. Last resort only: 4-bit quantized weights locally (~4 GB) — this deviates from their
    `transformers` fp16 pipeline and would confound the reproduction; if ever used, the
    quantization is disclosed next to the number and the run is repeated on the GPU box.
@@ -67,8 +71,9 @@ unified memory, 13 GiB free disk — neither holds the fp16 weights). Options:
 
 - [x] PMData: public zip is only 1.4 GB — agent download started 2026-08-27 into
       `data/raw/pmdata/pmdata.zip` (sha256 recorded on completion).
-- [ ] Provide the GPU box (§4) — the anchor run cannot execute on this Mac.
-- [ ] (Fallback only) provide OpenAI key if the MedAlpaca run fails.
+- [ ] Provide the GPU box (§4) — needed for the **primary** (MedAlpaca) run only.
+- [x] OpenAI key provided 2026-08-30 (git-ignored `.env`) — the fallback anchor is runnable
+      now, on this Mac, without a GPU.
 
 ## 6. Results (to be filled by the run)
 

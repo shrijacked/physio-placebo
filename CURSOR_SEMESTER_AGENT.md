@@ -74,14 +74,23 @@ Stretch datasets: DD-Database (Dryad), OpenNeuro ds003838.
 
 ### 2.2 Models
 
-- **Open (core):** Qwen3-8B-Instruct and Llama-3.1-8B-Instruct, 4-bit, served with vLLM.
-- **Vision (plot paradigm):** Qwen2.5-VL-7B-Instruct.
-- **Optional paid upper bound:** one GPT-class API model, budget < $50 (Week 13, stretch).
+> **AMENDED 2026-08-30 (user-directed, before prereg filing):** grid models swapped to OpenAI
+> dated snapshots — the user holds an API key (git-ignored `.env`), no GPU is available, and the
+> audited literature itself used OpenAI models. gpt-5.x snapshots were rejected empirically: they
+> do not expose logprobs. Details in `PROGRESS.md` decisions log and `docs/osf-prereg.md`.
 
-**Compute reality check:** every condition is scored by reading **logprobs over the label tokens in a
-single forward pass** — never free generation. Full grid ≈ 20–40 GPU-hours at 8B/4-bit with vLLM
-batching; a 16 GB card is sufficient. If you find yourself doing free-form generation and parsing text
-answers, you are doing it wrong.
+- **Core (paradigms A and B):** `gpt-4.1-2025-04-14` (flagship) and `gpt-4.1-mini-2025-04-14`
+  (mini), Chat Completions API, temperature 0, fixed seed, `system_fingerprint` logged per call.
+- **Vision (plot paradigm):** `gpt-4.1-2025-04-14` image input.
+- **Optional extension (only if a GPU materializes):** one open-weights 8B instruct model via
+  vLLM (original plan: Qwen3-8B / Llama-3.1-8B).
+
+**Compute reality check:** every condition is scored by reading **logprobs of the label tokens
+from the top-20 returned at the single answer position** (`max_completion_tokens=1`) — never free
+generation. The grid needs no GPU; API budget cap US$150 (mini model runs the full grid; the
+flagship falls back to a pre-specified subset if projected cost exceeds the cap — rule fixed in
+the prereg). If you find yourself doing free-form generation and parsing text answers, you are
+doing it wrong.
 
 ### 2.3 Features
 
@@ -93,7 +102,7 @@ tonic/phasic via cvxEDA, respiration features. The classical baselines and the L
 
 - **Paradigm A:** raw numeric series in the prompt.
 - **Paradigm B:** verbalized features in the prompt (Health-LLM style).
-- **Paradigm C:** matplotlib plot image → Qwen2.5-VL-7B (WESAD and MAUS only).
+- **Paradigm C:** matplotlib plot image → `gpt-4.1-2025-04-14` image input (WESAD and MAUS only).
 
 ### 2.5 Prompt protocol
 
@@ -185,7 +194,7 @@ physio-placebo/
 │   ├── surrogates/                # the 5-rung ladder + label-preserving permutation
 │   ├── prompts/                   # templates, verbalizer, neutralized + mis-signed variants
 │   ├── paradigms/                 # A (raw series), B (verbalized), C (plot image)
-│   ├── scoring/                   # vLLM logprob-over-label-tokens scorer
+│   ├── scoring/                   # OpenAI API logprob-over-label-tokens scorer
 │   ├── baselines/                 # LR + depth-3 tree, permutation chance floor
 │   ├── stats/                     # bootstrap CIs, Wilcoxon, SDS + validity gate
 │   └── report/                    # SDS report card generator (tables + figures)
@@ -279,7 +288,8 @@ the user (record the OSF URL in `PROGRESS.md`); tag `week-03-done`. **After this
 
 ### Weeks 4–5 — Paradigms A and B, prompt sweep then freeze
 **Tasks:**
-- Implement the vLLM logprob-over-label-tokens scorer (single forward pass per item).
+- Implement the OpenAI API logprob-over-label-tokens scorer (top-20 logprobs at the answer
+  position, `max_completion_tokens=1`, full request/response archiving).
 - Paradigm A (raw numeric series) and Paradigm B (verbalized features) × 2 open models × 3 datasets.
 - Prompt-robustness sweep **first**: 3 templates × {0-shot, 4-shot} selected on a held-out subject
   fold, then **frozen** (write the frozen prompt IDs into a locked config) before any surrogate runs.
@@ -288,7 +298,7 @@ the user (record the OSF URL in `PROGRESS.md`); tag `week-03-done`. **After this
 frozen-prompt lockfile committed; scorer unit-tested (known-logprob fixture); tag `week-05-done`.
 
 ### Week 6 — Paradigm C (plots)
-**Tasks:** matplotlib plot rendering of windows → Qwen2.5-VL-7B, WESAD and MAUS; same scoring protocol,
+**Tasks:** matplotlib plot rendering of windows → `gpt-4.1-2025-04-14` image input, WESAD and MAUS; same scoring protocol,
 same prompt sweep-then-freeze.
 
 **Exit criteria:** Paradigm C real-signal numbers with CIs on WESAD+MAUS; plot generation deterministic

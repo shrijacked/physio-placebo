@@ -88,11 +88,25 @@
 - **MAUS access** — IEEE DataPort account-creation page broken for user (2026-08-30); no public
   raw mirror exists (Kaggle copy is processed-PPG only, unusable for our frozen extractor).
   Escalated to prof; fallback = email dataset authors (NTU, addresses in arXiv:2111.02561).
-- **GPU hardware** — still unconfirmed (PROJECT_PLAN.md §12); needed from Week 4 (vLLM) and
-  **required for the anchor run**: this Mac has 16 GB RAM and 13 GiB free disk, which cannot
-  hold MedAlpaca-7b fp16 (~14 GB). Verified 2026-08-27.
+- **GPU hardware** — DOWNGRADED 2026-08-30: the main grid no longer needs a GPU (models swapped
+  to OpenAI API snapshots, see decisions log). GPU is now needed only for (a) the MedAlpaca-7b
+  primary anchor run and (b) the optional open-weights extension. This Mac (16 GB RAM, 13 GiB
+  free disk) still cannot hold MedAlpaca-7b fp16 (~14 GB).
 
 ## Decisions log
+- 2026-08-30: **Grid models swapped** from open-weights (Qwen3-8B, Llama-3.1-8B, Qwen2.5-VL via
+  vLLM) to OpenAI dated snapshots **`gpt-4.1-2025-04-14` + `gpt-4.1-mini-2025-04-14`** (vision
+  paradigm C via the flagship). Drivers: user holds an OpenAI key, no GPU available, and the
+  audited literature (Health-LLM) used OpenAI models — ecological validity. gpt-5.x snapshots
+  rejected empirically: no logprob support ("Unsupported parameter", verified 2026-08-30);
+  gpt-4.1 pair returns top-20 logprobs with both label tokens present. Logprob scoring rule
+  unchanged. Open-weights 8B kept as optional extension if GPU materializes. (User-directed.)
+- 2026-08-30: OpenAI key stored in git-ignored `.env` (user-authorized for this project;
+  `.gitignore` extended with `.env` — it previously only covered `.venv/`). Key should be
+  rotated at semester end since it transited chat.
+- 2026-08-30: Anchor fallback is now **viable**: `gpt-3.5-turbo-instruct` (their few-shot
+  0.94 ± 0.1 cell) is still served and we now hold a key — both conditions from
+  `docs/fidelity-anchor.md` met. MedAlpaca zero-shot remains the primary (GPU-gated).
 - 2026-08-27: Skipped gstack office-hours/autoplan for this session — `CURSOR_SEMESTER_AGENT.md`
   + `PROJECT_PLAN.md` are the already-approved plan; user said "get started". (User-directed.)
 - 2026-08-27: WESAD windowing 60 s / 30 s stride, stress={2}, non-stress={1,3} (standard WESAD

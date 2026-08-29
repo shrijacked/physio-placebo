@@ -58,9 +58,9 @@ At the time of filing:
   expected to bind for many CogWear cells).
 - **No LLM inference of any kind has been run on any dataset** at filing time. The LLM
   experimental grid — the subject of this pre-registration — is untouched.
-- One reproduction of a published Health-LLM number (fidelity anchor, PMData/MedAlpaca) has
-  **not** been run at filing time; it uses the original authors' data/task and shares no data or
-  code path with our grid.
+- One reproduction of a published Health-LLM number (fidelity anchor, on the original authors'
+  PMData stress task) has **not** been run at filing time; it uses their data and task and
+  shares no data or code path with our grid.
 
 ## Datasets and tasks (fixed)
 
@@ -86,11 +86,25 @@ baselines and the LLM verbalizer consume **byte-identical** feature matrices (en
 
 ## Models (fixed)
 
-- Qwen3-8B-Instruct and Llama-3.1-8B-Instruct, 4-bit, served with vLLM.
-- Qwen2.5-VL-7B-Instruct for the plot paradigm (WESAD and MAUS only).
-- Optional extension: one GPT-class API model, budget < $50.
-- **Scoring: log-probabilities over the label tokens in a single forward pass.** No free
-  generation, no answer parsing.
+- OpenAI `gpt-4.1-2025-04-14` (flagship) and `gpt-4.1-mini-2025-04-14` (mini tier), accessed
+  through the Chat Completions API with dated snapshot pins, temperature 0, fixed seed; the
+  returned `system_fingerprint` is logged for every call. These snapshots are selected because
+  they expose token log-probabilities (verified 2026-08-30); current reasoning-tuned snapshots
+  (gpt-5.x) do not, and are therefore incompatible with the scoring rule below.
+- Paradigm C uses `gpt-4.1-2025-04-14` image input (WESAD and MAUS only).
+- **Scoring: log-probabilities of the label tokens, read from the top-20 log-probabilities at
+  the single answer position (`max_completion_tokens = 1`; labels are single tokens by
+  construction).** The prediction is the argmax over the label-token log-probabilities. No free
+  generation, no answer parsing. Items where neither label token appears in the top-20 are
+  counted and reported as scoring failures, never imputed.
+- Disclosed limitation: these are closed-weight hosted snapshots that the provider may
+  eventually deprecate. All request/response payloads (including logprobs) are archived, so
+  every scored output remains re-analyzable indefinitely.
+- Budget rule (fixed in advance): the mini model runs the full grid; the flagship runs the full
+  grid if projected cost is within budget (US$150), otherwise a pre-specified subset (paradigm
+  B on all datasets; paradigms A and C on WESAD only).
+- Optional extension (only if GPU access materializes): one open-weights 8B instruct model
+  served locally with vLLM, scored with the same rule over full-vocabulary log-probabilities.
 
 ## Paradigms (fixed)
 

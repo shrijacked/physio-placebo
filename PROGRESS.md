@@ -82,8 +82,12 @@
   only the GPU box remains for the anchor run.
 - **Prof sign-off** — verbalizer variant (iv) (SensorLM templates) still pending
   (PROJECT_PLAN.md §11); vendoring done regardless as planned.
-- **OSF filing** — user reviews `docs/osf-prereg.md`, resolves ⟨placeholders⟩, files, and
-  records the OSF URL here.
+- **OSF filing** — all placeholders resolved (author: Shrijak Kumar; supervisor: Dr. Siddharth,
+  CS4002; repo: https://github.com/shrijacked/physio-placebo; anchor disclosed as NOT run).
+  User files `docs/osf-prereg.md` on osf.io and records the registration URL here.
+- **MAUS access** — IEEE DataPort account-creation page broken for user (2026-08-30); no public
+  raw mirror exists (Kaggle copy is processed-PPG only, unusable for our frozen extractor).
+  Escalated to prof; fallback = email dataset authors (NTU, addresses in arXiv:2111.02561).
 - **GPU hardware** — still unconfirmed (PROJECT_PLAN.md §12); needed from Week 4 (vLLM) and
   **required for the anchor run**: this Mac has 16 GB RAM and 13 GiB free disk, which cannot
   hold MedAlpaca-7b fp16 (~14 GB). Verified 2026-08-27.

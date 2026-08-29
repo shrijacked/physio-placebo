@@ -5,8 +5,9 @@
 > `PROGRESS.md`. After filing, §2 of `CURSOR_SEMESTER_AGENT.md` and everything below is frozen;
 > deviations must be reported as such in the paper.
 >
-> **DRAFT STATUS — not yet filed.** Placeholders that must be resolved before filing are marked
-> `⟨...⟩`.
+> **DRAFT STATUS — not yet filed.** All author/supervisor/repo placeholders are resolved. The
+> only remaining `⟨...⟩` is the OSF component URL, which is obtained by filing this document and
+> is inserted afterwards.
 
 ---
 
@@ -17,8 +18,9 @@ Do large language models read the signal or the story? A surrogate-ablation audi
 
 ## Authors
 
-⟨Shrijak Kumar⟩; supervised by ⟨supervisor name⟩. AI-assisted engineering (Cursor agent) is used
-for implementation; all scientific decisions are pre-registered here.
+Shrijak Kumar (CSAI); supervised by Dr. Siddharth (CS4002 Independent Study). AI-assisted
+engineering (Cursor agent) is used for implementation; all scientific decisions are
+pre-registered here.
 
 ## Description
 
@@ -71,9 +73,9 @@ At the time of filing:
   gate is expected to bind for many CogWear cells).
 - **No LLM inference of any kind has been run on any dataset** at filing time. The LLM
   experimental grid — the subject of this pre-registration — is untouched.
-- One reproduction of a published Health-LLM number (fidelity anchor, PMData/MedAlpaca) ⟨has /
-  has not⟩ been run at filing time; it uses the original authors' data/task and shares no data or
-  code path with our grid.
+- One reproduction of a published Health-LLM number (fidelity anchor, PMData/MedAlpaca) has
+  **not** been run at filing time (pending GPU access); it uses the original authors' data/task
+  and shares no data or code path with our grid.
 
 ## Datasets and tasks (fixed)
 

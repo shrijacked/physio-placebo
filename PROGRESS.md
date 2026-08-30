@@ -63,29 +63,32 @@
   - [ ] MAUS floor (blocked on data)
   - [ ] Byte-identity test (baselines vs LLM feature matrices) — LLM side does not exist yet;
         test lands with the LLM scorer (Week 4)
-- [ ] Week 3 — fidelity anchor + OSF pre-registration (**documents drafted; runs pending**)
+- [ ] Week 3 — fidelity anchor + OSF pre-registration (**prereg FILED & PUBLIC; anchor run
+      pending**)
   - [x] Anchor chosen + recipe + patch list: `docs/fidelity-anchor.md` (PMData stress,
         zero-shot MedAlpaca-7b, target MAE 0.76 ± 0.1) — **reproduction NOT RUN yet**
-  - [x] OSF prereg full draft: `docs/osf-prereg.md` (placeholders: OSF URL,
-        anchor-run disclosure; GitHub: https://github.com/shrijacked/physio-placebo)
-        — **not filed; user files it**
+        (fallback `gpt-3.5-turbo-instruct` runnable API-only since 2026-08-30)
+  - [x] OSF prereg **FILED & PUBLIC 2026-08-30 18:56 IST**: registration
+        https://osf.io/62r5t (DOI 10.17605/OSF.IO/62R5T, Open-Ended Registration,
+        OSF Registries; associated project https://osf.io/arj8w). Filed text =
+        `docs/osf-prereg.md` @ `f705db9`. Verified publicly visible while logged out,
+        2026-08-30 19:10 IST. **The no-LLM-before-prereg gate is CLEARED.**
 - [ ] Weeks 4–15: not started (by design — post-prereg)
 
 ## Open blockers
 - **MAUS raw data** — IEEE DataPort requires a (free) login; user must download
   `MAUS: A Mental Workload Assessment...` (DOI 10.21227/q4td-yd35) and unzip into
   `data/raw/maus/` so `scripts/prepare_maus.py` can run on real data.
-- **CogWear download** — PhysioNet static zip (187,856,113 bytes) keeps resetting mid-stream;
-  a 40-attempt resume loop is running. If it dies, rerun the same command (it resumes).
+- ~~CogWear download~~ **RESOLVED 2026-08-27** via per-file downloads with SHA256 verification
+  (`scripts/download_cogwear.py`); the zip resume-loop was abandoned. (This line was stale.)
 - ~~PMData~~ **RESOLVED 2026-08-27**: `data/raw/pmdata/pmdata.zip` downloaded complete
   (1,416,129,266 bytes, 912 files, sha256 `53a49d94…` in sidecar). Anchor data side is ready;
   the primary (MedAlpaca) run still needs a GPU box; the fallback anchor
   (few-shot `gpt-3.5-turbo-instruct`, API-only) is runnable on this Mac as of 2026-08-30.
 - **Prof sign-off** — verbalizer variant (iv) (SensorLM templates) still pending
   (PROJECT_PLAN.md §11); vendoring done regardless as planned.
-- **OSF filing** — all placeholders resolved (author: Shrijak Kumar; supervisor: Dr. Siddharth,
-  CS4002; repo: https://github.com/shrijacked/physio-placebo; anchor disclosed as NOT run).
-  User files `docs/osf-prereg.md` on osf.io and records the registration URL here.
+- ~~OSF filing~~ **RESOLVED 2026-08-30**: registered and public at https://osf.io/62r5t
+  (DOI 10.17605/OSF.IO/62R5T). Filed text = `docs/osf-prereg.md` @ `f705db9`.
 - **MAUS access** — IEEE DataPort account-creation page broken for user (2026-08-30); no public
   raw mirror exists (Kaggle copy is processed-PPG only, unusable for our frozen extractor).
   Escalated to prof; fallback = email dataset authors (NTU, addresses in arXiv:2111.02561).

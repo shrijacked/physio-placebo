@@ -1,3 +1,8 @@
+> **Registered:** https://osf.io/62r5t — DOI
+> [10.17605/OSF.IO/62R5T](https://doi.org/10.17605/OSF.IO/62R5T), Open-Ended Registration,
+> registered 2026-08-30 18:56 IST, public. The text below is the filed version (commit
+> `f705db9`). Any post-filing protocol change is a deviation and must be reported as such.
+
 ## Title
 
 Do large language models read the signal or the story? A surrogate-ablation audit of LLM

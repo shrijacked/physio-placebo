@@ -9,9 +9,12 @@ the measured performance produced by prompt scaffolding and the label prior?
 
 ## Status
 
-Weeks 1–3 foundation is in progress. WESAD and CogWear are windowed, features frozen, and
-classical floors locked. MAUS is blocked on an IEEE DataPort login. LLM grid runs start
-after OSF pre-registration (`docs/osf-prereg.md`, draft — not yet filed).
+**Pre-registered:** [osf.io/62r5t](https://osf.io/62r5t)
+(DOI [10.17605/OSF.IO/62R5T](https://doi.org/10.17605/OSF.IO/62R5T), filed 2026-08-30).
+
+WESAD and CogWear are windowed, features frozen, and classical floors locked. MAUS is blocked
+on an IEEE DataPort login. The LLM grid (pinned OpenAI `gpt-4.1` snapshots, logprob scoring)
+starts Week 4 — the pre-registration gate is cleared.
 
 Locked numbers and blockers live in [`PROGRESS.md`](PROGRESS.md). The design is in
 [`PROJECT_PLAN.md`](PROJECT_PLAN.md).
@@ -56,7 +59,7 @@ src/physio_placebo/   loaders, LOSO, frozen features, classical floor, provenanc
 scripts/              download / prepare / extract / floor runners
 tests/                fixture-based; does not need the real GB-scale archives
 results/              committed metrics, manifests, parquet feature tables
-docs/                 Health-LLM notes, fidelity-anchor recipe, OSF prereg draft
+docs/                 Health-LLM notes, fidelity-anchor recipe, OSF prereg (filed 2026-08-30)
 ```
 
 `results/**/*.npz` stay on disk only. Everything else under `results/` that is a metric

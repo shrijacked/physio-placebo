@@ -1,0 +1,200 @@
+--- gen_dataset.py	2026-08-27 17:41:45
++++ gen_dataset_patched.py	2026-08-30 19:20:26
+@@ -8,7 +8,7 @@
+ 
+ 
+ MODE = "train"
+-DATA = "LifeSnaps" # "PMData", "GLOBEM", "AW_FB"
++DATA = "PMData"  # PATCH G1: was "LifeSnaps"; anchor cell is PMData stress
+ 
+ 
+ def avg(_list):
+@@ -331,12 +331,15 @@
+             3) Calorie Consumption Prediction (food image) 
+             4) Sleep Quality Prediction
+         """
++        # PATCH G2: as released only 'p1' exists -> KeyError for every real participant dir
++        # (dirs are p01..p16). Values are placeholders identical to their 'p1' stub; none of
++        # these fields reach the generated prompts (template uses sensor values + mood only).
+         participant_info = {
+-            'p1': [-1, -1, 'N/A', 'N/A', 'N/A']
++            'p{:02d}'.format(i): [-1, -1, 'N/A', 'N/A', 'N/A'] for i in range(1, 17)
+         }
+         
+         DATA_PATH = "medAlpaca/data/pmdata"
+-        SUBTASK = "sleep_quality" # ['sleep_quality', 'stress', 'readiness', 'fatigue']:
++        SUBTASK = "stress"  # PATCH G3: was "sleep_quality"; anchor cell is stress
+         final_data = []
+         print("[INFO] Subtask:", SUBTASK)
+         for dir1 in tqdm(os.listdir(DATA_PATH)):
+@@ -347,6 +350,10 @@
+             height = str(tmp[1]) + " cm"
+             gender = tmp[2]
+             fpath1 = os.path.join(DATA_PATH, dir1)
++            # PATCH G4a: initialize per-participant channels. As released, a participant with a
++            # missing fitbit file (p12, p13 lack resting_heart_rate.json) either crashes with a
++            # NameError or silently reuses the PREVIOUS participant's fitbit variables.
++            exercise_data = heart_rate_data = sleep_data = wellness_dict = None
+ 
+             if '.' not in dir1:      
+                 # print("[INFO] Participant:", dir1)      
+@@ -402,6 +409,11 @@
+                             wellness_dict['stress'].append(stress)
+ 
+                 
++                # PATCH G4b: skip participants with missing channels instead of crashing or
++                # bleeding the previous participant's data (see G4a).
++                if exercise_data is None or heart_rate_data is None or sleep_data is None \
++                        or wellness_dict is None:
++                    continue
+                 date = wellness_dict['effective_time_frame']
+                 fatigue = wellness_dict['fatigue']
+                 mood = wellness_dict['mood']
+--- inference.py	2026-08-27 17:41:45
++++ inference_patched.py	2026-08-30 19:37:04
+@@ -1,26 +1,26 @@
+ import os
+ import random
++import argparse  # PATCH I1: missing import in the released script (NameError at startup)
++import time      # PATCH I8: for bounded retry backoff
+ import numpy as np
+ import json
+ from tqdm import tqdm
+ 
+ import openai
+-import google.generativeai as genai
++# PATCH I2: removed imports not needed for the gpt-3.5 cell and not installable here:
++# google.generativeai, torch, transformers (the released script requires ALL of them
++# unconditionally, even for API-only runs).
+ 
+-import torch
+-import transformers
+-from transformers import AutoTokenizer, AutoModelForCausalLM, AutoModel, pipeline
+-from transformers import AutoModelForQuestionAnswering
+ 
+-
+ parser = argparse.ArgumentParser()
+ parser.add_argument('--model', type=str, default='gpt-3.5')
+ args = parser.parse_args()
+ 
+ model = args.model
+ 
+-openai.api_key = os.environ["openai_key"]
+-genai.configure(api_key=os.environ["genai_key"])
++# PATCH I3: SDK >= 1.0 client; the released module-level api_key + unconditional
++# genai.configure (which demands a Google key even for OpenAI runs) are replaced.
++client = openai.OpenAI(api_key=os.environ["openai_key"])
+ 
+ def set_seed(seed):
+     random.seed(seed)
+@@ -72,8 +72,11 @@
+         return response
+     
+     elif model == 'gpt-3.5':
+-        response = openai.Completion.create(
+-            engine="gpt-3.5-turbo-instruct",
++        # PATCH I4: pre-1.0 openai.Completion.create(engine=...) was removed from the SDK in
++        # Nov 2023. Identical request through the >=1.0 client: same endpoint semantics, same
++        # model and parameters (max_tokens=120, all other params API defaults, as released).
++        response = client.completions.create(
++            model="gpt-3.5-turbo-instruct",
+             prompt=question,
+             max_tokens=120
+         )
+@@ -90,10 +93,12 @@
+         return ans
+ 
+ 
+-for mode in ['zero-shot', 'few-shot', 'few-shot_cot', 'few-shot_cot-sc']:
++# PATCH I5: scoped to the anchor cell only (few-shot, PMData stress) so no other cell is
++# paid for or executed; loop structure otherwise unchanged.
++for mode in ['few-shot']:
+     print("Mode:", mode)
+ 
+-    data_task_dict = {'pmdata':['fatigue', 'stress', 'readiness', 'sleep_quality'], 'lifesnaps':['stress_resilience', 'sleep_disorder'], 'globem': ['anxiety', 'depression'], 'awfb':['calories', 'activity'], 'mimic3':['ibis2sinus_b', 'ibis2sinus_t'], 'mit-bih':['ibis2a_fib']} 
++    data_task_dict = {'pmdata': ['stress']}
+     for dataset,tasks in data_task_dict.items():
+         print("|__Dataset:", dataset)
+         for task in tasks:
+@@ -101,14 +106,28 @@
+         
+             for seed in [0, 1, 2]:
+                 print("|____Seed:", seed)
++                # PATCH I6: set_seed() is defined but NEVER called in the released script,
++                # so the paper's "seeds {0,1,2}" cannot have controlled anything. Calling it
++                # here as evidently intended (affects few-shot exemplar sampling + rand_num).
++                set_seed(seed)
+                 
+-                if os.path.exists("output/gemini-pro/{}/{}_sd{}.json".format(mode, task, seed)):
++                if os.path.exists("output/gpt-3.5/{}/{}_sd{}.json".format(mode, task, seed)):
+                     print("skipping ...")
+                     continue
+ 
+                 data = json_reader('zero-shot/data/{}/{}.json'.format(dataset, task))
+            
+-                res = []
++                # PATCH I9: checkpoint/resume. Free-tier accounts cap this model at 50
++                # requests/day, so a 299-item seed cannot finish in one window. Results are
++                # saved after every call; on restart, completed items are skipped. The RNG
++                # stream stays identical to an uninterrupted run because prompts for
++                # already-done items are still constructed (same random draws) — only the
++                # API call is skipped.
++                partial_path = "output/gpt-3.5/{}/{}_sd{}.partial.json".format(mode, task, seed)
++                res = json_reader(partial_path) if os.path.exists(partial_path) else []
++                n_done = len(res)
++                if n_done:
++                    print("resuming: {} items already completed".format(n_done))
+                 num_samples = 0
+                 for _data in tqdm(data):
+                     question = _data['input']
+@@ -215,20 +234,33 @@
+                         question = instruction + examplers + "\nFinally, please answer to the below question:\n" + question + format_prompt
+ 
+                     if mode != 'few-shot_cot-sc':
+-                        while True:
++                        # PATCH I9: item already completed in a previous window — prompt was
++                        # rebuilt above (keeping the RNG stream aligned); skip only the call.
++                        if num_samples < n_done:
++                            num_samples += 1
++                            continue
++                        # PATCH I8: as released this hardcodes gemini-pro, ignoring --model
++                        # (the gpt-3.5 branch is unreachable), and retries forever on any
++                        # exception. Routed through args.model with bounded retries.
++                        for _attempt in range(5):
+                             try:
+-                                model = genai.GenerativeModel('gemini-pro')
+-                                response = get_response(model, question, seed)
++                                response = get_response(args.model, question, seed)
+                                 break
+                             except Exception as e:
+                                 print(e)
+-                                continue
++                                time.sleep(2 * (_attempt + 1))
++                        else:
++                            raise RuntimeError("5 consecutive API failures; aborting")
+                         
+                         print("question:", question)
+                         print("response:", response)
+                         print("label:", answer)
+                         print()
+                         res.append({"no": num_samples + 1, "question": question, "answer": response, 'label': answer})
++                        # PATCH I9: persist after every item
++                        os.makedirs("output/gpt-3.5/{}".format(mode), exist_ok=True)
++                        with open(partial_path, "w") as pf:
++                            json.dump(res, pf, indent=4)
+                     
+                     else:
+                         responses = []
+@@ -257,5 +289,11 @@
+                     num_samples += 1
+                 
+                 json_object = json.dumps(res, indent=4)
+-                with open("output/gemini-pro/{}/{}_sd{}.json".format(mode, task, seed), "w") as outfile:
++                # PATCH I7: output path says gpt-3.5 (released code writes every model's
++                # results under output/gemini-pro/) and the directory is actually created.
++                os.makedirs("output/gpt-3.5/{}".format(mode), exist_ok=True)
++                with open("output/gpt-3.5/{}/{}_sd{}.json".format(mode, task, seed), "w") as outfile:
+                     outfile.write(json_object)
++                # PATCH I9: seed complete — drop its checkpoint
++                if os.path.exists(partial_path):
++                    os.remove(partial_path)

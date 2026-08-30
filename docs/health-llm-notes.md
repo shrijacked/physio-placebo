@@ -116,6 +116,24 @@ the task, as released, is substantially "predict one self-report from another".
 10. The paper's stated token length (202 ± 42) is inconsistent with the prompt construction at
     line 518, which dumps raw Python lists of up to 14 days of per-event values into the prompt.
 
+Found while executing the fallback anchor (2026-08-30):
+
+11. **The two released scripts are mutually incompatible.** The generator's eval writer renames
+    `input`→`question` and `output`→`answer` and deletes the originals (lines 777–781), but
+    `inference.py` consumes `_data['input']` / `_data['output']` (lines 114–115). Feeding the
+    generator's eval file to their inference script raises `KeyError`; a schema adapter is
+    required (ours restores the keys, preserving order; disclosed in `results/anchor/`).
+12. **`set_seed()` is defined (line 25) but never called.** The paper's "seeds {0, 1, 2}"
+    therefore cannot have controlled exemplar sampling or anything else; as released, the seed
+    only selects the output filename and the three runs are unseeded repetitions.
+13. **Missing-file handling bleeds data across participants.** In the official Simula PMData
+    release, p12 and p13 have no `fitbit/resting_heart_rate.json`. The generator's bare
+    `except: continue` (line 367) skips the remaining Fitbit loads for that participant, after
+    which the aggregation runs on whatever `exercise_data`/`sleep_data`/`heart_rate_data`
+    variables are still in scope — a `NameError` crash if the unlucky participant comes first,
+    or the **previous participant's sensor data** paired with the current participant's labels
+    otherwise (dependent on `os.listdir` order, so irreproducible either way).
+
 **Implication for the fidelity anchor:** reproducing "their released code" necessarily means a
 minimally-patched version. Every patch will be recorded as a diff in `docs/fidelity-anchor.md`, and
 the reproduction gap reported with those patches disclosed.

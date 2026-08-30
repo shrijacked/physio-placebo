@@ -66,8 +66,14 @@
 - [ ] Week 3 — fidelity anchor + OSF pre-registration (**prereg FILED & PUBLIC; anchor run
       pending**)
   - [x] Anchor chosen + recipe + patch list: `docs/fidelity-anchor.md` (PMData stress,
-        zero-shot MedAlpaca-7b, target MAE 0.76 ± 0.1) — **reproduction NOT RUN yet**
-        (fallback `gpt-3.5-turbo-instruct` runnable API-only since 2026-08-30)
+        zero-shot MedAlpaca-7b, target MAE 0.76 ± 0.1) — primary still GPU-gated
+  - [ ] **Fallback anchor ATTEMPTED 2026-08-30, blocked at 35/897 calls** by the OpenAI
+        account's free-tier cap (50 requests/day/model — see blockers). Everything up to the
+        API calls is DONE and verified: PMData extracted, their generator patched + run
+        (eval split = 299 items, seed 123, manifest in `results/anchor/split_manifest.json`),
+        their inference patched (now checkpoint/resumable), patches recorded in
+        `results/anchor/patches.diff`, scorer ready (`scripts/score_anchor.py`). Rerun is
+        one command once the account is upgraded (~25 min, ≈$1.30).
   - [x] OSF prereg **FILED & PUBLIC 2026-08-30 18:56 IST**: registration
         https://osf.io/62r5t (DOI 10.17605/OSF.IO/62R5T, Open-Ended Registration,
         OSF Registries; associated project https://osf.io/arj8w). Filed text =
@@ -76,6 +82,14 @@
 - [ ] Weeks 4–15: not started (by design — post-prereg)
 
 ## Open blockers
+- **OpenAI account tier (NEW 2026-08-30, blocks anchor now and the ENTIRE Week 4–10 grid
+  later)** — the key's org is on the free tier: **50 requests/day/model** (hit at exactly 50
+  during the anchor run; verified via `x-ratelimit` headers: gpt-4.1 and gpt-4.1-mini also
+  50/day, with 10k and 60k tokens/min). The anchor needs 897 calls; the grid needs tens of
+  thousands. **User action: add a payment method / buy ≥$5 credits at
+  platform.openai.com → Settings → Billing** (Tier 1 raises limits to hundreds of
+  requests/min). Fallback if never upgraded: checkpointed 50/day trickle ≈ 19 days for the
+  anchor alone — not viable for the grid.
 - **MAUS raw data** — IEEE DataPort requires a (free) login; user must download
   `MAUS: A Mental Workload Assessment...` (DOI 10.21227/q4td-yd35) and unzip into
   `data/raw/maus/` so `scripts/prepare_maus.py` can run on real data.
@@ -98,6 +112,16 @@
   free disk) still cannot hold MedAlpaca-7b fp16 (~14 GB).
 
 ## Decisions log
+- 2026-08-30 (evening): **Fallback anchor executed up to the API wall.** Their pipeline needed
+  3 more patches than planned, all discovered by execution and logged as notes §3.11–13:
+  the released generator and inference scripts use incompatible eval schemas (adapter added);
+  `set_seed()` is never called (patched in as intended); p12/p13 lack `resting_heart_rate.json`
+  upstream and the released code bleeds the previous participant's sensors into their rows
+  (patched to a clean skip → 953 usable items vs the paper's implied 1,418; disclosed).
+  Eval split locked: 299 items, label dist {1:4, 2:53, 3:186, 4:53, 5:3}, constant-3 MAE
+  0.401 on this set. Run died at OpenAI's free-tier 50 req/day cap after 35 items; runner made
+  checkpoint/resumable (patch I9); the 35 finished calls were NOT salvaged from the log (tqdm
+  carriage returns corrupted the stream; worth $0.05 — clean rerun preferred).
 - 2026-08-30: **Grid models swapped** from open-weights (Qwen3-8B, Llama-3.1-8B, Qwen2.5-VL via
   vLLM) to OpenAI dated snapshots **`gpt-4.1-2025-04-14` + `gpt-4.1-mini-2025-04-14`** (vision
   paradigm C via the flagship). Drivers: user holds an OpenAI key, no GPU available, and the

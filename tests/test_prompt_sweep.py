@@ -22,8 +22,9 @@ def test_pick_exemplars_balanced_and_uses_tokens():
     )
     ex = pick_exemplars(pool, n=4, seed=1337)
     assert len(ex) == 4
-    tokens = {t for _, t in ex}
+    tokens = {e["token"] for e in ex}
     assert tokens == {"A", "B"}
+    assert all("body" in e for e in ex)
 
 
 def test_pick_winner_prefers_higher_f1_then_zero_shot():

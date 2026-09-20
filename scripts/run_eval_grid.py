@@ -1,7 +1,8 @@
-"""Real-signal A/B eval grid. Requires the frozen prompt lockfile.
+"""Real-signal eval grid. Requires the matching frozen prompt lockfile.
 
     python scripts/run_eval_grid.py --client constant --model qwen3_8b --paradigm B
     python scripts/run_eval_grid.py --client vllm --model qwen3_8b
+    python scripts/run_eval_grid.py --client vllm --model qwen25_vl --paradigm C
 """
 
 from __future__ import annotations
@@ -12,7 +13,7 @@ from pathlib import Path
 
 from physio_placebo.paths import REPO_ROOT
 from physio_placebo.prompts.eval_grid import run_eval_cell, run_model_eval
-from physio_placebo.prompts.freeze import load_frozen_prompts
+from physio_placebo.prompts.freeze import load_frozen_prompts, load_frozen_prompts_c
 from physio_placebo.provenance import run_metadata
 from physio_placebo.scoring.client import ConstantClient
 
@@ -29,16 +30,19 @@ def _client(kind: str, model_key: str):
 
 
 def main() -> None:
-    lock = load_frozen_prompts()
-    if not lock.get("frozen"):
-        raise SystemExit("configs/frozen_prompts.lock.yaml is not frozen")
     ap = argparse.ArgumentParser()
     ap.add_argument("--client", choices=("constant", "vllm"), required=True)
     ap.add_argument("--model", default="qwen3_8b")
     ap.add_argument("--dataset", default=None)
-    ap.add_argument("--paradigm", choices=("A", "B"), default=None)
+    ap.add_argument("--paradigm", choices=("A", "B", "C"), default=None)
     ap.add_argument("--out-dir", default=None)
     args = ap.parse_args()
+
+    use_c = args.paradigm == "C" or args.model == "qwen25_vl"
+    lock = load_frozen_prompts_c() if use_c else load_frozen_prompts()
+    lock_name = "configs/frozen_prompts_c.lock.yaml" if use_c else "configs/frozen_prompts.lock.yaml"
+    if not lock.get("frozen"):
+        raise SystemExit(f"{lock_name} is not frozen")
 
     client = _client(args.client, args.model)
     if args.dataset or args.paradigm:
@@ -67,9 +71,9 @@ def main() -> None:
     payload = {
         **run_metadata({"client": args.client, "model": args.model, "n_cells": len(rows)}),
         "frozen": True,
-        "lock": "configs/frozen_prompts.lock.yaml",
+        "lock": lock_name,
         "cells": rows,
-        "note": "Eval subjects only. Prompt-dev subjects are excluded. Do not start Week 6.",
+        "note": "Eval subjects only. Prompt-dev subjects are excluded. Do not start Week 7.",
     }
     out = dest / f"eval_{args.client}_{args.model}.json"
     out.write_text(json.dumps(payload, indent=2, default=str) + "\n")

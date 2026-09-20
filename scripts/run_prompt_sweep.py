@@ -33,14 +33,21 @@ def main() -> None:
     ap.add_argument("--client", choices=("constant", "vllm"), required=True)
     ap.add_argument("--model", default="qwen3_8b")
     ap.add_argument("--dataset", action="append", dest="datasets")
-    ap.add_argument("--paradigm", choices=("A", "B"), default=None)
+    ap.add_argument("--paradigm", choices=("A", "B", "C"), default=None)
     ap.add_argument("--out-dir", default=None)
     args = ap.parse_args()
 
-    datasets = args.datasets or list(spec["datasets"])
-    conditions = spec["paradigms"]
-    if args.paradigm:
-        conditions = [c for c in conditions if c["paradigm"] == args.paradigm]
+    if args.paradigm == "C":
+        from physio_placebo.paradigms.plot import load_c_spec
+
+        cspec = load_c_spec()
+        datasets = args.datasets or list(cspec["datasets"])
+        conditions = [{"paradigm": "C", "scheme": None}]
+    else:
+        datasets = args.datasets or list(spec["datasets"])
+        conditions = spec["paradigms"]
+        if args.paradigm:
+            conditions = [c for c in conditions if c["paradigm"] == args.paradigm]
     client = _client(args.client, args.model)
 
     cfg = {

@@ -158,7 +158,7 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 - [x] Logprob label-scoring path verified (no free generation) · **Done means:** known-logprob fixture in `tests/test_logprob_scorer.py`; eval grid 0/11916 scoring failures. Full GPU double-run was not repeated.
 
 ### Week 6 — Paradigm C
-- [ ] Plot rendering pipeline (fixed style, resolution, axes policy) · **Done means:** rendering config committed
+- [x] Plot rendering pipeline (fixed style, resolution, axes policy) · **Done means:** `configs/paradigm_c.yaml` + same-window PNG byte test
 - [ ] Paradigm C on WESAD + MAUS with Qwen2.5-VL-7B, real signal · **Done means:** results rows appended
 
 ### Weeks 7–8 — surrogate ladder

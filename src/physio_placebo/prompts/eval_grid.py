@@ -8,7 +8,12 @@ import pandas as pd
 
 from physio_placebo.data.loso import prompt_dev_split
 from physio_placebo.features.matrix import load_locked_feature_matrix
-from physio_placebo.prompts.freeze import FreezeError, frozen_choice, load_frozen_prompts
+from physio_placebo.prompts.freeze import (
+    FreezeError,
+    frozen_choice,
+    load_frozen_prompts,
+    load_frozen_prompts_c,
+)
 from physio_placebo.prompts.sweep import (
     _bodies_for_dataset,
     _fill_verbalizer,
@@ -92,12 +97,17 @@ def run_eval_cell(
 
 def run_model_eval(client: LogprobClient, model_key: str) -> list[dict]:
     lock = load_frozen_prompts()
-    if not lock.get("frozen"):
-        raise FreezeError("prompts are not frozen")
+    winners = [w for w in lock["winners"] if w["model"] == model_key]
+    if not winners:
+        try:
+            clock = load_frozen_prompts_c()
+        except FreezeError:
+            clock = {"winners": []}
+        winners = [w for w in clock.get("winners", []) if w["model"] == model_key]
+    if not winners:
+        raise FreezeError(f"no frozen cells for model {model_key}")
     rows: list[dict] = []
-    for w in lock["winners"]:
-        if w["model"] != model_key:
-            continue
+    for w in winners:
         rows.append(
             run_eval_cell(
                 w["dataset"],
@@ -107,8 +117,6 @@ def run_model_eval(client: LogprobClient, model_key: str) -> list[dict]:
                 scheme=w["scheme"],
             )
         )
-    if not rows:
-        raise FreezeError(f"no frozen cells for model {model_key}")
     return rows
 
 

@@ -1,0 +1,12 @@
+# Paradigm C (Week 6). WESAD + MAUS only. Do not add CogWear.
+datasets: [wesad, maus]
+model: qwen25_vl
+caption: "The recording is the attached line plot."
+plot:
+  width_in: 6.4
+  height_in: 2.4
+  dpi: 100
+  linewidth: 0.7
+  color: "#000000"
+  facecolor: "#ffffff"
+  xlabel: "time (s)"

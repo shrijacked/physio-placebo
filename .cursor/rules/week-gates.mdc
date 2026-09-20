@@ -8,10 +8,10 @@ alwaysApply: true
 Never start Week N+1 (code, docs-as-done, tags, or "let's proceed") until **every** exit criterion for Week N in `CURSOR_SEMESTER_AGENT.md` is actually true — real data, real run, real artifact. Partial weeks are not done.
 
 - Current freeze: **Weeks 1–5 closed** (Weeks 4–5: 2026-09-21, tag `week-05-done`).
-- **Current week is Week 6 — NOT STARTED.** Paradigm C plots / Qwen2.5-VL.
-  Do not implement Week 6 until the user asks. Do not start Week 7 until
-  `week-06-done` exit criteria are met (C real-signal + CIs on WESAD+MAUS,
-  deterministic plot bytes, tag).
+- **Current week is Week 6 (opened 2026-09-21):** Paradigm C plots →
+  Qwen2.5-VL-7B on WESAD+MAUS, sweep then freeze then eval CIs.
+  Do not start Week 7 until `week-06-done` (C real-signal + CIs, deterministic
+  plot bytes, tag).
 - Catch-up on an earlier incomplete week is allowed. Skipping forward is not.
 
 If the user asks to jump ahead, refuse, name the open exit criterion, and stay on that week.

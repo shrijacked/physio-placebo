@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
+import io
 import os
 from collections.abc import Sequence
 from typing import Any
 
 import yaml
+from PIL import Image
 
 from physio_placebo.paths import configs_dir
+from physio_placebo.scoring.client import ScoreRequest
 from physio_placebo.scoring.logprob import load_label_spec
 from physio_placebo.scoring.vllm_extract import extract_label_logprobs, single_token_id
 
@@ -35,9 +38,30 @@ def llm_engine_kwargs(spec: dict, model_cfg: dict) -> dict[str, Any]:
     quant = spec.get("quantization")
     if quant:
         kw["quantization"] = quant
-    if spec.get("max_model_len") is not None:
+    if model_cfg.get("max_model_len") is not None:
+        kw["max_model_len"] = int(model_cfg["max_model_len"])
+    elif spec.get("max_model_len") is not None:
         kw["max_model_len"] = int(spec["max_model_len"])
+    if model_cfg.get("limit_mm_per_prompt"):
+        kw["limit_mm_per_prompt"] = dict(model_cfg["limit_mm_per_prompt"])
     return kw
+
+
+def pngs_to_pils(images: Sequence[bytes]) -> list[Any]:
+    return [Image.open(io.BytesIO(b)).convert("RGB") for b in images]
+
+
+def vl_user_content(prompt: str, n_images: int) -> list[dict[str, Any]]:
+    """Images first, then the text prompt. Chat-template placeholder list."""
+    if n_images < 1:
+        return [{"type": "text", "text": prompt}]
+    content: list[dict[str, Any]] = [{"type": "image"} for _ in range(n_images)]
+    content.append({"type": "text", "text": prompt})
+    return content
+
+
+def vl_placeholder_prefix(n_images: int) -> str:
+    return "".join("<|vision_start|><|image_pad|><|vision_end|>" for _ in range(n_images))
 
 
 def build_sampling_params(SamplingParams: Any, label_ids: list[int], spec: dict) -> Any:
@@ -108,17 +132,44 @@ class VLLMLogprobClient:
                 )
         return prompt
 
+    def _wrap_vl(self, prompt: str, images: Sequence[bytes]) -> dict[str, Any]:
+        pils = pngs_to_pils(images)
+        tok = self._tokenizer
+        kwargs = dict(self.model_cfg.get("chat_kwargs") or {})
+        if tok is not None and hasattr(tok, "apply_chat_template"):
+            try:
+                text = tok.apply_chat_template(
+                    [{"role": "user", "content": vl_user_content(prompt, len(pils))}],
+                    tokenize=False,
+                    add_generation_prompt=True,
+                    **kwargs,
+                )
+            except TypeError:
+                text = self._wrap_chat(vl_placeholder_prefix(len(pils)) + "\n" + prompt)
+        else:
+            text = self._wrap_chat(vl_placeholder_prefix(len(pils)) + "\n" + prompt)
+        mm: Any = pils[0] if len(pils) == 1 else pils
+        return {"prompt": text, "multi_modal_data": {"image": mm}}
+
     def score_prompts(self, prompts: Sequence[str]) -> list[dict[str, float]]:
+        return self.score_requests([ScoreRequest(p) for p in prompts])
+
+    def score_requests(self, requests: Sequence[ScoreRequest]) -> list[dict[str, float]]:
         from vllm import SamplingParams
 
         if self._llm is None or self._token_ids is None:
             self.load()
         assert self._llm is not None and self._token_ids is not None
-        wrapped = [self._wrap_chat(p) for p in prompts]
+        payloads: list[Any] = []
+        for req in requests:
+            if req.images:
+                payloads.append(self._wrap_vl(req.prompt, req.images))
+            else:
+                payloads.append(self._wrap_chat(req.prompt))
         params = build_sampling_params(
             SamplingParams, list(self._token_ids.values()), self.spec
         )
-        outputs = self._llm.generate(wrapped, params)
+        outputs = self._llm.generate(payloads, params)
         tables: list[dict[str, float]] = []
         for out in outputs:
             step = out.outputs[0].logprobs[0]

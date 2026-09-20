@@ -11,16 +11,22 @@ import argparse
 import json
 from pathlib import Path
 
-from physio_placebo.prompts.freeze import write_lockfile
+from physio_placebo.prompts.freeze import write_lockfile, write_lockfile_c
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--sweep", action="append", dest="sweeps", required=True)
+    ap.add_argument("--paradigm", choices=("AB", "C"), default="AB")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
-    dest = write_lockfile([Path(p) for p in args.sweeps], dest=Path(args.out) if args.out else None)
-    print(json.dumps({"wrote": str(dest), "frozen": True}, indent=2))
+    paths = [Path(p) for p in args.sweeps]
+    dest = Path(args.out) if args.out else None
+    if args.paradigm == "C":
+        wrote = write_lockfile_c(paths, dest=dest)
+    else:
+        wrote = write_lockfile(paths, dest=dest)
+    print(json.dumps({"wrote": str(wrote), "frozen": True, "paradigm": args.paradigm}, indent=2))
 
 
 if __name__ == "__main__":

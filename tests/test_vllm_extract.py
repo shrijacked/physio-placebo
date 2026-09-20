@@ -57,6 +57,20 @@ def test_llm_engine_kwargs_omit_null_quantization():
     locked = load_model_spec()
     assert locked.get("quantization") not in {"bitsandbytes", "bnb"}
     assert int(locked["max_model_len"]) >= 16384
+    vl = locked["models"]["qwen25_vl"]
+    assert vl["hf_id"] == "Qwen/Qwen2.5-VL-7B-Instruct"
+    kw_vl = llm_engine_kwargs(locked, vl)
+    assert kw_vl["max_model_len"] == 16384
+    assert kw_vl["limit_mm_per_prompt"] == {"image": 5}
+
+
+def test_vl_user_content_images_then_text():
+    from physio_placebo.scoring.vllm_client import vl_placeholder_prefix, vl_user_content
+
+    content = vl_user_content("hello", 2)
+    assert content[:2] == [{"type": "image"}, {"type": "image"}]
+    assert content[-1] == {"type": "text", "text": "hello"}
+    assert vl_placeholder_prefix(2).count("image_pad") == 2
 
 
 def test_build_sampling_params_logprobs_count_matches_label_ids():

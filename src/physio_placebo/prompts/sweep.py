@@ -11,11 +11,12 @@ import yaml
 from physio_placebo.data.loso import prompt_dev_split
 from physio_placebo.features.frozen import feature_columns
 from physio_placebo.features.matrix import assert_matches_locked_floor, load_locked_feature_matrix
+from physio_placebo.paradigms.plot import assert_c_dataset, plot_body
 from physio_placebo.paradigms.series import load_windows, series_body
 from physio_placebo.paths import configs_dir
 from physio_placebo.prompts.templates import TEMPLATE_IDS, render_prompt
 from physio_placebo.prompts.verbalizer import train_medians, verbalize_row
-from physio_placebo.scoring.client import LogprobClient
+from physio_placebo.scoring.client import LogprobClient, ScoreRequest
 from physio_placebo.scoring.logprob import ScoringFailure, argmax_label, token_for_y, y_from_token
 from physio_placebo.stats.metrics import macro_f1, per_subject_macro_f1
 
@@ -28,8 +29,8 @@ def pick_exemplars(
     pool: pd.DataFrame,
     n: int,
     seed: int,
-) -> list[tuple[str, str]]:
-    """n (body, token) pairs from other prompt-dev rows, class-balanced when possible."""
+) -> list[dict]:
+    """n exemplar dicts from other prompt-dev rows, class-balanced when possible."""
     if pool.empty:
         raise ValueError("exemplar pool is empty")
     rng = np.random.default_rng(seed)
@@ -46,10 +47,13 @@ def pick_exemplars(
         extra = rng.choice(pool.index.to_numpy(), size=n - len(chosen), replace=True)
         chosen = pd.concat([chosen, pool.loc[extra]])
     chosen = chosen.iloc[:n]
-    return [
-        (str(r["body"]), token_for_y(int(r["y"])))
-        for r in chosen.to_dict(orient="records")
-    ]
+    out: list[dict] = []
+    for r in chosen.to_dict(orient="records"):
+        item = {"body": str(r["body"]), "token": token_for_y(int(r["y"]))}
+        if "image" in r and r["image"] is not None:
+            item["image"] = r["image"]
+        out.append(item)
+    return out
 
 
 def _bodies_for_dataset(
@@ -70,10 +74,30 @@ def _bodies_for_dataset(
         out["body"] = ""
         out.attrs["verbalizer_cols"] = cols
         return out
+    if paradigm == "C":
+        assert_c_dataset(dataset)
+        if scheme is not None:
+            raise ValueError("Paradigm C has no downsample scheme")
+        bodies: list[str] = []
+        images: list[bytes] = []
+        cache: dict[str, object] = {}
+        for r in feat.itertuples(index=False):
+            sub = str(r.subject)
+            if sub not in cache:
+                cache[sub] = load_windows(dataset, sub)
+            caption, png = plot_body(
+                cache[sub], t0=float(r.t0), seg_name=str(r.seg_name), dataset=dataset
+            )
+            bodies.append(caption)
+            images.append(png)
+        out = feat.copy()
+        out["body"] = bodies
+        out["image"] = np.array(images, dtype=object)
+        return out
     if paradigm != "A" or scheme is None:
         raise ValueError(f"bad paradigm/scheme {paradigm}/{scheme}")
-    bodies: list[str] = []
-    cache: dict[str, object] = {}
+    bodies = []
+    cache = {}
     for r in feat.itertuples(index=False):
         sub = str(r.subject)
         if sub not in cache:
@@ -109,11 +133,21 @@ def score_dev_fold(
     exemplars = (
         pick_exemplars(exemplar_pool, int(spec["n_exemplars"]), seed) if n_shot else None
     )
-    prompts = [
-        render_prompt(template_id, dataset, str(r["body"]), exemplars=exemplars)
-        for r in rows.to_dict(orient="records")
-    ]
-    tables = client.score_prompts(prompts)
+    render_ex = None
+    if exemplars:
+        render_ex = [(e["body"], e["token"]) for e in exemplars]
+    requests: list[ScoreRequest] = []
+    prompts: list[str] = []
+    for r in rows.to_dict(orient="records"):
+        prompt = render_prompt(template_id, dataset, str(r["body"]), exemplars=render_ex)
+        prompts.append(prompt)
+        images: list[bytes] = []
+        if exemplars:
+            images.extend(e["image"] for e in exemplars if e.get("image") is not None)
+        if r.get("image") is not None:
+            images.append(r["image"])
+        requests.append(ScoreRequest(prompt, tuple(images)))
+    tables = client.score_requests(requests)
     recs = []
     for r, table, prompt in zip(rows.to_dict(orient="records"), tables, prompts, strict=True):
         try:

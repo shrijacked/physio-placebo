@@ -1,13 +1,11 @@
 # PROGRESS
 
 ## Current status
-- Semester week: **Weeks 4–5 CLOSED** (2026-09-21). Tag `week-05-done`.
-  Week 6 is next and **not started**.
-- Phase: real-signal Paradigms A/B are in for both open models. Surrogates
-  wait for Weeks 7–8. Plots wait for Week 6.
-- Last session: 2026-09-21 — eval grid finished on the HTI A6000
-  (`eval_vllm_qwen3_8b.json` 23:52 IST, `eval_vllm_llama31_8b.json` 00:13 IST).
-  18 cells, 11,916 scored windows, 0 scoring failures.
+- Semester week: **Week 6 OPENED** (2026-09-21). Weeks 1–5 closed
+  (`week-05-done`). Sequential gate: do not start Week 7 until `week-06-done`.
+- Phase: real-signal A/B is locked. Paradigm C (plots → Qwen2.5-VL) is in
+  progress. Surrogates wait for Weeks 7–8.
+- Last session: 2026-09-21 — Week 6 opened after the A/B eval grid.
 
 ## Week checklist
 - [x] Week 1 — data + harness foundation (**WESAD 15, MAUS 22, CogWear 10 usable / 11**)
@@ -136,7 +134,14 @@
   | cogwear | A bin_mean | 0.396 [0.380, 0.411] | 0.440 [0.399, 0.495] |
   | cogwear | B | 0.475 [0.393, 0.504] | 0.479 [0.375, 0.640] |
 
-- [ ] Weeks 6–15: not started
+- [ ] Week 6 — Paradigm C plots (**OPENED 2026-09-21**)
+  - [x] Deterministic matplotlib PNG (same window → same bytes)
+        (`src/physio_placebo/paradigms/plot.py`, `tests/test_plot.py`)
+  - [x] Sweep / eval / freeze path for C (WESAD+MAUS; A/B lock untouched)
+  - [ ] Prompt-dev VL sweep on WESAD + MAUS (real vLLM)
+  - [ ] C prompt IDs frozen (`configs/frozen_prompts_c.lock.yaml`)
+  - [ ] Real-signal C macro-F1 + CIs (WESAD + MAUS)
+- [ ] Weeks 7–15: not started
 
 ## Open blockers
 - ~~**GPU hardware**~~ **RESOLVED 2026-09-20**: account `shrijak` on Plaksha HTI
@@ -163,6 +168,9 @@
 - ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-09-21: **Week 6 opened.** Paradigm C is matplotlib line plots of the
+  primary channel (WESAD ECG, MAUS PPG) → Qwen2.5-VL-7B-Instruct. A/B lockfile
+  stays 18 cells. C freeze is a separate file. No CogWear. No surrogates.
 - 2026-09-21: **Weeks 4–5 closed.** Real-signal A/B eval grid on the HTI A6000
   (fp16 vLLM 0.29, `max_model_len` 32768, FlashInfer sampler off). Artifacts
   `results/eval_grid/eval_vllm_{qwen3_8b,llama31_8b}.json`. Do not retune

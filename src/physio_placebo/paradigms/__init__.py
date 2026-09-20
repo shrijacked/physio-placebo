@@ -1,1 +1,1 @@
-"""Signal-to-prompt paradigms. Week 4 ships A (series) and B (verbalizer) helpers."""
+"""Signal-to-prompt paradigms. A = series, B = verbalizer, C = plot."""

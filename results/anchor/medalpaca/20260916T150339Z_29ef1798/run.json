@@ -1,0 +1,56 @@
+{
+  "created_utc": "2026-09-16T15:03:39.296641+00:00",
+  "git_sha": "dad8099b0545814f34c830e7f10e5837fa37b2dc",
+  "config": {
+    "model": "medalpaca/medalpaca-7b",
+    "mode": "zero-shot",
+    "task": "pmdata_stress",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "max_new_tokens": 120,
+    "torch_dtype": "float16",
+    "return_full_text": false,
+    "do_sample": false
+  },
+  "config_sha256": "29ef179832df845ccddd8f9f2b7a2d880e204c613bbc0f60a5d7a10d20050c8b",
+  "library_versions": {
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.9.0",
+    "neurokit2": "0.2.13",
+    "cvxopt": "1.3.3"
+  },
+  "eval_sha256": "fea3b87971a7fc5e69c534497434f133afed08be49a2f5ca86ba65b05356128b",
+  "paper_target": {
+    "mae_mean": 0.76,
+    "mae_sd": 0.1,
+    "source": "Health-LLM (CHIL 2024) Table 3, PMData stress, zero-shot MedAlpaca-7b"
+  },
+  "dry_run": true,
+  "prompt_manifest": {
+    "eval_file": "data/third_party/Health-LLM/zero-shot/data/pmdata/stress.json",
+    "eval_sha256": "fea3b87971a7fc5e69c534497434f133afed08be49a2f5ca86ba65b05356128b",
+    "n_items": 299,
+    "seeds": {
+      "0": {
+        "n": 299,
+        "sha256": "0abba6a2fd570735901fcff5d9f05be5a352d64c9aadfeb126b0be9cc2b872a1",
+        "path": "results/anchor/medalpaca/20260916T150339Z_29ef1798/prompts_sd0.json"
+      },
+      "1": {
+        "n": 299,
+        "sha256": "6789c80970c367980c7e6a2b5a112ca354d481cf003127d9d6ca7cc0332c5f44",
+        "path": "results/anchor/medalpaca/20260916T150339Z_29ef1798/prompts_sd1.json"
+      },
+      "2": {
+        "n": 299,
+        "sha256": "50bee7218e757530f932bfdab3442dd72801161dbc96aa441bd3a47536d969c9",
+        "path": "results/anchor/medalpaca/20260916T150339Z_29ef1798/prompts_sd2.json"
+      }
+    }
+  }
+}

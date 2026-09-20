@@ -1,0 +1,22 @@
+{
+  "eval_file": "data/third_party/Health-LLM/zero-shot/data/pmdata/stress.json",
+  "eval_sha256": "fea3b87971a7fc5e69c534497434f133afed08be49a2f5ca86ba65b05356128b",
+  "n_items": 299,
+  "seeds": {
+    "0": {
+      "n": 299,
+      "sha256": "0abba6a2fd570735901fcff5d9f05be5a352d64c9aadfeb126b0be9cc2b872a1",
+      "path": "results/anchor/medalpaca/20260916T150339Z_29ef1798/prompts_sd0.json"
+    },
+    "1": {
+      "n": 299,
+      "sha256": "6789c80970c367980c7e6a2b5a112ca354d481cf003127d9d6ca7cc0332c5f44",
+      "path": "results/anchor/medalpaca/20260916T150339Z_29ef1798/prompts_sd1.json"
+    },
+    "2": {
+      "n": 299,
+      "sha256": "50bee7218e757530f932bfdab3442dd72801161dbc96aa441bd3a47536d969c9",
+      "path": "results/anchor/medalpaca/20260916T150339Z_29ef1798/prompts_sd2.json"
+    }
+  }
+}

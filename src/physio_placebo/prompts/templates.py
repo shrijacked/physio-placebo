@@ -1,4 +1,4 @@
-"""Three prompt templates × {0-shot, 4-shot}. IDs are not frozen until the sweep."""
+"""Three prompt templates × {0-shot, 4-shot}. Winning IDs live in frozen_prompts.lock.yaml."""
 
 from __future__ import annotations
 

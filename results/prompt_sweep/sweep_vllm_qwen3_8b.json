@@ -1,0 +1,1277 @@
+{
+  "created_utc": "2026-09-20T16:03:21.464601+00:00",
+  "git_sha": "unknown",
+  "config": {
+    "client": "vllm",
+    "model": "qwen3_8b",
+    "datasets": [
+      "wesad",
+      "maus",
+      "cogwear"
+    ],
+    "conditions": [
+      {
+        "paradigm": "A",
+        "scheme": "uniform_stride"
+      },
+      {
+        "paradigm": "A",
+        "scheme": "bin_mean"
+      },
+      {
+        "paradigm": "B",
+        "scheme": null
+      }
+    ],
+    "sweep": {
+      "seed": 1337,
+      "n_dev": 2,
+      "n_shot": [
+        0,
+        4
+      ],
+      "n_exemplars": 4,
+      "template_ids": [
+        "instruction",
+        "clinical",
+        "minimal"
+      ],
+      "paradigms": [
+        {
+          "paradigm": "A",
+          "scheme": "uniform_stride"
+        },
+        {
+          "paradigm": "A",
+          "scheme": "bin_mean"
+        },
+        {
+          "paradigm": "B",
+          "scheme": null
+        }
+      ],
+      "primary_channel": {
+        "wesad": "ecg",
+        "maus": "ppg",
+        "cogwear": "bvp"
+      },
+      "datasets": [
+        "wesad",
+        "maus",
+        "cogwear"
+      ]
+    }
+  },
+  "config_sha256": "06a87960e3d66f5acbf698c6104891c4034461c60699b069ec38c186fbf315da",
+  "library_versions": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.1",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.9.0",
+    "neurokit2": "0.2.13",
+    "cvxopt": "1.3.3"
+  },
+  "cells": [
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "instruction",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.5254500138465799,
+      "per_subject": {
+        "S2": 0.6201814058956916,
+        "S8": 0.3634413216048058
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "instruction",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.22727272727272727,
+      "per_subject": {
+        "S2": 0.22093023255813954,
+        "S8": 0.23333333333333334
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "clinical",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.4666666666666667,
+      "per_subject": {
+        "S2": 0.5117408906882591,
+        "S8": 0.4012698412698412
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "clinical",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.22727272727272727,
+      "per_subject": {
+        "S2": 0.22093023255813954,
+        "S8": 0.23333333333333334
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "minimal",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.3198454194135031,
+      "per_subject": {
+        "S2": 0.39201451905626133,
+        "S8": 0.23333333333333334
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "minimal",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.22727272727272727,
+      "per_subject": {
+        "S2": 0.22093023255813954,
+        "S8": 0.23333333333333334
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "instruction",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.511377245508982,
+      "per_subject": {
+        "S2": 0.49042748492001054,
+        "S8": 0.5046452702702703
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "instruction",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.29411764705882354,
+      "per_subject": {
+        "S2": 0.2877391920623671,
+        "S8": 0.3002028397565923
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "clinical",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.6286380286380286,
+      "per_subject": {
+        "S2": 0.5894607843137255,
+        "S8": 0.6537634408602151
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "clinical",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.33530347806319616,
+      "per_subject": {
+        "S2": 0.243937575030012,
+        "S8": 0.4171539961013645
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "minimal",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.2502932207365705,
+      "per_subject": {
+        "S2": 0.2661904761904762,
+        "S8": 0.23333333333333334
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "minimal",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.22727272727272727,
+      "per_subject": {
+        "S2": 0.22093023255813954,
+        "S8": 0.23333333333333334
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "instruction",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.35501355013550134,
+      "per_subject": {
+        "S2": 0.3086303939962477,
+        "S8": 0.3989547038327526
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "instruction",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.4879685709608774,
+      "per_subject": {
+        "S2": 0.43977401129943505,
+        "S8": 0.5337837837837838
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "clinical",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.5882352941176471,
+      "per_subject": {
+        "S2": 0.5521390374331551,
+        "S8": 0.623109243697479
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "clinical",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.6528916644040185,
+      "per_subject": {
+        "S2": 0.4733887267011003,
+        "S8": 0.8174603174603174
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "minimal",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.29411764705882354,
+      "per_subject": {
+        "S2": 0.22093023255813954,
+        "S8": 0.3611111111111111
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "minimal",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.33530347806319616,
+      "per_subject": {
+        "S2": 0.2877391920623671,
+        "S8": 0.3802847754654983
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "instruction",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.5514529914529914,
+      "per_subject": {
+        "015": 0.5577007459412022,
+        "023": 0.53125
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "instruction",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.4,
+      "per_subject": {
+        "015": 0.4,
+        "023": 0.4
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "clinical",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.5228749840703453,
+      "per_subject": {
+        "015": 0.482903981264637,
+        "023": 0.5555555555555556
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "clinical",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.4,
+      "per_subject": {
+        "015": 0.4,
+        "023": 0.4
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "minimal",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.515688445921004,
+      "per_subject": {
+        "015": 0.482903981264637,
+        "023": 0.546218487394958
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "minimal",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.4,
+      "per_subject": {
+        "015": 0.4,
+        "023": 0.4
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "instruction",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.33063427800269907,
+      "per_subject": {
+        "015": 0.4,
+        "023": 0.2595281306715064
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "instruction",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.4,
+      "per_subject": {
+        "015": 0.4,
+        "023": 0.4
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "clinical",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.5366388767003072,
+      "per_subject": {
+        "015": 0.5577007459412022,
+        "023": 0.515577007459412
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "clinical",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.4,
+      "per_subject": {
+        "015": 0.4,
+        "023": 0.4
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "minimal",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.5384615384615384,
+      "per_subject": {
+        "015": 0.5804195804195804,
+        "023": 0.49650349650349646
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "minimal",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.4,
+      "per_subject": {
+        "015": 0.4,
+        "023": 0.4
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "instruction",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.5590903999103842,
+      "per_subject": {
+        "015": 0.5278688524590164,
+        "023": 0.5804195804195804
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "instruction",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.41563914468550023,
+      "per_subject": {
+        "015": 0.4074074074074074,
+        "023": 0.4
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "clinical",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.5758805970149253,
+      "per_subject": {
+        "015": 0.5644283121597096,
+        "023": 0.5800308800823469
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "clinical",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.4997518610421836,
+      "per_subject": {
+        "015": 0.45739130434782604,
+        "023": 0.4
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "minimal",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.5416666666666666,
+      "per_subject": {
+        "015": 0.5623100303951367,
+        "023": 0.5206252713851498
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "minimal",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.410874839446268,
+      "per_subject": {
+        "015": 0.37662337662337664,
+        "023": 0.4
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "instruction",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.6974789915966386,
+      "per_subject": {
+        "4": 0.3684210526315789,
+        "8": 0.9111111111111111
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "instruction",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.3684210526315789,
+      "per_subject": {
+        "4": 0.3684210526315789,
+        "8": 0.3684210526315789
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "clinical",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.5408695652173914,
+      "per_subject": {
+        "4": 0.5804195804195804,
+        "8": 0.4857142857142857
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "clinical",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.3684210526315789,
+      "per_subject": {
+        "4": 0.3684210526315789,
+        "8": 0.3684210526315789
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "minimal",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.5408695652173914,
+      "per_subject": {
+        "4": 0.4125874125874126,
+        "8": 0.6571428571428571
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "minimal",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.3684210526315789,
+      "per_subject": {
+        "4": 0.3684210526315789,
+        "8": 0.3684210526315789
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "instruction",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.3696969696969697,
+      "per_subject": {
+        "4": 0.29411764705882354,
+        "8": 0.4375
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "instruction",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.4444444444444444,
+      "per_subject": {
+        "4": 0.3333333333333333,
+        "8": 0.5555555555555556
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "clinical",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.3684210526315789,
+      "per_subject": {
+        "4": 0.3684210526315789,
+        "8": 0.3684210526315789
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "clinical",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.35135135135135137,
+      "per_subject": {
+        "4": 0.3333333333333333,
+        "8": 0.3684210526315789
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "minimal",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.4375,
+      "per_subject": {
+        "4": 0.37777777777777777,
+        "8": 0.4957983193277311
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "minimal",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.3684210526315789,
+      "per_subject": {
+        "4": 0.3684210526315789,
+        "8": 0.3684210526315789
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "instruction",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.5208711433756805,
+      "per_subject": {
+        "4": 0.6666666666666666,
+        "8": 0.29411764705882354
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "instruction",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.49650349650349646,
+      "per_subject": {
+        "4": 0.3684210526315789,
+        "8": 0.29411764705882354
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "clinical",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.5343915343915344,
+      "per_subject": {
+        "4": 0.3684210526315789,
+        "8": 0.4375
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "clinical",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.49650349650349646,
+      "per_subject": {
+        "4": 0.3684210526315789,
+        "8": 0.29411764705882354
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "minimal",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.5343915343915344,
+      "per_subject": {
+        "4": 0.3684210526315789,
+        "8": 0.4375
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "minimal",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.49650349650349646,
+      "per_subject": {
+        "4": 0.3684210526315789,
+        "8": 0.29411764705882354
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    }
+  ],
+  "winners": [
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "instruction",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.5254500138465799,
+      "per_subject": {
+        "S2": 0.6201814058956916,
+        "S8": 0.3634413216048058
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "clinical",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.6286380286380286,
+      "per_subject": {
+        "S2": 0.5894607843137255,
+        "S8": 0.6537634408602151
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "wesad",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "clinical",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "S2",
+        "S8"
+      ],
+      "macro_f1": 0.6528916644040185,
+      "per_subject": {
+        "S2": 0.4733887267011003,
+        "S8": 0.8174603174603174
+      },
+      "n_scored": 136,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "instruction",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.5514529914529914,
+      "per_subject": {
+        "015": 0.5577007459412022,
+        "023": 0.53125
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "minimal",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.5384615384615384,
+      "per_subject": {
+        "015": 0.5804195804195804,
+        "023": 0.49650349650349646
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "maus",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "clinical",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "015",
+        "023"
+      ],
+      "macro_f1": 0.5758805970149253,
+      "per_subject": {
+        "015": 0.5644283121597096,
+        "023": 0.5800308800823469
+      },
+      "n_scored": 96,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "uniform_stride",
+      "template_id": "instruction",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.6974789915966386,
+      "per_subject": {
+        "4": 0.3684210526315789,
+        "8": 0.9111111111111111
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "A",
+      "scheme": "bin_mean",
+      "template_id": "instruction",
+      "n_shot": 4,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.4444444444444444,
+      "per_subject": {
+        "4": 0.3333333333333333,
+        "8": 0.5555555555555556
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    },
+    {
+      "dataset": "cogwear",
+      "model": "qwen3_8b",
+      "paradigm": "B",
+      "scheme": null,
+      "template_id": "clinical",
+      "n_shot": 0,
+      "prompt_dev_subjects": [
+        "4",
+        "8"
+      ],
+      "macro_f1": 0.5343915343915344,
+      "per_subject": {
+        "4": 0.3684210526315789,
+        "8": 0.4375
+      },
+      "n_scored": 24,
+      "n_failures": 0
+    }
+  ],
+  "frozen": false,
+  "note": "Winners are candidates only. Do not write a lockfile from --client constant."
+}

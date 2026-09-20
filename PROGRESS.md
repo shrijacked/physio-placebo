@@ -4,10 +4,9 @@
 - Semester week: **Weeks 4–5 OPENED** (2026-09-20). Weeks 1–3 closed.
   Sequential gate: do not start Week 6 until `week-05-done`.
 - Phase: WESAD + MAUS + CogWear features and floors locked before any LLM grid run.
-- Last session: 2026-09-20 — Week 4 prompt-dev sweep is the live step. Scorer
-  and vLLM client are in. Sweep loads only prompt-dev windows. vLLM 0.29 has
-  no bitsandbytes; same HF ids run in fp16. Winners not frozen. Eval grid not
-  started.
+- Last session: 2026-09-20 — Prompt IDs frozen from real Qwen3 + Llama-3.1
+  vLLM sweeps (`configs/frozen_prompts.lock.yaml`, 18 cells). Eval grid not
+  started. Do not start Week 6.
 
 ## Week checklist
 - [x] Week 1 — data + harness foundation (**WESAD 15, MAUS 22, CogWear 10 usable / 11**)
@@ -112,7 +111,8 @@
         (`uniform_stride` n=256, `bin_mean` n=128)
   - [x] vLLM client + extract helpers (unit-tested without GPU)
   - [x] Prompt-dev sweep runner (`scripts/run_prompt_sweep.py`)
-  - [ ] Real vLLM sweep on the A6000; then freeze winning IDs
+  - [x] Real vLLM prompt-dev sweeps on the A6000 (Qwen3-8B + Llama-3.1-8B-Instruct)
+  - [x] Frozen prompt IDs (`configs/frozen_prompts.lock.yaml`, 18 cells)
   - [ ] Real-signal A/B × 2 models × 3 datasets with bootstrap CIs
 - [ ] Weeks 6–15: not started
 
@@ -142,6 +142,9 @@
 - ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-09-20: **Prompt IDs frozen** from `sweep_vllm_qwen3_8b.json` and
+  `sweep_vllm_llama31_8b.json` (4608 scored / 0 failures each). Lockfile
+  `configs/frozen_prompts.lock.yaml`. Do not retune. Eval grid is next.
 - 2026-09-20: **vLLM 0.29 dropped bitsandbytes.** Prompt-dev sweep uses the same
   HF ids (`Qwen/Qwen3-8B`, later Llama-3.1-8B-Instruct) in fp16 on the A6000
   48GB. OSF Models text not rewritten. 4-bit was a 16GB-card constraint.

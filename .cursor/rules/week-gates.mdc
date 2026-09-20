@@ -1,0 +1,18 @@
+---
+description: Do not start the next semester week until the current week's exit criteria are fully met
+alwaysApply: true
+---
+
+# Sequential week gates
+
+Never start Week N+1 (code, docs-as-done, tags, or "let's proceed") until **every** exit criterion for Week N in `CURSOR_SEMESTER_AGENT.md` is actually true — real data, real run, real artifact. Partial weeks are not done.
+
+- Current freeze: **Weeks 1–3 closed** (Week 3: 2026-09-20). All three floors
+  locked; MedAlpaca MAE 2.689 ± 0.038 documented; OSF update public.
+- **Do not start Week 4 until the user explicitly opens it.** Exit criteria for
+  Week 3 are met (number + gap in `docs/fidelity-anchor.md` §6; OSF filed and
+  deviation update public; tag `week-03-done`).
+- Catch-up on an earlier incomplete week is allowed. Skipping forward is not.
+- Catch-up on an earlier incomplete week is allowed. Skipping forward is not.
+
+If the user asks to jump ahead, refuse, name the open exit criterion, and stay on that week.

@@ -12,9 +12,12 @@ the measured performance produced by prompt scaffolding and the label prior?
 **Pre-registered:** [osf.io/62r5t](https://osf.io/62r5t)
 (DOI [10.17605/OSF.IO/62R5T](https://doi.org/10.17605/OSF.IO/62R5T), filed 2026-08-30).
 
-WESAD and CogWear are windowed, features frozen, and classical floors locked. MAUS is blocked
-on an IEEE DataPort login. The LLM grid (pinned OpenAI `gpt-4.1` snapshots, logprob scoring)
-starts Week 4 — the pre-registration gate is cleared.
+WESAD, MAUS, and CogWear are windowed with frozen features and locked classical floors.
+**Week 3 number is in:** zero-shot MedAlpaca-7b MAE **2.689 ± 0.038** vs paper
+0.76 ± 0.1 (gap +1.929). OSF model-deviation update is public on the same
+registration (2026-09-20). The LLM grid (Qwen3-8B + Llama-3.1-8B + Qwen2.5-VL,
+4-bit vLLM, logprob scoring) starts when Week 4 is opened. The OpenAI
+API path was abandoned 2026-09-16 (rate-limit wall).
 
 Locked numbers and blockers live in [`PROGRESS.md`](PROGRESS.md). The design is in
 [`PROJECT_PLAN.md`](PROJECT_PLAN.md).

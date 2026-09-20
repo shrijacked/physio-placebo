@@ -52,7 +52,10 @@ These apply to **every** session, no exceptions:
    `results/`. Raw model outputs (logprobs) are always saved, not just aggregated metrics.
 8. **Ask, don't assume:** if a decision changes the science (a metric definition, a surrogate design, a
    dataset substitution), stop and ask the user. If it's pure engineering, decide and document it.
-9. **Stay on the week's scope.** Do not jump ahead to later weeks' work or add unrequested features.
+9. **Stay on the week's scope. Sequential week gate (user-mandated 2026-09-16):** do **not**
+   start Week N+1 until **every** exit criterion of Week N is true (real data, real run, real
+   artifact). Partial completion is not done. Catch-up on an earlier open week is allowed;
+   skipping forward is not. If asked to jump ahead, refuse, name the open criterion, and stay.
    Stretch goals (§6) only start after the Week-10 milestone is banked.
 
 ---
@@ -74,23 +77,21 @@ Stretch datasets: DD-Database (Dryad), OpenNeuro ds003838.
 
 ### 2.2 Models
 
-> **AMENDED 2026-08-30 (user-directed, before prereg filing):** grid models swapped to OpenAI
-> dated snapshots — the user holds an API key (git-ignored `.env`), no GPU is available, and the
-> audited literature itself used OpenAI models. gpt-5.x snapshots were rejected empirically: they
-> do not expose logprobs. Details in `PROGRESS.md` decisions log and `docs/osf-prereg.md`.
+> **AMENDED 2026-09-16 (user-directed):** OpenAI API grid abandoned. The org holding the
+> credits (`codex-btzye1`) is capped at 50 requests/day/model; support confirmed credits do
+> not lift rate limits. Restored the original open-weights stack. This **deviates from the
+> filed OSF models section** (gpt-4.1 snapshots); disclose as a post-registration addendum
+> (see `docs/osf-prereg.md` header). Details in `PROGRESS.md`.
 
-- **Core (paradigms A and B):** `gpt-4.1-2025-04-14` (flagship) and `gpt-4.1-mini-2025-04-14`
-  (mini), Chat Completions API, temperature 0, fixed seed, `system_fingerprint` logged per call.
-- **Vision (plot paradigm):** `gpt-4.1-2025-04-14` image input.
-- **Optional extension (only if a GPU materializes):** one open-weights 8B instruct model via
-  vLLM (original plan: Qwen3-8B / Llama-3.1-8B).
+- **Open (core):** Qwen3-8B-Instruct and Llama-3.1-8B-Instruct, 4-bit, served with vLLM.
+- **Vision (plot paradigm):** Qwen2.5-VL-7B-Instruct.
+- **Optional paid upper bound:** one GPT-class API model, budget < $50 (Week 13, stretch) —
+  currently unusable on this account; do not block the grid on it.
 
-**Compute reality check:** every condition is scored by reading **logprobs of the label tokens
-from the top-20 returned at the single answer position** (`max_completion_tokens=1`) — never free
-generation. The grid needs no GPU; API budget cap US$150 (mini model runs the full grid; the
-flagship falls back to a pre-specified subset if projected cost exceeds the cap — rule fixed in
-the prereg). If you find yourself doing free-form generation and parsing text answers, you are
-doing it wrong.
+**Compute reality check:** every condition is scored by reading **logprobs over the label tokens in a
+single forward pass** — never free generation. Full grid ≈ 20–40 GPU-hours at 8B/4-bit with vLLM
+batching; a 16 GB card is sufficient. If you find yourself doing free-form generation and parsing text
+answers, you are doing it wrong.
 
 ### 2.3 Features
 
@@ -102,7 +103,7 @@ tonic/phasic via cvxEDA, respiration features. The classical baselines and the L
 
 - **Paradigm A:** raw numeric series in the prompt.
 - **Paradigm B:** verbalized features in the prompt (Health-LLM style).
-- **Paradigm C:** matplotlib plot image → `gpt-4.1-2025-04-14` image input (WESAD and MAUS only).
+- **Paradigm C:** matplotlib plot image → Qwen2.5-VL-7B (WESAD and MAUS only).
 
 ### 2.5 Prompt protocol
 
@@ -194,7 +195,7 @@ physio-placebo/
 │   ├── surrogates/                # the 5-rung ladder + label-preserving permutation
 │   ├── prompts/                   # templates, verbalizer, neutralized + mis-signed variants
 │   ├── paradigms/                 # A (raw series), B (verbalized), C (plot image)
-│   ├── scoring/                   # OpenAI API logprob-over-label-tokens scorer
+│   ├── scoring/                   # vLLM logprob-over-label-tokens scorer
 │   ├── baselines/                 # LR + depth-3 tree, permutation chance floor
 │   ├── stats/                     # bootstrap CIs, Wilcoxon, SDS + validity gate
 │   └── report/                    # SDS report card generator (tables + figures)
@@ -241,7 +242,8 @@ physio-placebo/
 1. Read this file + `PROGRESS.md`. State which week you're in and what the current exit criteria are.
 2. Work only on the current week's tasks (or explicitly-approved catch-up/stretch).
 3. Before ending: run tests, commit, update `PROGRESS.md` (status, checklist, blockers, decisions).
-4. If a week's exit criteria are met, mark it done, tag the commit, and state readiness for the next week.
+4. If **every** exit criterion for the current week is met, mark it done, tag the commit, and
+   only then state readiness for the next week. Do not preview or start the next week before that.
 5. If the schedule slips ≥1 week, say so plainly and propose what to cut — protect the Week-10 milestone
    above everything else. The Week-10 result must not depend on any external party.
 
@@ -288,8 +290,7 @@ the user (record the OSF URL in `PROGRESS.md`); tag `week-03-done`. **After this
 
 ### Weeks 4–5 — Paradigms A and B, prompt sweep then freeze
 **Tasks:**
-- Implement the OpenAI API logprob-over-label-tokens scorer (top-20 logprobs at the answer
-  position, `max_completion_tokens=1`, full request/response archiving).
+- Implement the vLLM logprob-over-label-tokens scorer (single forward pass per item).
 - Paradigm A (raw numeric series) and Paradigm B (verbalized features) × 2 open models × 3 datasets.
 - Prompt-robustness sweep **first**: 3 templates × {0-shot, 4-shot} selected on a held-out subject
   fold, then **frozen** (write the frozen prompt IDs into a locked config) before any surrogate runs.
@@ -298,7 +299,7 @@ the user (record the OSF URL in `PROGRESS.md`); tag `week-03-done`. **After this
 frozen-prompt lockfile committed; scorer unit-tested (known-logprob fixture); tag `week-05-done`.
 
 ### Week 6 — Paradigm C (plots)
-**Tasks:** matplotlib plot rendering of windows → `gpt-4.1-2025-04-14` image input, WESAD and MAUS; same scoring protocol,
+**Tasks:** matplotlib plot rendering of windows → Qwen2.5-VL-7B, WESAD and MAUS; same scoring protocol,
 same prompt sweep-then-freeze.
 
 **Exit criteria:** Paradigm C real-signal numbers with CIs on WESAD+MAUS; plot generation deterministic

@@ -158,9 +158,9 @@ the reproduction gap reported with those patches disclosed.
   Rationale: open weights (`medalpaca/medalpaca-7b` on HF), no dependence on retired APIs
   (their zero-shot GPT-3.5/GPT-4 stress cells are "—" failures; Gemini-Pro 1.0 is retired),
   zero-shot avoids the few-shot exemplar-leakage confound.
-- Fallback: few-shot GPT-3.5 `gpt-3.5-turbo-instruct` (0.94 ± 0.1) only if that engine is still
-  served and an OpenAI key is provided. **Update 2026-08-30: both conditions now hold** (engine
-  present in the account's model list; key in git-ignored `.env`).
+- Fallback: few-shot GPT-3.5 `gpt-3.5-turbo-instruct` (0.94 ± 0.1). **Attempted 2026-08-30,
+  abandoned 2026-09-16:** engine is served and a key exists, but the org is capped at 50
+  requests/day despite credit balance; support confirmed credits do not lift rate limits.
 - Reproduction target defined as: run their (patched) pipeline on PMData stress eval split
   (seed 123, ≤299 items), MedAlpaca-7b, zero-shot, 3 seeds {0,1,2}, report MAE mean ± sd and the
   gap vs 0.76.

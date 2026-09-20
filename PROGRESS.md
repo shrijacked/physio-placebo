@@ -1,16 +1,15 @@
 # PROGRESS
 
 ## Current status
-- Semester week: 1–3 sprint (first deliverable = end of Week 3; calendar week of 2026-08-24)
-- Phase: foundation — data + harness + classical floor + Week-3 documents
-- Last session: 2026-08-27 — repo scaffolded; WESAD end-to-end verified on real data
-  (15 subjects, 1,042 windows); features frozen + extracted (zero NaNs); WESAD classical floor
-  locked; Health-LLM notes + fidelity-anchor recipe + OSF prereg draft written; SensorLM
-  captioning vendored and render-proven on a real WESAD window. All claims below were executed
-  and verified this session; commands and outputs are in the session log.
+- Semester week: **Week 3 CLOSED** (2026-09-20). Weeks 1–2 closed 2026-09-16.
+  Sequential gate: do not start Week 4 until the user explicitly opens it.
+- Phase: WESAD + MAUS + CogWear features and floors locked before any LLM grid run.
+- Last session: 2026-09-20 — OSF model-deviation update verified public on
+  https://osf.io/62r5t (approved, schema response `6aaff4804f661ffb39d0ab73`).
+  MedAlpaca MAE **2.689 ± 0.038**, gap **+1.929**.
 
 ## Week checklist
-- [ ] Week 1 — data + harness foundation (**mostly done; blocked on 2 of 3 datasets' raw data**)
+- [x] Week 1 — data + harness foundation (**WESAD 15, MAUS 22, CogWear 10 usable / 11**)
   - [x] WESAD downloaded (2.25 GB zip, sha256 recorded), windowed end-to-end: 15/15 subjects,
         1,042 windows (60 s / 30 s stride), 731 non-stress / 311 stress, 0 NaN drops
         (`data/processed/wesad/prepare_manifest.json`)
@@ -20,8 +19,9 @@
   - [x] Feature code frozen: `configs/frozen_features.lock.json`
         (source sha256 `702d5f37…`, neurokit2 0.2.13, freeze-guard test active)
   - [x] Strict LOSO harness + leakage tests + prompt-dev split (`src/physio_placebo/data/loso.py`)
-  - [x] MAUS loader written per authors' baseline-repo format; fixture-tested (real data gated —
-        see blockers)
+  - [x] MAUS loader written per authors' baseline-repo format; fixture-tested; **real data
+        ingested 2026-09-16** (IEEE DataPort `MAUS.zip`, 22/22 subjects in
+        `SUBJECT_IDS`, concat sha256 of all `pixart.csv` `fadf7131…`)
   - [x] Health-LLM code + paper read; `docs/health-llm-notes.md` written (verified line-level
         code defects; headline table verified from paper PDF; majority-class MAE ≈ 0.434
         computed from their own Table 16 — beats most of their LLM cells)
@@ -44,8 +44,13 @@
         (`data/processed/cogwear/prepare_manifest.json`)
   - [x] CogWear features: all 114 windows, zero NaNs in all 15 features
         (`results/features/cogwear/20260827T134111Z_d5b1bd65/`)
-  - [ ] MAUS raw data: requires IEEE DataPort login → **user action**
-- [ ] Week 2 — classical floor (**WESAD done and locked; other datasets pending their data**)
+  - [x] MAUS raw data: IEEE DataPort zip dropped 2026-09-16 into `data/raw/maus/MAUS/`
+        (`Data/Raw_data/<id>/pixart.csv` × 22). Windowed: **22 subjects, 1,086 windows**
+        (362 low / 724 high), **0 NaN drops** (`data/processed/maus/prepare_manifest.json`).
+        Subjects 002–006: 54 windows each (100 Hz); 008–025: 48 each (102.5 Hz).
+  - [x] MAUS features: all 1,086 windows, **zero NaNs in all 8 HRV features**
+        (`results/features/maus/20260916T131937Z_3aa179ba/`, parquet sha256 `e9367ac1…`)
+- [x] Week 2 — classical floor (**WESAD + MAUS + CogWear locked**)
   - [x] WESAD floor locked before any LLM run
         (`results/classical_floor/wesad/20260827T130307Z_600c388f/floor.json`, seed 1337):
         logreg L2 pooled macro-F1 **0.9181** (per-subject 0.9127 ± 0.1066);
@@ -60,58 +65,95 @@
         **Note:** classical signal is weak — logreg barely clears the permutation p95 and the
         tree does not; CogWear cells are likely to trigger the pre-registered SDS validity
         gate. WESAD is the strong-signal dataset (0.92 vs ~0.42).
-  - [ ] MAUS floor (blocked on data)
-  - [ ] Byte-identity test (baselines vs LLM feature matrices) — LLM side does not exist yet;
-        test lands with the LLM scorer (Week 4)
-- [ ] Week 3 — fidelity anchor + OSF pre-registration (**prereg FILED & PUBLIC; anchor run
-      pending**)
+  - [x] MAUS floor locked
+        (`results/classical_floor/maus/20260916T132700Z_4ded037e/floor.json`, seed 1337):
+        logreg L2 pooled macro-F1 **0.4440** (per-subject 0.4370 ± 0.0541);
+        depth-3 tree **0.4815** (0.4536 ± 0.0864); majority **0.4000**;
+        permutation floor: logreg mean 0.4027 / p95 0.4129, tree mean 0.4244 / p95 0.4534.
+        **Note:** classical signal is weak (tree just clears p95; logreg also, but barely).
+        MAUS cells are likely to trigger the SDS validity gate, same family as CogWear.
+        Byte-identity now covers MAUS (`configs/locked_floors.yaml`).
+  - [x] Byte-identity test (baselines vs LLM feature matrices) —
+        `tests/test_byte_identity.py` + `physio_placebo.features.matrix`. Locked
+        WESAD/CogWear/MAUS parquet SHA-256s match `floor.json`. Week-4 verbalizer must
+        call `load_locked_feature_matrix` / `assert_matches_locked_floor`.
+- [x] Week 3 — fidelity anchor + OSF pre-registration (**CLOSED 2026-09-20**)
   - [x] Anchor chosen + recipe + patch list: `docs/fidelity-anchor.md` (PMData stress,
-        zero-shot MedAlpaca-7b, target MAE 0.76 ± 0.1) — primary still GPU-gated
-  - [ ] **Fallback anchor ATTEMPTED 2026-08-30, blocked at 35/897 calls** by the OpenAI
-        account's free-tier cap (50 requests/day/model — see blockers). Everything up to the
-        API calls is DONE and verified: PMData extracted, their generator patched + run
-        (eval split = 299 items, seed 123, manifest in `results/anchor/split_manifest.json`),
-        their inference patched (now checkpoint/resumable), patches recorded in
-        `results/anchor/patches.diff`, scorer ready (`scripts/score_anchor.py`). Rerun is
-        one command once the account is upgraded (~25 min, ≈$1.30).
+        zero-shot MedAlpaca-7b, target MAE 0.76 ± 0.1)
+  - [x] Fallback pipeline prepared (eval split locked, patches, scorer). **API run abandoned
+        2026-09-16** after 35/897 calls at the 50 req/day cap; support confirmed credits do
+        not lift limits. Do not wait on this cell.
   - [x] OSF prereg **FILED & PUBLIC 2026-08-30 18:56 IST**: registration
         https://osf.io/62r5t (DOI 10.17605/OSF.IO/62R5T, Open-Ended Registration,
         OSF Registries; associated project https://osf.io/arj8w). Filed text =
         `docs/osf-prereg.md` @ `f705db9`. Verified publicly visible while logged out,
         2026-08-30 19:10 IST. **The no-LLM-before-prereg gate is CLEARED.**
+  - [x] Zero-shot prompt construction locked (2026-09-16 dry-run): 299 items × seeds
+        {0,1,2}, eval sha256 `fea3b879…`, prompt sha256s `0abba6a2` / `6789c809` /
+        `50bee721` under `results/anchor/medalpaca/20260916T150339Z_29ef1798/`.
+        `tests/test_anchor.py` 9 passing. P2 (`medalpaca_pl`) is in
+        `scripts/run_medalpaca_anchor.py`.
+  - [x] OSF model-deviation update public 2026-09-20 on https://osf.io/62r5t
+        (submitted 15:02 UTC, approved; schema response `6aaff4804f661ffb39d0ab73`).
+        Reason-for-update text is the locked deviation paragraph.
+  - [x] Anchor *number* (2026-09-20, `10.1.45.49` RTX A6000): MAE **2.689 ± 0.038**
+        (seeds 2.714 / 2.645 / 2.708), parse failures 6/897, gap **+1.929** vs
+        0.76 ± 0.1. Prompts matched the 2026-09-16 lock. Completions are mostly
+        `out of 5` / `out of 10`; first-number scoring reads 5 or 10. Documented
+        in `docs/fidelity-anchor.md` §6. Do not retune the scorer.
 - [ ] Weeks 4–15: not started (by design — post-prereg)
 
 ## Open blockers
-- **OpenAI account tier (NEW 2026-08-30, blocks anchor now and the ENTIRE Week 4–10 grid
-  later)** — the key's org is on the free tier: **50 requests/day/model** (hit at exactly 50
-  during the anchor run; verified via `x-ratelimit` headers: gpt-4.1 and gpt-4.1-mini also
-  50/day, with 10k and 60k tokens/min). The anchor needs 897 calls; the grid needs tens of
-  thousands. **User action: add a payment method / buy ≥$5 credits at
-  platform.openai.com → Settings → Billing** (Tier 1 raises limits to hundreds of
-  requests/min). Fallback if never upgraded: checkpointed 50/day trickle ≈ 19 days for the
-  anchor alone — not viable for the grid.
-- **MAUS raw data** — IEEE DataPort requires a (free) login; user must download
-  `MAUS: A Mental Workload Assessment...` (DOI 10.21227/q4td-yd35) and unzip into
-  `data/raw/maus/` so `scripts/prepare_maus.py` can run on real data.
+- ~~**GPU hardware**~~ **RESOLVED 2026-09-20** for the Week-3 number: account
+  `shrijak` on Plaksha HTI `10.1.45.49`, RTX A6000 48 GB, driver 580.178.04 after
+  admin reboot. Same box is intended for Weeks 4–10 vLLM. **Do not start Week 4
+  until the user opens Week 4.** This Mac still cannot run the grid.
+- ~~OpenAI account tier~~ **CLOSED 2026-09-16 as a grid path.** Credits (~$2,499) sit in
+  `codex-btzye1` with a 50 req/day/model cap; support (Kristian, 2026-09-10) confirmed
+  credits do not lift rate limits. Stretch GPT cell stays optional and unused.
+- ~~MAUS raw data~~ **RESOLVED 2026-09-16**: IEEE DataPort `MAUS/` (22 pixart.csv,
+  concat sha256 `fadf7131…`) at `data/raw/maus/MAUS/Data/Raw_data`. Windowed 1,086
+  windows, 0 NaN drops; features parquet `e9367ac1…`.
 - ~~CogWear download~~ **RESOLVED 2026-08-27** via per-file downloads with SHA256 verification
   (`scripts/download_cogwear.py`); the zip resume-loop was abandoned. (This line was stale.)
 - ~~PMData~~ **RESOLVED 2026-08-27**: `data/raw/pmdata/pmdata.zip` downloaded complete
   (1,416,129,266 bytes, 912 files, sha256 `53a49d94…` in sidecar). Anchor data side is ready;
-  the primary (MedAlpaca) run still needs a GPU box; the fallback anchor
-  (few-shot `gpt-3.5-turbo-instruct`, API-only) is runnable on this Mac as of 2026-08-30.
+  the primary (MedAlpaca) run completed 2026-09-20. GPT-3.5 fallback abandoned 2026-09-16.
 - **Prof sign-off** — verbalizer variant (iv) (SensorLM templates) still pending
   (PROJECT_PLAN.md §11); vendoring done regardless as planned.
+- ~~**OSF model deviation**~~ **RESOLVED 2026-09-20**: public registration update on
+  https://osf.io/62r5t (approved). Filed Models section still names gpt-4.1; executed
+  grid is Qwen/Llama/vLLM. Local addendum in `docs/osf-prereg.md`.
 - ~~OSF filing~~ **RESOLVED 2026-08-30**: registered and public at https://osf.io/62r5t
   (DOI 10.17605/OSF.IO/62R5T). Filed text = `docs/osf-prereg.md` @ `f705db9`.
-- **MAUS access** — IEEE DataPort account-creation page broken for user (2026-08-30); no public
-  raw mirror exists (Kaggle copy is processed-PPG only, unusable for our frozen extractor).
-  Escalated to prof; fallback = email dataset authors (NTU, addresses in arXiv:2111.02561).
-- **GPU hardware** — DOWNGRADED 2026-08-30: the main grid no longer needs a GPU (models swapped
-  to OpenAI API snapshots, see decisions log). GPU is now needed only for (a) the MedAlpaca-7b
-  primary anchor run and (b) the optional open-weights extension. This Mac (16 GB RAM, 13 GiB
-  free disk) still cannot hold MedAlpaca-7b fp16 (~14 GB).
+- ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-09-20: OSF model-deviation **update verified public** on https://osf.io/62r5t
+  (submitted 15:02 UTC, approved). Week 3 closed.
+- 2026-09-20: **Fidelity-anchor number obtained.** Zero-shot MedAlpaca-7b on the
+  HTI A6000: MAE 2.689 ± 0.038 vs paper 0.76 ± 0.1 (gap +1.929). Report the gap;
+  do not change the locked first-number scorer.
+- 2026-09-18: Supervisor briefing written for Dr.\ Siddharth
+  (`reports/supervisor_briefing_2026-09-18.tex` / `.pdf`): Weeks 1--2 locked
+  numbers, OSF URL, three asks (GPU ≥16 GB, SensorLM variant iv, Week-10 format).
+- 2026-09-16: **Week 3 opened.** Hardware re-check: M2 Pro, 16 GB unified, 14 GiB free
+  disk, no CUDA — MedAlpaca fp16 still impossible here. Zero-shot prompts locked
+  without loading weights. Week 3 is not closed.
+- 2026-09-16: **Week 2 closed.** MAUS floor locked (tree 0.4815 vs perm p95 0.4534;
+  logreg 0.4440 vs p95 0.4129; majority 0.4000). Weak classical signal — SDS validity
+  gate likely. Byte-identity registry now includes MAUS.
+- 2026-09-16: **Week 1 closed.** MAUS real data ingested (22/22, 1086 windows, 0 feature
+  NaNs). Next week is Week 2 (MAUS classical floor only; WESAD/CogWear already locked).
+- 2026-09-16: Week-2 byte-identity contract locked (`configs/locked_floors.yaml`,
+  `features.matrix`, 6 tests). MAUS still has no raw files under `data/raw/maus/`;
+  the IEEE login remains a user action. Fixture-level MAUS prepare→features→floor
+  now has a regression test so the real download is mechanical.
+- 2026-09-16: **OpenAI API grid abandoned; original vLLM stack restored.** Support (Kristian)
+  confirmed ~$2,499 credits remain but do not remove 50 req/day limits. Grid models:
+  Qwen3-8B-Instruct, Llama-3.1-8B-Instruct, Qwen2.5-VL-7B-Instruct, 4-bit, logprob scoring.
+  Filed OSF still names gpt-4.1 — local addendum in `docs/osf-prereg.md`; user must post the
+  same comment on osf.io/62r5t. (User-directed.)
 - 2026-08-30 (evening): **Fallback anchor executed up to the API wall.** Their pipeline needed
   3 more patches than planned, all discovered by execution and logged as notes §3.11–13:
   the released generator and inference scripts use incompatible eval schemas (adapter added);
@@ -155,12 +197,14 @@
 ## NOT IMPLEMENTED / known gaps
 - ~~CogWear loader/windowing/floor~~ RESOLVED 2026-08-27 (per-file download; loader, windows,
   and floor all landed — this line was stale).
-- MAUS on real data (loader is fixture-tested only) — pending user download.
-- Fidelity-anchor reproduction run — recipe + patches documented, nothing executed.
-- Everything LLM-side (paradigms, prompts, surrogates, API logprob scoring, SDS) —
-  intentionally absent until after prereg (Weeks 4+).
+- MAUS on real data — **RESOLVED 2026-09-16**.
+- ~~Fidelity-anchor reproduction *number*~~ **RESOLVED 2026-09-20**: MAE 2.689 ± 0.038,
+  gap +1.929, artifact `results/anchor/medalpaca/server_run/`.
+- Everything LLM-side (paradigms, prompts, surrogates, vLLM logprob scoring, SDS) —
+  intentionally absent until Week 4. Scientifically unblocked (prereg filed) and
+  hardware exists; **Week 4 not started** until the user opens it.
 - `pip install -e .` required `required_permissions=all` in this sandbox (a `.pth` write);
-  fresh-clone install on a second machine still unverified (GPU box now optional).
+  fresh-clone install on a second machine still unverified (GPU box required again).
 - Health-LLM releases **no evaluation code** (verified 2026-08-27: no `eval/` dir;
   `medalpaca/` = training/inference utilities only). The paper's MAE must be re-implemented
   for the anchor; convention fixed in `docs/fidelity-anchor.md` §2 and disclosed as part of

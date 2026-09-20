@@ -1,7 +1,20 @@
 > **Registered:** https://osf.io/62r5t — DOI
 > [10.17605/OSF.IO/62R5T](https://doi.org/10.17605/OSF.IO/62R5T), Open-Ended Registration,
-> registered 2026-08-30 18:56 IST, public. The text below is the filed version (commit
-> `f705db9`). Any post-filing protocol change is a deviation and must be reported as such.
+> registered 2026-08-30 18:56 IST, public. The Models section below is the **filed** text
+> (commit `f705db9`) and is not rewritten.
+>
+> **Post-registration deviation (2026-09-16):** the OpenAI API path is abandoned. The org
+> holding the credit grant is rate-limited at 50 requests/day/model; OpenAI support confirmed
+> credits do not lift those limits. The executed grid will instead use the original
+> open-weights stack: Qwen3-8B-Instruct and Llama-3.1-8B-Instruct (4-bit, vLLM) for
+> paradigms A/B, and Qwen2.5-VL-7B-Instruct for paradigm C. Scoring remains
+> log-probabilities over label tokens in a single forward pass (full-vocabulary logprobs
+> via vLLM, not top-20 API logprobs). Hypotheses, datasets, features, surrogate ladder,
+> verbalizer ablation, metrics, and SDS are unchanged.
+>
+> **Posted 2026-09-20:** public OSF registration update on https://osf.io/62r5t
+> (submitted 15:02 UTC, approved; schema response `6aaff4804f661ffb39d0ab73`).
+> The filed Models section below is still the 2026-08-30 text.
 
 ## Title
 

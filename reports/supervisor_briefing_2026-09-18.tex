@@ -1,0 +1,202 @@
+% ============================================================
+% Supervisor briefing — physio-placebo
+% Compile: tectonic reports/supervisor_briefing_2026-09-18.tex
+% ============================================================
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{lmodern}
+\else
+  \usepackage{fontspec}
+\fi
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{ragged2e}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{Accent}{HTML}{0F4C5C}
+\definecolor{AccentSoft}{HTML}{1B6B7A}
+\definecolor{RuleGray}{HTML}{B8C4C8}
+\definecolor{TableHead}{HTML}{E8F1F3}
+\definecolor{Ask}{HTML}{7A2E0E}
+
+\hypersetup{
+  pdftitle={physio-placebo: Supervisor briefing (18 September 2026)},
+  pdfauthor={Shrijak Kumar},
+  pdfsubject={Independent study progress and requests},
+  linkcolor=Accent,
+  urlcolor=AccentSoft,
+}
+
+\titleformat{\section}
+  {\large\bfseries\color{Accent}}
+  {\thesection}{0.7em}{}
+\titlespacing*{\section}{0pt}{1.15em}{0.4em}
+
+\titleformat{\subsection}
+  {\normalsize\bfseries\color{AccentSoft}}
+  {\thesubsection}{0.6em}{}
+\titlespacing*{\subsection}{0pt}{0.9em}{0.3em}
+
+\arrayrulecolor{Accent!55}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.48em}
+\linespread{1.05}
+\setlength{\emergencystretch}{1.5em}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+
+\begin{document}
+
+{\large\scshape\color{AccentSoft} Independent study --- supervisor briefing\par}
+\vspace{0.35em}
+{\color{Accent}\hrule height 1.0pt}
+\vspace{0.7em}
+{\LARGE\bfseries\color{Accent} physio-placebo\par}
+\vspace{0.25em}
+{\large Is the LLM reading the signal, or is the verbalizer doing the classifying?\par}
+\vspace{0.7em}
+{\color{Accent}\hrule height 1.0pt}
+\vspace{0.85em}
+
+\begin{tabular}{@{}L{3.4cm}L{12.1cm}@{}}
+\textbf{Student} & Shrijak Kumar \\
+\textbf{Advisor} & Dr.\ Siddharth, Plaksha University \\
+\textbf{Date} & 18 September 2026 \\
+\textbf{Semester week} & Week 3 in progress (Weeks 1--2 closed) \\
+\textbf{Repository} & \url{https://github.com/shrijacked/physio-placebo} \\
+\textbf{Pre-registration} & \url{https://osf.io/62r5t} \quad DOI 10.17605/OSF.IO/62R5T \\
+\end{tabular}
+
+\vspace{0.2em}
+{\small\color{AccentSoft} Purpose of this note: a short status report of what is already locked, and three concrete decisions I need from you. The binding one is GPU access.\par}
+
+\section{The study, in one paragraph}
+
+Published wearable-LLM papers (Health-LLM and related prompting pipelines) report that language models can infer stress or workload from sensor text. They almost never test whether that accuracy depends on the physiological signal itself. This independent study runs the same class of prompts on WESAD, MAUS, and CogWear under strict leave-one-subject-out, then replaces the recording with a ladder of surrogates (spectrum-matched noise, phase randomization, another subject, a flatline, or nothing) and measures how much accuracy survives. The intellectual core is a verbalizer ablation: do models read the numbers, or the class-suggestive adjectives in the template? A negative result is pre-registered as publishable.
+
+\section{Status at a glance}
+
+{\small
+\begin{tabularx}{\textwidth}{@{}L{3.55cm}L{3.7cm}Y@{}}
+\rowcolor{TableHead}
+\textbf{Item} & \textbf{State} & \textbf{Evidence} \\
+\midrule
+Week 1 (data + harness) & Closed, 16 Sep 2026 & WESAD 15/15, MAUS 22/22, CogWear 10/11 usable; frozen NeuroKit2; LOSO leakage tests \\
+Week 2 (classical floor) & Closed, 16 Sep 2026 & Floors locked on all three datasets before any LLM grid run \\
+OSF pre-registration & Filed, public, 30 Aug 2026 & Hypotheses, SDS, surrogate ladder, and validity gate frozen \\
+Week 3 (fidelity anchor) & Open: number missing & Pipeline + 299-item split locked; MedAlpaca inference needs CUDA \\
+Weeks 4--10 (LLM grid) & Not started & Scientifically unblocked; computationally blocked (no GPU) \\
+\end{tabularx}
+}
+
+\section{What is already locked}
+
+\subsection{Classical floors (macro-F1, LOSO, seed 1337, 1000 within-subject permutations)}
+
+These are the numbers any later LLM cell must beat, on byte-identical feature matrices.
+
+{\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\rowcolor{TableHead}
+\textbf{Dataset} & \textbf{Logreg L2} & \textbf{Depth-3 tree} & \textbf{Majority} & \textbf{Perm.\ p95} & \textbf{Signal} \\
+\midrule
+WESAD ($n{=}15$) & 0.918 & 0.848 & 0.412 & 0.433 & Strong \\
+MAUS ($n{=}22$) & 0.444 & 0.482 & 0.400 & 0.413 & Weak \\
+CogWear ($n{=}10$) & 0.569 & 0.560 & 0.397 & 0.541 & Weak \\
+\bottomrule
+\end{tabular}
+}
+
+WESAD is the dataset that can actually test signal dependence. MAUS and CogWear barely clear (or fail) the permutation floor; many of those cells will hit the pre-registered SDS validity gate, and we will report raw deltas rather than invent a ratio on a near-zero denominator.
+
+Window counts, for the record: WESAD 1{,}042 windows (731/311), MAUS 1{,}086 (362/724), CogWear 114 (39/75). Zero feature-NaN drops on all three. CogWear subject 3 is excluded because PhysioNet is missing that subject's EDA file (logged in the prereg).
+
+\subsection{Health-LLM read and OSF}
+
+I read the Health-LLM released code line by line. It cannot run as published (missing imports, ignored \texttt{--model}, undefined \texttt{medalpaca\_pl}, schema mismatch, never-called \texttt{set\_seed}). Their Table~16 implies a constant-3 MAE ${\approx}\,0.434$, which beats most of their LLM cells; they never report that baseline.
+
+OSF registration \texttt{osf.io/62r5t} is public. Predictions on file:
+\begin{itemize}\setlength{\itemsep}{0.15em}
+  \item SDS ${<}\,0.3$ for raw-series and plot paradigms;
+  \item verbalized features lose ${>}\,50\%$ of their above-chance margin when adjectives are neutralized;
+  \item adversarially mis-signed adjectives flip ${>}\,40\%$ of items.
+\end{itemize}
+
+Post-registration note (local addendum already written): the executed grid will be Qwen3-8B-Instruct, Llama-3.1-8B-Instruct, and Qwen2.5-VL-7B-Instruct via vLLM, not the gpt-4.1 snapshots named in the filed Models section. The OpenAI path hit a 50~request/day cap; support confirmed prepaid credits do not lift it. I still need to post that comment on the frozen OSF page (I can do this; listing you as a project collaborator is optional).
+
+\subsection{Week 3, short of the number}
+
+The fidelity-anchor cell is Health-LLM Table~3: PMData stress, zero-shot MedAlpaca-7b, MAE $0.76\pm 0.1$. The 299-item eval split is locked (constant-3 MAE on that split: 0.401). Zero-shot prompts for seeds $\{0,1,2\}$ are hashed. The run script is written. What is missing is a CUDA box to load the 7B fp16 weights (${\sim}14$\,GB).
+
+My Mac (Apple M2 Pro, 16\,GB unified memory, no CUDA) cannot do this. Google Colab is a fallback for \emph{this one cell only}; a free T4 is marginal, and Colab cannot host the later vLLM grid.
+
+\section{What I need from you}
+
+{\color{Ask}\textbf{Ask 1 --- GPU access (binding).}}
+This is the only item that currently stops the semester clock. Same machine covers the MedAlpaca anchor \emph{and} Weeks 4--10.
+
+{\small
+\begin{tabularx}{\textwidth}{@{}L{3.15cm}Y@{}}
+\toprule
+\rowcolor{TableHead}
+\textbf{Requirement} & \textbf{Specification} \\
+\midrule
+Device & One NVIDIA GPU, ${\ge}16$\,GB VRAM (A4000, A5000, L4, A6000, or A100). \\
+Software & CUDA drivers. I will install PyTorch and vLLM in a venv; sudo is not required if drivers exist. \\
+Disk & ${\sim}40$--$60$\,GB free (MedAlpaca + three 8B 4-bit checkpoints). \\
+This week & MedAlpaca-7b fp16, 897 greedy generations, ${\sim}3$--$6$ hours. The command is written. \\
+Weeks 4--10 & Qwen3-8B, Llama-3.1-8B, Qwen2.5-VL-7B; 4-bit; vLLM; log-probs over label tokens. ${\approx}20$--$40$ GPU-hours \emph{in total}, not a 40-hour lock. \\
+Useful access & SSH to a cluster node, a booked lab workstation, or approval to rent (Lambda / RunPod) on a lab or student budget. \\
+Not useful & This Mac; CPU-only VMs; Colab for the full grid. \\
+\bottomrule
+\end{tabularx}
+}
+
+If a Plaksha or lab cluster already exists, an account plus a one-line ``you may run multi-hour jobs on node~X'' is enough. I do not need you to run the jobs.
+
+\vspace{0.3em}
+{\color{Ask}\textbf{Ask 2 --- SensorLM verbalizer variant (yes / no).}}
+I proposed adding Google's released SensorLM captioning templates as verbalizer variant~(iv), next to original / neutralized / mis-signed adjectives. Code is vendored (Apache-2.0; upstream commit \texttt{7d087e9}); templates already render on a real WESAD window. Near-zero extra compute. SensorLM has no public weights, so it cannot be a model-under-test --- templates only. A yes or no lets me freeze the ablation set.
+
+\vspace{0.3em}
+{\color{Ask}\textbf{Ask 3 --- Week-10 check-in format.}}
+The proposal's mid-semester gate is an SDS report on the real-signal cells. Please confirm you still want that as a short written note plus a meeting, rather than a slide deck, so I do not prepare the wrong artifact.
+
+\section{If a GPU does not appear this week}
+
+The design already hard-caps the fidelity anchor: I will write the reproduction gap as ``not obtained,'' close Week~3, and proceed. That is honest and pre-declared. It does \emph{not} unblock Weeks 4--10. Without a ${\ge}16$\,GB GPU, the surrogate grid and the verbalizer ablation --- the paper --- do not run.
+
+I can keep Colab as a last try for the MedAlpaca number alone. I will not pretend that substitutes for the grid.
+
+\section{What I will do next, once Ask 1 is answered}
+
+\begin{enumerate}\setlength{\itemsep}{0.15em}
+  \item Run MedAlpaca on the locked 299-item split; report MAE vs $0.76\pm 0.1$ and the constant-3 baseline, with every patch disclosed.
+  \item Post the OSF model-deviation comment.
+  \item Implement the vLLM log-prob scorer and freeze prompts on a held-out subject fold (Weeks 4--5). No surrogate runs before that freeze.
+\end{enumerate}
+
+The repository, the locked floors, and the OSF page are ready to inspect. The missing piece is a machine that can load a 7B model.
+
+\vspace{0.7em}
+{\color{Accent}\hrule height 0.6pt}
+\vspace{0.35em}
+{\small\color{AccentSoft}
+Shrijak Kumar \textbullet\ 18 September 2026 \textbullet\
+Working log: \texttt{PROGRESS.md} \textbullet\
+This briefing does not change the filed OSF text.
+\par}
+
+\end{document}

@@ -1,12 +1,20 @@
 # Fidelity anchor — reproducing one Health-LLM headline number
 
-**Status: fallback run ATTEMPTED 2026-08-30 — blocked by account rate limits at 35/897 calls.**
-Everything before the API is done and locked: PMData extracted, their generator patched and run
-(299-item eval split, seed 123, `results/anchor/split_manifest.json`), their inference script
-patched (`results/anchor/patches.diff`) and made checkpoint/resumable, scorer written
-(`scripts/score_anchor.py`). The OpenAI org is free-tier: **50 requests/day/model** — the run
-needs 897. Resumes with one command after a billing upgrade (~25 min, ≈$1.30). The primary
-(MedAlpaca) run remains GPU-gated. §6 is filled when a run completes.
+**Status: Week 3 closed (2026-09-20).** OpenAI fallback ABANDONED 2026-09-16.
+Primary MedAlpaca-7b CUDA run is in §6. OSF model-deviation update is public on
+https://osf.io/62r5t (20 Sep 2026). Tag `week-03-done`. Do not start Week 4
+until the user opens it.
+
+```mermaid
+flowchart TD
+  eval["Locked 299-item eval split<br/>sha256 fea3b879…"] --> prompts["Zero-shot prompts, seeds 0/1/2<br/>dry-run locked 2026-09-16"]
+  prompts --> gpu{"CUDA GPU ≥16 GB?"}
+  gpu -->|yes| run["MedAlpaca-7b fp16<br/>scripts/run_medalpaca_anchor.py"]
+  run --> score["First-number MAE ± sd"]
+  score --> gap["Gap vs paper 0.76 ± 0.1"]
+  gpu -->|no this week| cap["Close Week 3: gap = not obtained"]
+  osf["OSF filed 2026-08-30<br/>osf.io/62r5t"] --> comment["Deviation update public 2026-09-20"]
+```
 
 ## 1. Anchor target
 
@@ -20,10 +28,9 @@ Why this cell (full reasoning in `docs/health-llm-notes.md` §5):
   so the API cells are unreproducible in 2026 by anyone.
 - Zero-shot avoids the few-shot exemplar-leakage confound in their released `inference.py`.
 
-Fallback — **VIABLE as of 2026-08-30** (user's OpenAI key stored in git-ignored `.env`;
-`gpt-3.5-turbo-instruct` verified present in the account's model list): few-shot GPT-3.5,
-MAE 0.94 ± 0.1. Runs API-only on this Mac (≈$1). Caveat: this cell inherits their few-shot
-exemplar-leakage confound, which is disclosed wherever the number is reported.
+Fallback — **ABANDONED 2026-09-16.** Few-shot `gpt-3.5-turbo-instruct` was attempted; the
+org is capped at 50 requests/day despite ~$2,500 in credits (OpenAI support confirmed
+credits do not lift rate limits). Do not wait on this cell.
 
 ## 2. Reproduction recipe (fallback executed through step 2 on 2026-08-30; step 3 rate-limited)
 
@@ -59,20 +66,27 @@ The released scripts cannot run as-is; every line reference is verified in
 | I5 | `inference.py` | scope loops to the anchor cell (few-shot, PMData stress) | avoid paying for the other 47 mode×task cells |
 | I6 | `inference.py` | call their `set_seed(seed)` at the top of each seed iteration | defined but never called as released; the paper's "seeds {0,1,2}" otherwise control nothing (notes §3.12) |
 | I7–I8 | `inference.py` | route through `args.model` with bounded (5×) retries; write outputs under `output/gpt-3.5/` and create the directory | `--model` ignored as released (everything hardcodes gemini-pro); infinite retry loop cannot terminate on persistent errors |
+| P2 | `scripts/run_medalpaca_anchor.py` | define the missing `medalpaca_pl` as a transformers text-generation pipeline on `medalpaca/medalpaca-7b`, fp16, CUDA device 0; wrap the list return so the released call site `['generated_text']` works; `return_full_text=False`; greedy (`do_sample=False`); `max_new_tokens=120`; `set_seed` per seed (I6) | `medalpaca_pl` is referenced but never defined (notes §3.5). Full-text pipeline output would make first-number scoring read step counts from the prompt, so completions-only is disclosed. Zero-shot prompt bytes locked 2026-09-16 under `results/anchor/medalpaca/20260916T150339Z_29ef1798/` |
 
 Patch policy: **only** changes needed to make their pipeline execute; no methodological
-improvements. The reproduction gap is reported with these patches disclosed. P2 from the
-original plan (define `medalpaca_pl`) is still pending — it belongs to the GPU-gated
-primary run only.
+improvements beyond the disclosed P2 wrap. The reproduction gap is reported with these
+patches disclosed. P2 inference itself still needs CUDA.
 
 ## 4. Compute plan
 
-MedAlpaca-7b needs ~14 GB in fp16. **This Mac is ruled out** (verified 2026-08-27: 16 GB
-unified memory, 13 GiB free disk — neither holds the fp16 weights). Options:
+MedAlpaca-7b needs ~14 GB in fp16. **This Mac is ruled out** (re-checked 2026-09-16:
+Apple M2 Pro, 16 GB unified memory, 14 GiB free disk, no CUDA, no nvidia-smi, torch
+not installed, MedAlpaca weights not in the HF cache). Options:
 
-1. A GPU box (16 GB card is sufficient) — required for the primary (MedAlpaca) run. Note: no
-   longer implied by the main grid, which moved to the OpenAI API on 2026-08-30; a GPU must be
-   provisioned specifically for this run (or the run waits).
+1. A GPU box (16 GB card is sufficient) — required for the primary (MedAlpaca) run **and**
+   for the restored open-weights grid (Qwen/Llama via vLLM). Same machine covers both.
+   Command: `python scripts/run_medalpaca_anchor.py` (omit `--dry-run`).
+2. **Google Colab** — viable for *this* MedAlpaca cell only (not the Week 4 vLLM grid).
+   Free T4 (16 GB) is the minimum and may OOM on fp16 with these long prompts; Colab Pro
+   L4 (24 GB) or A100 is the runtime that will actually finish. ~897 greedy generations,
+   budget 3–6 hours. Use `notebooks/week3_medalpaca_colab.ipynb`: pack a zip locally
+   (`bash scripts/pack_colab_anchor.sh`), upload it, write checkpoints to Drive via
+   `--out-dir`. Disconnects resume. Do not 4-bit unless fp16 OOMs (disclose if so).
 2. Last resort only: 4-bit quantized weights locally (~4 GB) — this deviates from their
    `transformers` fp16 pipeline and would confound the reproduction; if ever used, the
    quantization is disclosed next to the number and the run is repeated on the GPU box.
@@ -81,19 +95,35 @@ unified memory, 13 GiB free disk — neither holds the fp16 weights). Options:
 
 - [x] PMData: public zip is only 1.4 GB — agent download started 2026-08-27 into
       `data/raw/pmdata/pmdata.zip` (sha256 recorded on completion).
-- [ ] Provide the GPU box (§4) — needed for the **primary** (MedAlpaca) run only.
-- [x] OpenAI key provided 2026-08-30 (git-ignored `.env`) — the fallback anchor is runnable
-  now, on this Mac, without a GPU.
-- [ ] **Upgrade the OpenAI account past the free tier** (add payment method / ≥$5 credits at
-  platform.openai.com → Settings → Billing): the org currently allows 50 requests/day/model
-  (verified 2026-08-30 — killed the fallback run at call 50 and equally caps the gpt-4.1
-  models the main grid uses).
+- [x] GPU box (2026-09-20): Plaksha HTI `10.1.45.49`, NVIDIA RTX A6000 48 GB,
+      driver/CUDA 580.178.04 / 13.0 after admin reboot. Used for the primary MedAlpaca
+      run. Same box is intended for the Week 4–10 vLLM grid (not started).
+- [x] OpenAI key provided 2026-08-30 — fallback attempted; **abandoned 2026-09-16** (rate
+      limits, not credits).
+- [x] OSF model-deviation **update public 2026-09-20** on https://osf.io/62r5t
+      (banner: “This is an update to the original registration. This update was
+      made on Sep 20, 2026.” Submitted 15:02 UTC, `reviews_state=approved`,
+      schema response `6aaff4804f661ffb39d0ab73`). Reason-for-update text matches
+      the locked deviation paragraph. Filed Models section is unchanged.
 
-## 6. Results (to be filled by the run)
+## 6. Results (primary run 2026-09-20)
+
+Artifact: `results/anchor/medalpaca/server_run/run.json`. Host `10.1.45.49`
+(RTX A6000 48 GB, driver 580.178.04, torch 2.14.0+cu130, transformers 5.17,
+`medalpaca/medalpaca-7b` snapshot `fbb41b75…`, fp16, greedy, `max_new_tokens=120`,
+`return_full_text=False`). Prompts byte-identical to the 2026-09-16 lock
+(`0abba6a2` / `6789c809` / `50bee721`; eval `fea3b879…`). 897/897 generations;
+0 `N/A` swallows.
 
 | Quantity | Paper | Our reproduction | Gap |
 |---|---|---|---|
-| PMData stress, zero-shot MedAlpaca-7b, MAE (primary) | 0.76 ± 0.1 | — (GPU-gated) | — |
-| PMData stress, few-shot `gpt-3.5-turbo-instruct`, MAE (fallback) | 0.94 ± 0.1 | — (rate-limited at 35/897 calls) | — |
-| Parse-failure rate | not reported | — | — |
+| PMData stress, zero-shot MedAlpaca-7b, MAE (primary) | 0.76 ± 0.1 | **2.689 ± 0.038** (seeds 2.714 / 2.645 / 2.708) | **+1.929** |
+| PMData stress, few-shot `gpt-3.5-turbo-instruct`, MAE (fallback) | 0.94 ± 0.1 | — (rate-limited at 35/897 calls; abandoned) | — |
+| Parse-failure rate | not reported | 6/897 (2 + 3 + 1) | — |
 | Constant-3 baseline MAE (our addition) | not reported | 0.434 on their Table 16 distribution; **0.401 on our locked 299-item eval split** | — |
+
+Honest gap note (not a rescoring): completions are almost all scale suffixes
+(`out of 5`, `out of 10`, `.5`). Locked first-number scoring therefore reads 5,
+10, or 0.5 (seed 0: 240 / 42 / 15). That is the executed Health-LLM call site
+plus our disclosed P2 wrap, not a better post-hoc parser. The paper's 0.76 is
+not reproduced. Do not retune the scorer to close the gap.

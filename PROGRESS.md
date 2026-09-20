@@ -4,9 +4,9 @@
 - Semester week: **Weeks 4–5 OPENED** (2026-09-20). Weeks 1–3 closed.
   Sequential gate: do not start Week 6 until `week-05-done`.
 - Phase: WESAD + MAUS + CogWear features and floors locked before any LLM grid run.
-- Last session: 2026-09-20 — Prompt IDs frozen from real Qwen3 + Llama-3.1
-  vLLM sweeps (`configs/frozen_prompts.lock.yaml`, 18 cells). Eval grid not
-  started. Do not start Week 6.
+- Last session: 2026-09-20 — Weeks 4–5 still open. Prompts frozen. Eval-grid
+  runner + subject-bootstrap CIs are in. Real-signal A/B numbers not yet a
+  finished artifact. Week 6 closed.
 
 ## Week checklist
 - [x] Week 1 — data + harness foundation (**WESAD 15, MAUS 22, CogWear 10 usable / 11**)
@@ -113,7 +113,8 @@
   - [x] Prompt-dev sweep runner (`scripts/run_prompt_sweep.py`)
   - [x] Real vLLM prompt-dev sweeps on the A6000 (Qwen3-8B + Llama-3.1-8B-Instruct)
   - [x] Frozen prompt IDs (`configs/frozen_prompts.lock.yaml`, 18 cells)
-  - [ ] Real-signal A/B × 2 models × 3 datasets with bootstrap CIs
+  - [x] Eval-grid runner + subject-bootstrap CIs (unit-tested, ConstantClient)
+  - [ ] Real-signal A/B × 2 models × 3 datasets with bootstrap CIs (vLLM artifact)
 - [ ] Weeks 6–15: not started
 
 ## Open blockers

@@ -19,8 +19,12 @@ dist/
 # everything is re-derivable from scripts + committed manifests (checksums recorded).
 # Leading slash is required so src/physio_placebo/data/ (the Python package) is tracked.
 /data/
+# IEEE DataPort drop at repo root (canonical copy lives under data/raw/maus/)
+/MAUS/
 
 # large raw arrays inside results are kept on disk but not in git
 # (metrics, manifests, and JSON results ARE committed)
 results/**/*.npz
+results/anchor/colab_anchor.zip
+results/anchor/**/*.log
 .claude/

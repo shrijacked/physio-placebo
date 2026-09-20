@@ -16,12 +16,12 @@ import argparse
 import json
 from pathlib import Path
 
-import pandas as pd
 import yaml
 from tqdm import tqdm
 
 from physio_placebo.baselines.classical import run_classical_floor
 from physio_placebo.features import frozen
+from physio_placebo.features.matrix import load_feature_matrix
 from physio_placebo.provenance import config_hash, run_metadata, sha256_file, utc_stamp
 
 
@@ -38,11 +38,8 @@ def main() -> None:
         cfg["n_permutations"] = args.n_permutations
 
     features_path = Path(args.features)
-    df = pd.read_parquet(features_path)
+    df = load_feature_matrix(features_path, args.dataset)
     feat_cols = frozen.feature_columns(args.dataset)
-    missing = [c for c in feat_cols if c not in df.columns]
-    if missing:
-        raise SystemExit(f"feature matrix lacks expected columns: {missing}")
 
     results = run_classical_floor(df, feat_cols, cfg, progress=lambda it: tqdm(it, desc="permutations"))
 

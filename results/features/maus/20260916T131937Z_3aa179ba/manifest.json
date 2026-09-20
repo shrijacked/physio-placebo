@@ -1,0 +1,47 @@
+{
+  "created_utc": "2026-09-16T13:19:39.576258+00:00",
+  "git_sha": "dad8099b0545814f34c830e7f10e5837fa37b2dc",
+  "config": {
+    "dataset": "maus",
+    "frozen_code": {
+      "frozen_py_sha256": "702d5f37ebb6cf2c864c85e0cb7c4f840fddfcdaf39c6138933fbaed32d178e1",
+      "neurokit2": "0.2.13",
+      "numpy": "2.4.6",
+      "scipy": "1.17.1"
+    },
+    "windows_manifest_sha256": "9a1d4d3108af5fffc58eed9e8ada1bee61bb75232948216eb698a83cdbd71edd"
+  },
+  "config_sha256": "3aa179babdddd6a834194a115410ee8e55e52fefd9eff03b6cf311c9e754f634",
+  "library_versions": {
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.9.0",
+    "neurokit2": "0.2.13",
+    "cvxopt": "1.3.3"
+  },
+  "n_rows": 1086,
+  "n_subjects": 22,
+  "feature_columns": [
+    "hrv_mean_nn",
+    "hrv_sdnn",
+    "hrv_rmssd",
+    "hrv_pnn50",
+    "hrv_mean_hr",
+    "hrv_lf",
+    "hrv_hf",
+    "hrv_lf_hf"
+  ],
+  "nan_fraction_per_feature": {
+    "hrv_mean_nn": 0.0,
+    "hrv_sdnn": 0.0,
+    "hrv_rmssd": 0.0,
+    "hrv_pnn50": 0.0,
+    "hrv_mean_hr": 0.0,
+    "hrv_lf": 0.0,
+    "hrv_hf": 0.0,
+    "hrv_lf_hf": 0.0
+  },
+  "rows_all_nan": 0,
+  "features_parquet_sha256": "e9367ac17771164dc473ff3dc30e9a703f818d2a9992c1804894688d0387e9b3"
+}

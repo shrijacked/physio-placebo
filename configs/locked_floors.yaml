@@ -1,0 +1,6 @@
+# Locked Week-2 classical floors. These JSON files (and the feature parquets they
+# hash) are the byte-identical matrices that Paradigm B / the LLM verbalizer must
+# consume. Do not retarget a dataset after its floor is locked.
+wesad: results/classical_floor/wesad/20260827T130307Z_600c388f/floor.json
+cogwear: results/classical_floor/cogwear/20260827T134224Z_842011b7/floor.json
+maus: results/classical_floor/maus/20260916T132700Z_4ded037e/floor.json

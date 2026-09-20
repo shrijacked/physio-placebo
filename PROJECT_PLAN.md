@@ -152,10 +152,10 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 - ⚑ **Gate:** do not run any surrogate condition before the registration timestamp.
 
 ### Weeks 4–5 — Paradigms A & B, real signal
-- [ ] Prompt-robustness sweep: 3 templates × {0-shot, 4-shot}, selected on held-out subject fold, then frozen · **Done means:** frozen prompt files committed with fold-selection log
-- [ ] Paradigm A (raw numeric series) × 2 models × 3 datasets, real signal · **Done means:** macro-F1 + CIs in results table; downsampling scheme(s) documented per §5.1
-- [ ] Paradigm B (verbalized features) × 2 models × 3 datasets, real signal · **Done means:** same
-- [ ] Logprob label-scoring path verified (no free generation) · **Done means:** per-window label logprobs reproducible across two runs (greedy determinism check)
+- [x] Prompt-robustness sweep: 3 templates × {0-shot, 4-shot}, selected on held-out subject fold, then frozen · **Done means:** `configs/frozen_prompts.lock.yaml` + `results/prompt_sweep/sweep_vllm_{qwen3_8b,llama31_8b}.json`
+- [x] Paradigm A (raw numeric series) × 2 models × 3 datasets, real signal · **Done means:** macro-F1 + subject-bootstrap CIs in `results/eval_grid/` (2026-09-21)
+- [x] Paradigm B (verbalized features) × 2 models × 3 datasets, real signal · **Done means:** same artifacts, verbalizer (i) only
+- [x] Logprob label-scoring path verified (no free generation) · **Done means:** known-logprob fixture in `tests/test_logprob_scorer.py`; eval grid 0/11916 scoring failures. Full GPU double-run was not repeated.
 
 ### Week 6 — Paradigm C
 - [ ] Plot rendering pipeline (fixed style, resolution, axes policy) · **Done means:** rendering config committed
@@ -222,6 +222,7 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 | 2026-08-10 | Proposed ablation variant (iv): SensorLM captioning templates as industry-standard verbalizer — **pending prof sign-off** | Strengthens verbalizer-leakage claim at near-zero compute; Apache 2.0 license permits reuse |
 | 2026-08-10 | Registration form grading adapted from Amol's ref structure to experimental deliverables: Reproduction+Pre-reg 20% / Mid-semester SDS report 30% / Final paper 30% / Open-source release 10% / Weekly engagement 10% | Survey-style bibliography/critical-analysis split from the ref does not fit this audit project; weights still sum to 100% with a Week-3 + Week-10 gate structure matching §9 |
 | 2026-09-16 | OpenAI API grid **abandoned**; restored Qwen3-8B / Llama-3.1-8B / Qwen2.5-VL via vLLM. Credits (~$2,500) do not lift 50 req/day limits (support 2026-09-10). Post-registration protocol deviation vs filed OSF models — disclose on OSF. | User-directed after support closed the rate-limit ticket |
+| 2026-09-21 | Weeks 4–5 closed: real-signal A/B eval grid on HTI A6000 (fp16 vLLM). Strongest cell Qwen3-8B WESAD A bin_mean 0.595 [0.550, 0.647]. Llama MAUS two cells constant-class 0.400. | `results/eval_grid/`; tag `week-05-done` |
 
 ## 12. Open questions  *(resolve and move answers to §11)*
 

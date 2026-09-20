@@ -1,12 +1,13 @@
 # PROGRESS
 
 ## Current status
-- Semester week: **Weeks 4–5 OPENED** (2026-09-20). Weeks 1–3 closed.
-  Sequential gate: do not start Week 6 until `week-05-done`.
-- Phase: WESAD + MAUS + CogWear features and floors locked before any LLM grid run.
-- Last session: 2026-09-20 — Weeks 4–5 still open. Prompts frozen. Eval-grid
-  runner + subject-bootstrap CIs are in. Real-signal A/B numbers not yet a
-  finished artifact. Week 6 closed.
+- Semester week: **Weeks 4–5 CLOSED** (2026-09-21). Tag `week-05-done`.
+  Week 6 is next and **not started**.
+- Phase: real-signal Paradigms A/B are in for both open models. Surrogates
+  wait for Weeks 7–8. Plots wait for Week 6.
+- Last session: 2026-09-21 — eval grid finished on the HTI A6000
+  (`eval_vllm_qwen3_8b.json` 23:52 IST, `eval_vllm_llama31_8b.json` 00:13 IST).
+  18 cells, 11,916 scored windows, 0 scoring failures.
 
 ## Week checklist
 - [x] Week 1 — data + harness foundation (**WESAD 15, MAUS 22, CogWear 10 usable / 11**)
@@ -101,7 +102,7 @@
         0.76 ± 0.1. Prompts matched the 2026-09-16 lock. Completions are mostly
         `out of 5` / `out of 10`; first-number scoring reads 5 or 10. Documented
         in `docs/fidelity-anchor.md` §6. Do not retune the scorer.
-- [ ] Weeks 4–5 — Paradigms A and B, prompt sweep then freeze (**OPENED 2026-09-20**)
+- [x] Weeks 4–5 — Paradigms A and B, prompt sweep then freeze (**CLOSED 2026-09-21**)
   - [x] Logprob-over-label-tokens scorer + known-logprob fixture
         (`src/physio_placebo/scoring/logprob.py`, `tests/test_logprob_scorer.py`)
   - [x] Label tokens locked as A/B (`configs/label_tokens.yaml`)
@@ -114,14 +115,33 @@
   - [x] Real vLLM prompt-dev sweeps on the A6000 (Qwen3-8B + Llama-3.1-8B-Instruct)
   - [x] Frozen prompt IDs (`configs/frozen_prompts.lock.yaml`, 18 cells)
   - [x] Eval-grid runner + subject-bootstrap CIs (unit-tested, ConstantClient)
-  - [ ] Real-signal A/B × 2 models × 3 datasets with bootstrap CIs (vLLM artifact)
+  - [x] Real-signal A/B × 2 models × 3 datasets with subject-bootstrap CIs
+        (`results/eval_grid/eval_vllm_qwen3_8b.json`,
+        `results/eval_grid/eval_vllm_llama31_8b.json`). Eval subjects only;
+        prompt-dev held out (wesad S2/S8, maus 015/023, cogwear 4/8).
+        5,958 windows × 2 models, 0 failures. Strongest cell: Qwen3-8B
+        WESAD A `bin_mean` / clinical 0-shot **0.595 [0.550, 0.647]**.
+        Llama MAUS A `bin_mean` and MAUS B collapsed to **0.400 [0.400, 0.400]**
+        (constant-class on every eval subject). CogWear CIs are wide (n=90).
+
+  | dataset | cell | Qwen3-8B | Llama-3.1-8B |
+  |---|---|---|---|
+  | wesad | A stride | 0.427 [0.392, 0.465] | 0.333 [0.301, 0.370] |
+  | wesad | A bin_mean | **0.595 [0.550, 0.647]** | 0.230 [0.227, 0.233] |
+  | wesad | B | 0.584 [0.462, 0.699] | 0.283 [0.247, 0.324] |
+  | maus | A stride | 0.467 [0.436, 0.499] | 0.413 [0.403, 0.426] |
+  | maus | A bin_mean | 0.483 [0.452, 0.516] | 0.400 [0.400, 0.400] |
+  | maus | B | 0.487 [0.439, 0.531] | 0.400 [0.400, 0.400] |
+  | cogwear | A stride | 0.576 [0.443, 0.689] | 0.404 [0.392, 0.417] |
+  | cogwear | A bin_mean | 0.396 [0.380, 0.411] | 0.440 [0.399, 0.495] |
+  | cogwear | B | 0.475 [0.393, 0.504] | 0.479 [0.375, 0.640] |
+
 - [ ] Weeks 6–15: not started
 
 ## Open blockers
-- ~~**GPU hardware**~~ **RESOLVED 2026-09-20** for the Week-3 number: account
-  `shrijak` on Plaksha HTI `10.1.45.49`, RTX A6000 48 GB, driver 580.178.04 after
-  admin reboot. Same box is intended for Weeks 4–10 vLLM. **Do not start Week 4
-  until Week 4–5 prompt freeze.** This Mac still cannot run the grid.
+- ~~**GPU hardware**~~ **RESOLVED 2026-09-20**: account `shrijak` on Plaksha HTI
+  `10.1.45.49`, RTX A6000 48 GB. Used for the Week-3 anchor and the Weeks 4–5
+  sweep + eval grid. This Mac still cannot run the grid.
 - ~~OpenAI account tier~~ **CLOSED 2026-09-16 as a grid path.** Credits (~$2,499) sit in
   `codex-btzye1` with a 50 req/day/model cap; support (Kristian, 2026-09-10) confirmed
   credits do not lift rate limits. Stretch GPT cell stays optional and unused.
@@ -143,6 +163,10 @@
 - ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-09-21: **Weeks 4–5 closed.** Real-signal A/B eval grid on the HTI A6000
+  (fp16 vLLM 0.29, `max_model_len` 32768, FlashInfer sampler off). Artifacts
+  `results/eval_grid/eval_vllm_{qwen3_8b,llama31_8b}.json`. Do not retune
+  frozen prompts. Do not start Week 6 until asked.
 - 2026-09-20: **Prompt IDs frozen** from `sweep_vllm_qwen3_8b.json` and
   `sweep_vllm_llama31_8b.json` (4608 scored / 0 failures each). Lockfile
   `configs/frozen_prompts.lock.yaml`. Do not retune. Eval grid is next.
@@ -225,10 +249,9 @@
 - MAUS on real data — **RESOLVED 2026-09-16**.
 - ~~Fidelity-anchor reproduction *number*~~ **RESOLVED 2026-09-20**: MAE 2.689 ± 0.038,
   gap +1.929, artifact `results/anchor/medalpaca/server_run/`.
-- Everything LLM-side (paradigms, prompts, surrogates, vLLM logprob scoring, SDS) —
-  Week 4–5 scorer + sweep runner are in; **prompt-dev vLLM sweep not yet a
-  finished artifact; winners not frozen; eval grid not started.** Surrogates
-  remain Weeks 7–8.
+- Everything LLM-side after the real-signal A/B grid: Paradigm C (Week 6),
+  surrogates (Weeks 7–8), verbalizer ablation (Week 9). Weeks 4–5 A/B numbers
+  are in `results/eval_grid/`.
 - `pip install -e .` required `required_permissions=all` in this sandbox (a `.pth` write);
   fresh-clone install on a second machine still unverified (GPU box required again).
 - Health-LLM releases **no evaluation code** (verified 2026-08-27: no `eval/` dir;

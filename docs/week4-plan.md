@@ -54,3 +54,13 @@ vLLM is imported only inside `VLLMLogprobClient.load`. Unit tests never load a G
 8. `prompts/sweep.py` + `scripts/run_prompt_sweep.py` on prompt-dev subjects only.
 9. **Do not freeze** until a real `--client vllm` artifact exists.
 10. **Do not run the eval grid** until the lockfile is committed.
+
+## Closed (2026-09-21)
+
+All ten increments ran. Lockfile `configs/frozen_prompts.lock.yaml` (18 winners).
+Eval artifacts:
+
+- `results/eval_grid/eval_vllm_qwen3_8b.json` (9 cells, 5958 scored, 0 fail)
+- `results/eval_grid/eval_vllm_llama31_8b.json` (9 cells, 5958 scored, 0 fail)
+
+Tag `week-05-done`. Week 6 (plots) is not this file.

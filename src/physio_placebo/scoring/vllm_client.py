@@ -45,22 +45,26 @@ def build_sampling_params(SamplingParams: Any, label_ids: list[int], spec: dict)
 
     Never sets allowed_token_ids — that renormalizes and is not the OSF rule.
     """
-    kwargs: dict[str, Any] = {
+    base: dict[str, Any] = {
         "temperature": float(spec["temperature"]),
         "max_tokens": int(spec["max_tokens"]),
-        "logprobs": int(spec["logprobs_topk"]),
     }
-    for extra in (
-        {"logprob_token_ids": label_ids},
-        {"sampled_logprobs_ids": label_ids},
-        {"logprobs": -1},
-        {},
-    ):
+    attempts: tuple[dict[str, Any], ...] = (
+        {**base, "logprobs": len(label_ids), "logprob_token_ids": label_ids},
+        {**base, "logprobs": -1},
+        {**base, "logprobs": int(spec["logprobs_topk"])},
+        base,
+    )
+    for kwargs in attempts:
         try:
-            return SamplingParams(**kwargs, **extra)
+            return SamplingParams(**kwargs)
         except (TypeError, ValueError):
             continue
-    return SamplingParams(**kwargs)
+        except Exception as exc:
+            if type(exc).__name__ != "VLLMValidationError":
+                raise
+            continue
+    return SamplingParams(**base)
 
 
 class VLLMLogprobClient:

@@ -58,14 +58,22 @@ def test_llm_engine_kwargs_omit_null_quantization():
     assert locked.get("quantization") not in {"bitsandbytes", "bnb"}
 
 
-def test_build_sampling_params_prefers_explicit_token_ids():
+def test_build_sampling_params_logprobs_count_matches_label_ids():
     from physio_placebo.scoring.vllm_client import build_sampling_params
 
-    class Fake:
+    class VLLMLike:
         def __init__(self, **kwargs):
+            ids = kwargs.get("logprob_token_ids")
+            lp = kwargs.get("logprobs")
+            if ids is not None and lp is not None and lp != len(ids):
+                raise ValueError(
+                    "When both logprobs and logprob_token_ids are set, "
+                    "logprobs must equal len(logprob_token_ids)"
+                )
             self.kwargs = kwargs
 
     spec = {"temperature": 0.0, "max_tokens": 1, "logprobs_topk": 32}
-    p = build_sampling_params(Fake, [10, 11], spec)
+    p = build_sampling_params(VLLMLike, [10, 11], spec)
     assert p.kwargs.get("logprob_token_ids") == [10, 11]
+    assert p.kwargs.get("logprobs") == 2
     assert p.kwargs.get("allowed_token_ids") is None

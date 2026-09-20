@@ -13,6 +13,7 @@ from physio_placebo.prompts.freeze import (
     build_lockfile,
     frozen_choice,
     load_frozen_prompts,
+    load_frozen_prompts_c,
     write_lockfile,
 )
 from physio_placebo.prompts.sweep import pick_winner
@@ -91,3 +92,12 @@ def test_committed_lockfile_is_frozen():
     assert lock["frozen"] is True
     assert len(lock["winners"]) == 18
     assert frozen_choice("cogwear", "llama31_8b", "B", None)["template_id"] == "minimal"
+
+
+def test_committed_c_lockfile_is_frozen():
+    lock = load_frozen_prompts_c()
+    assert lock["frozen"] is True
+    assert len(lock["winners"]) == 2
+    assert {w["dataset"] for w in lock["winners"]} == {"wesad", "maus"}
+    assert all(w["paradigm"] == "C" and w["template_id"] == "instruction" and w["n_shot"] == 4 for w in lock["winners"])
+    assert frozen_choice("wesad", "qwen25_vl", "C", None)["n_shot"] == 4

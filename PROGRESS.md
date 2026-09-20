@@ -5,7 +5,8 @@
   (`week-05-done`). Sequential gate: do not start Week 7 until `week-06-done`.
 - Phase: real-signal A/B is locked. Paradigm C (plots → Qwen2.5-VL) is in
   progress. Surrogates wait for Weeks 7–8.
-- Last session: 2026-09-21 — Week 6 opened after the A/B eval grid.
+- Last session: 2026-09-21 — VL prompt-dev sweep done; C prompts frozen
+  (instruction 4-shot on WESAD + MAUS). Eval grid is next.
 
 ## Week checklist
 - [x] Week 1 — data + harness foundation (**WESAD 15, MAUS 22, CogWear 10 usable / 11**)
@@ -138,8 +139,10 @@
   - [x] Deterministic matplotlib PNG (same window → same bytes)
         (`src/physio_placebo/paradigms/plot.py`, `tests/test_plot.py`)
   - [x] Sweep / eval / freeze path for C (WESAD+MAUS; A/B lock untouched)
-  - [ ] Prompt-dev VL sweep on WESAD + MAUS (real vLLM)
-  - [ ] C prompt IDs frozen (`configs/frozen_prompts_c.lock.yaml`)
+  - [x] Prompt-dev VL sweep on WESAD + MAUS (real vLLM)
+        (`results/prompt_sweep/sweep_vllm_qwen25_vl.json`, 12 cells, 1392/0 fail)
+  - [x] C prompt IDs frozen (`configs/frozen_prompts_c.lock.yaml`):
+        instruction 4-shot on wesad (dev F1 0.499) and maus (dev F1 0.433)
   - [ ] Real-signal C macro-F1 + CIs (WESAD + MAUS)
 - [ ] Weeks 7–15: not started
 
@@ -168,6 +171,9 @@
 - ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-09-21: **C prompts frozen** from `sweep_vllm_qwen25_vl.json`. Winners:
+  instruction 4-shot on WESAD and MAUS. A/B lockfile unchanged (18 cells).
+  Do not retune. Eval grid is next.
 - 2026-09-21: **Week 6 opened.** Paradigm C is matplotlib line plots of the
   primary channel (WESAD ECG, MAUS PPG) → Qwen2.5-VL-7B-Instruct. A/B lockfile
   stays 18 cells. C freeze is a separate file. No CogWear. No surrogates.

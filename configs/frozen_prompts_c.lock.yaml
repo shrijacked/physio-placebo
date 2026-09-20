@@ -1,0 +1,33 @@
+frozen: true
+frozen_at_utc: 20260920T195648Z
+git_sha_at_freeze: 828f372e2788c2d55d3fd8398d792bf5ed36a5b4
+seed: 1337
+n_dev: 2
+source_sweeps:
+- results/prompt_sweep/sweep_vllm_qwen25_vl.json
+winners:
+- dataset: wesad
+  model: qwen25_vl
+  paradigm: C
+  scheme: null
+  template_id: instruction
+  n_shot: 4
+  macro_f1: 0.49929198527329366
+  n_scored: 136
+  n_failures: 0
+  prompt_dev_subjects:
+  - S2
+  - S8
+- dataset: maus
+  model: qwen25_vl
+  paradigm: C
+  scheme: null
+  template_id: instruction
+  n_shot: 4
+  macro_f1: 0.43281875357347055
+  n_scored: 96
+  n_failures: 0
+  prompt_dev_subjects:
+  - '015'
+  - '023'
+note: Paradigm C prompt IDs frozen from a real vLLM VL sweep. Do not retune A/B.

@@ -1,0 +1,14 @@
+# Two candidate Paradigm A series compressions (PROJECT_PLAN.md §5.1 / §12).
+# Both are applied per window, per channel, independently. Neither is "correct";
+# the prompt sweep and the paper report both so the downsample is not a silent knob.
+#
+# uniform_stride: keep every k-th sample so the kept length is n_keep (or the
+#   raw length if shorter). Preserves instantaneous samples; throws away the rest.
+# bin_mean: non-overlapping block averages to n_bins values. Preserves local means;
+#   destroys high-frequency shape.
+
+schemes:
+  uniform_stride:
+    n_keep: 256
+  bin_mean:
+    n_bins: 128

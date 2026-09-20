@@ -16,7 +16,7 @@ WESAD, MAUS, and CogWear are windowed with frozen features and locked classical 
 **Week 3 number is in:** zero-shot MedAlpaca-7b MAE **2.689 ± 0.038** vs paper
 0.76 ± 0.1 (gap +1.929). OSF model-deviation update is public on the same
 registration (2026-09-20). The LLM grid (Qwen3-8B + Llama-3.1-8B + Qwen2.5-VL,
-4-bit vLLM, logprob scoring) starts when Week 4 is opened. The OpenAI
+4-bit vLLM, logprob scoring) is Week 4–5 work. The OpenAI
 API path was abandoned 2026-09-16 (rate-limit wall).
 
 Locked numbers and blockers live in [`PROGRESS.md`](PROGRESS.md). The design is in

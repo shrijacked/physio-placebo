@@ -1,12 +1,11 @@
 # PROGRESS
 
 ## Current status
-- Semester week: **Week 3 CLOSED** (2026-09-20). Weeks 1–2 closed 2026-09-16.
-  Sequential gate: do not start Week 4 until the user explicitly opens it.
+- Semester week: **Weeks 4–5 OPENED** (2026-09-20). Weeks 1–3 closed.
+  Sequential gate: do not start Week 6 until `week-05-done`.
 - Phase: WESAD + MAUS + CogWear features and floors locked before any LLM grid run.
-- Last session: 2026-09-20 — OSF model-deviation update verified public on
-  https://osf.io/62r5t (approved, schema response `6aaff4804f661ffb39d0ab73`).
-  MedAlpaca MAE **2.689 ± 0.038**, gap **+1.929**.
+- Last session: 2026-09-20 — Week 4 opened. Scorer / templates / verbalizer (i)
+  / two Paradigm A downsample schemes landed locally; vLLM grid not run.
 
 ## Week checklist
 - [x] Week 1 — data + harness foundation (**WESAD 15, MAUS 22, CogWear 10 usable / 11**)
@@ -101,13 +100,24 @@
         0.76 ± 0.1. Prompts matched the 2026-09-16 lock. Completions are mostly
         `out of 5` / `out of 10`; first-number scoring reads 5 or 10. Documented
         in `docs/fidelity-anchor.md` §6. Do not retune the scorer.
-- [ ] Weeks 4–15: not started (by design — post-prereg)
+- [ ] Weeks 4–5 — Paradigms A and B, prompt sweep then freeze (**OPENED 2026-09-20**)
+  - [x] Logprob-over-label-tokens scorer + known-logprob fixture
+        (`src/physio_placebo/scoring/logprob.py`, `tests/test_logprob_scorer.py`)
+  - [x] Label tokens locked as A/B (`configs/label_tokens.yaml`)
+  - [x] Three prompt templates × {0-shot, 4-shot} renderer
+  - [x] Verbalizer variant (i) on locked features, train-fold medians
+  - [x] Two Paradigm A downsample schemes documented + tested
+        (`uniform_stride` n=256, `bin_mean` n=128)
+  - [ ] Prompt sweep on prompt-dev subjects; freeze winning IDs
+  - [ ] Real-signal A/B × 2 models × 3 datasets with bootstrap CIs
+  - [ ] vLLM client on the HTI A6000 (not a local dependency yet)
+- [ ] Weeks 6–15: not started
 
 ## Open blockers
 - ~~**GPU hardware**~~ **RESOLVED 2026-09-20** for the Week-3 number: account
   `shrijak` on Plaksha HTI `10.1.45.49`, RTX A6000 48 GB, driver 580.178.04 after
   admin reboot. Same box is intended for Weeks 4–10 vLLM. **Do not start Week 4
-  until the user opens Week 4.** This Mac still cannot run the grid.
+  until Week 4–5 prompt freeze.** This Mac still cannot run the grid.
 - ~~OpenAI account tier~~ **CLOSED 2026-09-16 as a grid path.** Credits (~$2,499) sit in
   `codex-btzye1` with a 50 req/day/model cap; support (Kristian, 2026-09-10) confirmed
   credits do not lift rate limits. Stretch GPT cell stays optional and unused.
@@ -129,6 +139,9 @@
 - ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-09-20: **Week 4 opened.** First slice is the logprob scorer, A/B tokens,
+  three templates, verbalizer (i), and two downsample schemes. No surrogate
+  code. No Week 6 plots. GPU grid waits on the prompt sweep.
 - 2026-09-20: OSF model-deviation **update verified public** on https://osf.io/62r5t
   (submitted 15:02 UTC, approved). Week 3 closed.
 - 2026-09-20: **Fidelity-anchor number obtained.** Zero-shot MedAlpaca-7b on the
@@ -202,7 +215,7 @@
   gap +1.929, artifact `results/anchor/medalpaca/server_run/`.
 - Everything LLM-side (paradigms, prompts, surrogates, vLLM logprob scoring, SDS) —
   intentionally absent until Week 4. Scientifically unblocked (prereg filed) and
-  hardware exists; **Week 4 not started** until the user opens it.
+  hardware exists; Week 4–5 scorer is in; **vLLM grid not started.**
 - `pip install -e .` required `required_permissions=all` in this sandbox (a `.pth` write);
   fresh-clone install on a second machine still unverified (GPU box required again).
 - Health-LLM releases **no evaluation code** (verified 2026-08-27: no `eval/` dir;

@@ -1,0 +1,18 @@
+# Binary class tokens for logprob scoring (Weeks 4+).
+# Tokens are single ASCII letters so they remain one token in Qwen and Llama.
+# Class names live in the prompt, never in the scored string.
+# y is the locked binary label in the feature parquet (0 = negative, 1 = positive).
+
+tokens: ["A", "B"]
+tie_break: first_in_tokens  # if logprobs are equal, pick tokens[0]
+
+datasets:
+  wesad:
+    A: non-stress
+    B: stress
+  maus:
+    A: low-workload
+    B: high-workload
+  cogwear:
+    A: baseline
+    B: stroop

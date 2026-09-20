@@ -29,6 +29,16 @@ def test_missing_label_id_is_scoring_failure():
         extract_label_logprobs({10: _LP(-0.1)}, {"A": 10, "B": 11})
 
 
+def test_prepare_vllm_runtime_disables_flashinfer_sampler(monkeypatch):
+    import os
+
+    monkeypatch.delenv("VLLM_USE_FLASHINFER_SAMPLER", raising=False)
+    from physio_placebo.scoring.vllm_client import prepare_vllm_runtime
+
+    prepare_vllm_runtime()
+    assert os.environ["VLLM_USE_FLASHINFER_SAMPLER"] == "0"
+
+
 def test_llm_engine_kwargs_omit_null_quantization():
     from physio_placebo.scoring.vllm_client import llm_engine_kwargs, load_model_spec
 

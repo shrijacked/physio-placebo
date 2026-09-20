@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from collections.abc import Sequence
 from typing import Any
 
@@ -14,6 +15,14 @@ from physio_placebo.scoring.vllm_extract import extract_label_logprobs, single_t
 
 def load_model_spec() -> dict:
     return yaml.safe_load((configs_dir() / "models.yaml").read_text())
+
+
+def prepare_vllm_runtime() -> None:
+    """This box has no ninja; FlashInfer sampler JIT then kills engine warmup.
+
+    Logprob scoring does not need that sampler.
+    """
+    os.environ.setdefault("VLLM_USE_FLASHINFER_SAMPLER", "0")
 
 
 def llm_engine_kwargs(spec: dict, model_cfg: dict) -> dict[str, Any]:
@@ -65,6 +74,7 @@ class VLLMLogprobClient:
         self._token_ids: dict[str, int] | None = None
 
     def load(self) -> None:
+        prepare_vllm_runtime()
         from vllm import LLM
 
         if self._llm is None:

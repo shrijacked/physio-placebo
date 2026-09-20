@@ -20,8 +20,9 @@ def _client(kind: str, model_key: str):
     if kind == "constant":
         return ConstantClient()
     if kind == "vllm":
-        from physio_placebo.scoring.vllm_client import VLLMLogprobClient
+        from physio_placebo.scoring.vllm_client import VLLMLogprobClient, prepare_vllm_runtime
 
+        prepare_vllm_runtime()
         return VLLMLogprobClient(model_key)
     raise SystemExit(f"unknown --client {kind}")
 

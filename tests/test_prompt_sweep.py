@@ -66,6 +66,30 @@ def test_wesad_window_index_matches_feature_row():
     assert int(sw.y[idx]) == int(row.y)
 
 
+def test_paradigm_a_sweep_loads_only_prompt_dev_windows(monkeypatch):
+    """Prompt-dev sweep must not touch eval-subject npz (server only has n_dev=2)."""
+    loaded: list[str] = []
+    real = load_windows
+
+    def spy(dataset: str, subject: str):
+        loaded.append(str(subject))
+        return real(dataset, subject)
+
+    monkeypatch.setattr("physio_placebo.prompts.sweep.load_windows", spy)
+    rows = run_dataset_sweep(
+        "wesad",
+        ConstantClient(),
+        paradigm="A",
+        scheme="uniform_stride",
+        model_key="constant",
+    )
+    subjects = load_locked_feature_matrix("wesad")["subject"].astype(str).unique()
+    dev, eval_ = prompt_dev_split(sorted(subjects), n_dev=2, seed=1337)
+    assert set(loaded) == set(dev)
+    assert set(eval_).isdisjoint(loaded)
+    assert set(rows[0]["prompt_dev_subjects"]) == set(dev)
+
+
 def test_maus_paradigm_b_sweep_runs_on_constant_client():
     rows = run_dataset_sweep(
         "maus",

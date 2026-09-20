@@ -1,8 +1,10 @@
 # Open-weights stack for Weeks 4–5 (OSF deviation 2026-09-16).
-# 4-bit via bitsandbytes on vLLM. Do not add a vision model here (Week 6).
+# Same HF ids as the OSF comment. vLLM 0.29 dropped bitsandbytes; the A6000
+# 48GB box runs these 8B checkpoints in fp16. Do not add a vision model (Week 6).
 
-quantization: bitsandbytes
+quantization: null
 dtype: float16
+max_model_len: 8192
 max_tokens: 1
 temperature: 0.0
 # Request these token ids from the full-vocab softmax. Do not set

@@ -16,6 +16,21 @@ def load_model_spec() -> dict:
     return yaml.safe_load((configs_dir() / "models.yaml").read_text())
 
 
+def llm_engine_kwargs(spec: dict, model_cfg: dict) -> dict[str, Any]:
+    """LLM() kwargs. Omit null quantization — vLLM 0.29 has no bitsandbytes."""
+    kw: dict[str, Any] = {
+        "model": model_cfg["hf_id"],
+        "dtype": spec.get("dtype", "float16"),
+        "max_logprobs": max(int(spec["logprobs_topk"]), 32),
+    }
+    quant = spec.get("quantization")
+    if quant:
+        kw["quantization"] = quant
+    if spec.get("max_model_len") is not None:
+        kw["max_model_len"] = int(spec["max_model_len"])
+    return kw
+
+
 def build_sampling_params(SamplingParams: Any, label_ids: list[int], spec: dict) -> Any:
     """Full-vocab softmax; request label ids if this vLLM build supports it.
 
@@ -26,13 +41,17 @@ def build_sampling_params(SamplingParams: Any, label_ids: list[int], spec: dict)
         "max_tokens": int(spec["max_tokens"]),
         "logprobs": int(spec["logprobs_topk"]),
     }
-    try:
-        return SamplingParams(**kwargs, sampled_logprobs_ids=label_ids)
-    except TypeError:
+    for extra in (
+        {"logprob_token_ids": label_ids},
+        {"sampled_logprobs_ids": label_ids},
+        {"logprobs": -1},
+        {},
+    ):
         try:
-            return SamplingParams(**kwargs, logprobs=-1)
+            return SamplingParams(**kwargs, **extra)
         except (TypeError, ValueError):
-            return SamplingParams(**kwargs)
+            continue
+    return SamplingParams(**kwargs)
 
 
 class VLLMLogprobClient:
@@ -49,12 +68,7 @@ class VLLMLogprobClient:
         from vllm import LLM
 
         if self._llm is None:
-            self._llm = LLM(
-                model=self.model_cfg["hf_id"],
-                quantization=self.spec.get("quantization"),
-                dtype=self.spec.get("dtype", "float16"),
-                max_logprobs=max(int(self.spec["logprobs_topk"]), 32),
-            )
+            self._llm = LLM(**llm_engine_kwargs(self.spec, self.model_cfg))
         if self._tokenizer is None:
             self._tokenizer = self._llm.get_tokenizer()
         self._token_ids = {t: single_token_id(self._tokenizer, t) for t in self.tokens}

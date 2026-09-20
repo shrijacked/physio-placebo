@@ -4,8 +4,10 @@
 - Semester week: **Weeks 4–5 OPENED** (2026-09-20). Weeks 1–3 closed.
   Sequential gate: do not start Week 6 until `week-05-done`.
 - Phase: WESAD + MAUS + CogWear features and floors locked before any LLM grid run.
-- Last session: 2026-09-20 — Week 4 opened. Scorer / templates / verbalizer (i)
-  / two Paradigm A downsample schemes landed locally; vLLM grid not run.
+- Last session: 2026-09-20 — Week 4 prompt-dev sweep is the live step. Scorer
+  and vLLM client are in. Sweep loads only prompt-dev windows. vLLM 0.29 has
+  no bitsandbytes; same HF ids run in fp16. Winners not frozen. Eval grid not
+  started.
 
 ## Week checklist
 - [x] Week 1 — data + harness foundation (**WESAD 15, MAUS 22, CogWear 10 usable / 11**)
@@ -140,6 +142,11 @@
 - ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-09-20: **vLLM 0.29 dropped bitsandbytes.** Prompt-dev sweep uses the same
+  HF ids (`Qwen/Qwen3-8B`, later Llama-3.1-8B-Instruct) in fp16 on the A6000
+  48GB. OSF Models text not rewritten. 4-bit was a 16GB-card constraint.
+- 2026-09-20: Prompt-dev sweep builds Paradigm A bodies for prompt-dev subjects
+  only (`n_dev=2`, seed 1337). Split is still computed on the full locked roster.
 - 2026-09-20: **Week 4 opened.** First slice is the logprob scorer, A/B tokens,
   three templates, verbalizer (i), and two downsample schemes. No surrogate
   code. No Week 6 plots. GPU grid waits on the prompt sweep.
@@ -215,8 +222,9 @@
 - ~~Fidelity-anchor reproduction *number*~~ **RESOLVED 2026-09-20**: MAE 2.689 ± 0.038,
   gap +1.929, artifact `results/anchor/medalpaca/server_run/`.
 - Everything LLM-side (paradigms, prompts, surrogates, vLLM logprob scoring, SDS) —
-  intentionally absent until Week 4. Scientifically unblocked (prereg filed) and
-  hardware exists; Week 4–5 scorer is in; **vLLM grid not started.**
+  Week 4–5 scorer + sweep runner are in; **prompt-dev vLLM sweep not yet a
+  finished artifact; winners not frozen; eval grid not started.** Surrogates
+  remain Weeks 7–8.
 - `pip install -e .` required `required_permissions=all` in this sandbox (a `.pth` write);
   fresh-clone install on a second machine still unverified (GPU box required again).
 - Health-LLM releases **no evaluation code** (verified 2026-08-27: no `eval/` dir;

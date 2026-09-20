@@ -27,3 +27,35 @@ def test_plain_float_entries_work():
 def test_missing_label_id_is_scoring_failure():
     with pytest.raises(ScoringFailure, match="missing"):
         extract_label_logprobs({10: _LP(-0.1)}, {"A": 10, "B": 11})
+
+
+def test_llm_engine_kwargs_omit_null_quantization():
+    from physio_placebo.scoring.vllm_client import llm_engine_kwargs, load_model_spec
+
+    spec = {
+        "quantization": None,
+        "dtype": "float16",
+        "logprobs_topk": 32,
+        "max_model_len": 8192,
+    }
+    kw = llm_engine_kwargs(spec, {"hf_id": "Qwen/Qwen3-8B"})
+    assert "quantization" not in kw
+    assert kw["model"] == "Qwen/Qwen3-8B"
+    assert kw["dtype"] == "float16"
+    assert kw["max_model_len"] == 8192
+
+    locked = load_model_spec()
+    assert locked.get("quantization") not in {"bitsandbytes", "bnb"}
+
+
+def test_build_sampling_params_prefers_explicit_token_ids():
+    from physio_placebo.scoring.vllm_client import build_sampling_params
+
+    class Fake:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+    spec = {"temperature": 0.0, "max_tokens": 1, "logprobs_topk": 32}
+    p = build_sampling_params(Fake, [10, 11], spec)
+    assert p.kwargs.get("logprob_token_ids") == [10, 11]
+    assert p.kwargs.get("allowed_token_ids") is None

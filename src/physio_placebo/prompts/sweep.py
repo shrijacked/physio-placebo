@@ -52,9 +52,17 @@ def pick_exemplars(
     ]
 
 
-def _bodies_for_dataset(dataset: str, paradigm: str, scheme: str | None) -> pd.DataFrame:
+def _bodies_for_dataset(
+    dataset: str,
+    paradigm: str,
+    scheme: str | None,
+    subjects: Sequence[str] | None = None,
+) -> pd.DataFrame:
     assert_matches_locked_floor(dataset)
     feat = load_locked_feature_matrix(dataset)
+    if subjects is not None:
+        keep = set(map(str, subjects))
+        feat = feat[feat["subject"].astype(str).isin(keep)].copy()
     if paradigm == "B":
         cols = feature_columns(dataset)
         # Medians recomputed per scored subject; placeholder column filled later.
@@ -156,9 +164,9 @@ def run_dataset_sweep(
 ) -> list[dict]:
     spec = load_sweep_spec()
     seed = int(spec["seed"])
-    frame = _bodies_for_dataset(dataset, paradigm, scheme)
-    subjects = sorted(frame["subject"].astype(str).unique())
-    dev, _eval = prompt_dev_split(subjects, n_dev=int(spec["n_dev"]), seed=seed)
+    all_subjects = sorted(load_locked_feature_matrix(dataset)["subject"].astype(str).unique())
+    dev, _eval = prompt_dev_split(all_subjects, n_dev=int(spec["n_dev"]), seed=seed)
+    frame = _bodies_for_dataset(dataset, paradigm, scheme, subjects=dev)
     results: list[dict] = []
     for template_id in spec["template_ids"]:
         if template_id not in TEMPLATE_IDS:

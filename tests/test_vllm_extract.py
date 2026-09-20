@@ -56,6 +56,7 @@ def test_llm_engine_kwargs_omit_null_quantization():
 
     locked = load_model_spec()
     assert locked.get("quantization") not in {"bitsandbytes", "bnb"}
+    assert int(locked["max_model_len"]) >= 16384
 
 
 def test_build_sampling_params_logprobs_count_matches_label_ids():

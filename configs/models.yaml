@@ -4,7 +4,8 @@
 
 quantization: null
 dtype: float16
-max_model_len: 8192
+# 4-shot Paradigm A series prompts overflowed 8192 on Qwen3 (8193 tokens).
+max_model_len: 32768
 max_tokens: 1
 temperature: 0.0
 # Request these token ids from the full-vocab softmax. Do not set

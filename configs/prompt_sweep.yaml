@@ -1,0 +1,15 @@
+# Prompt-dev sweep (Weeks 4–5). Winning IDs are frozen only after a real vLLM run.
+seed: 1337
+n_dev: 2
+n_shot: [0, 4]
+n_exemplars: 4
+template_ids: [instruction, clinical, minimal]
+paradigms:
+  - {paradigm: A, scheme: uniform_stride}
+  - {paradigm: A, scheme: bin_mean}
+  - {paradigm: B, scheme: null}
+primary_channel:
+  wesad: ecg
+  maus: ppg
+  cogwear: bvp
+datasets: [wesad, maus, cogwear]

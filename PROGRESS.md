@@ -108,9 +108,10 @@
   - [x] Verbalizer variant (i) on locked features, train-fold medians
   - [x] Two Paradigm A downsample schemes documented + tested
         (`uniform_stride` n=256, `bin_mean` n=128)
-  - [ ] Prompt sweep on prompt-dev subjects; freeze winning IDs
+  - [x] vLLM client + extract helpers (unit-tested without GPU)
+  - [x] Prompt-dev sweep runner (`scripts/run_prompt_sweep.py`)
+  - [ ] Real vLLM sweep on the A6000; then freeze winning IDs
   - [ ] Real-signal A/B × 2 models × 3 datasets with bootstrap CIs
-  - [ ] vLLM client on the HTI A6000 (not a local dependency yet)
 - [ ] Weeks 6–15: not started
 
 ## Open blockers

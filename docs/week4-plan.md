@@ -45,4 +45,12 @@ flowchart TD
 4. Verbalizer (i) on locked features, train-fold medians only.
 5. Two Paradigm A downsample schemes (uniform stride, bin mean), documented.
 
-vLLM is not a local dependency yet. The client is a protocol; the unit tests never load a GPU.
+vLLM is imported only inside `VLLMLogprobClient.load`. Unit tests never load a GPU.
+
+## This increment (vLLM client + prompt-dev sweep)
+
+6. `scoring/vllm_extract.py` + `scoring/vllm_client.py` — full-vocab label logprobs, no `allowed_token_ids`.
+7. Paradigm A series body from the locked primary channel.
+8. `prompts/sweep.py` + `scripts/run_prompt_sweep.py` on prompt-dev subjects only.
+9. **Do not freeze** until a real `--client vllm` artifact exists.
+10. **Do not run the eval grid** until the lockfile is committed.

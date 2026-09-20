@@ -1,0 +1,19 @@
+# Open-weights stack for Weeks 4–5 (OSF deviation 2026-09-16).
+# 4-bit via bitsandbytes on vLLM. Do not add a vision model here (Week 6).
+
+quantization: bitsandbytes
+dtype: float16
+max_tokens: 1
+temperature: 0.0
+# Request these token ids from the full-vocab softmax. Do not set
+# allowed_token_ids — that would renormalize and is not the OSF rule.
+logprobs_topk: 32
+
+models:
+  qwen3_8b:
+    hf_id: Qwen/Qwen3-8B
+    chat_kwargs:
+      enable_thinking: false
+  llama31_8b:
+    hf_id: meta-llama/Llama-3.1-8B-Instruct
+    chat_kwargs: {}

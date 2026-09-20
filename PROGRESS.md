@@ -1,12 +1,11 @@
 # PROGRESS
 
 ## Current status
-- Semester week: **Week 6 OPENED** (2026-09-21). Weeks 1–5 closed
-  (`week-05-done`). Sequential gate: do not start Week 7 until `week-06-done`.
-- Phase: real-signal A/B is locked. Paradigm C (plots → Qwen2.5-VL) is in
-  progress. Surrogates wait for Weeks 7–8.
-- Last session: 2026-09-21 — VL prompt-dev sweep done; C prompts frozen
-  (instruction 4-shot on WESAD + MAUS). Eval grid is next.
+- Semester week: **Week 6 CLOSED** (2026-09-21). Tag `week-06-done`.
+  Weeks 7–8 are next and **not started**.
+- Phase: real-signal A/B/C numbers are in. Surrogates wait for Weeks 7–8.
+- Last session: 2026-09-21 — Paradigm C eval finished on the HTI A6000
+  (`eval_vllm_qwen25_vl.json`). 2 cells, 1,896 scored, 0 failures.
 
 ## Week checklist
 - [x] Week 1 — data + harness foundation (**WESAD 15, MAUS 22, CogWear 10 usable / 11**)
@@ -135,7 +134,7 @@
   | cogwear | A bin_mean | 0.396 [0.380, 0.411] | 0.440 [0.399, 0.495] |
   | cogwear | B | 0.475 [0.393, 0.504] | 0.479 [0.375, 0.640] |
 
-- [ ] Week 6 — Paradigm C plots (**OPENED 2026-09-21**)
+- [x] Week 6 — Paradigm C plots (**CLOSED 2026-09-21**)
   - [x] Deterministic matplotlib PNG (same window → same bytes)
         (`src/physio_placebo/paradigms/plot.py`, `tests/test_plot.py`)
   - [x] Sweep / eval / freeze path for C (WESAD+MAUS; A/B lock untouched)
@@ -143,13 +142,16 @@
         (`results/prompt_sweep/sweep_vllm_qwen25_vl.json`, 12 cells, 1392/0 fail)
   - [x] C prompt IDs frozen (`configs/frozen_prompts_c.lock.yaml`):
         instruction 4-shot on wesad (dev F1 0.499) and maus (dev F1 0.433)
-  - [ ] Real-signal C macro-F1 + CIs (WESAD + MAUS)
+  - [x] Real-signal C macro-F1 + CIs
+        (`results/eval_grid/eval_vllm_qwen25_vl.json`, 1896 scored / 0 fail).
+        WESAD instruction 4-shot **0.412 [0.410, 0.414]**;
+        MAUS **0.400 [0.399, 0.400]**. Both sit on chance (near-constant class).
 - [ ] Weeks 7–15: not started
 
 ## Open blockers
 - ~~**GPU hardware**~~ **RESOLVED 2026-09-20**: account `shrijak` on Plaksha HTI
-  `10.1.45.49`, RTX A6000 48 GB. Used for the Week-3 anchor and the Weeks 4–5
-  sweep + eval grid. This Mac still cannot run the grid.
+  `10.1.45.49`, RTX A6000 48 GB. Used for the Week-3 anchor and the Weeks 4–6
+  sweeps + eval grids. This Mac still cannot run the grid.
 - ~~OpenAI account tier~~ **CLOSED 2026-09-16 as a grid path.** Credits (~$2,499) sit in
   `codex-btzye1` with a 50 req/day/model cap; support (Kristian, 2026-09-10) confirmed
   credits do not lift rate limits. Stretch GPT cell stays optional and unused.
@@ -171,6 +173,9 @@
 - ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-09-21: **Week 6 closed.** Paradigm C real-signal eval on the HTI A6000
+  (Qwen2.5-VL-7B-Instruct, fp16, instruction 4-shot). Both cells are at chance.
+  Do not retune C prompts. Do not start Weeks 7–8 until asked.
 - 2026-09-21: **C prompts frozen** from `sweep_vllm_qwen25_vl.json`. Winners:
   instruction 4-shot on WESAD and MAUS. A/B lockfile unchanged (18 cells).
   Do not retune. Eval grid is next.
@@ -263,9 +268,8 @@
 - MAUS on real data — **RESOLVED 2026-09-16**.
 - ~~Fidelity-anchor reproduction *number*~~ **RESOLVED 2026-09-20**: MAE 2.689 ± 0.038,
   gap +1.929, artifact `results/anchor/medalpaca/server_run/`.
-- Everything LLM-side after the real-signal A/B grid: Paradigm C (Week 6),
-  surrogates (Weeks 7–8), verbalizer ablation (Week 9). Weeks 4–5 A/B numbers
-  are in `results/eval_grid/`.
+- Everything LLM-side after the real-signal A/B/C grid: surrogates (Weeks 7–8),
+  verbalizer ablation (Week 9). A/B/C numbers are in `results/eval_grid/`.
 - `pip install -e .` required `required_permissions=all` in this sandbox (a `.pth` write);
   fresh-clone install on a second machine still unverified (GPU box required again).
 - Health-LLM releases **no evaluation code** (verified 2026-08-27: no `eval/` dir;

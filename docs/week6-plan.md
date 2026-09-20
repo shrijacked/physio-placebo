@@ -43,3 +43,13 @@ flowchart TD
 
 **Do not write the C lockfile** until a real `--client vllm` sweep exists.
 **Do not start Week 7.**
+
+## Closed (2026-09-21)
+
+All four increments ran. Lockfile `configs/frozen_prompts_c.lock.yaml`
+(instruction 4-shot × 2). Eval artifact:
+
+- `results/eval_grid/eval_vllm_qwen25_vl.json` (2 cells, 1896 scored, 0 fail)
+
+WESAD 0.412 [0.410, 0.414]; MAUS 0.400 [0.399, 0.400]. Tag `week-06-done`.
+Weeks 7–8 (surrogates) are not this file.

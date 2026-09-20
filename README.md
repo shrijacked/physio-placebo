@@ -17,8 +17,9 @@ WESAD, MAUS, and CogWear are windowed with frozen features and locked classical 
 0.76 ± 0.1 (gap +1.929). OSF model-deviation update is public on the same
 registration (2026-09-20). **Weeks 4–5 are closed:** real-signal Paradigms A/B
 for Qwen3-8B and Llama-3.1-8B-Instruct (fp16 vLLM, logprob A/B tokens) live in
-`results/eval_grid/`. **Week 6 is open:** Paradigm C plots → Qwen2.5-VL on
-WESAD+MAUS (sweep then freeze). The OpenAI
+`results/eval_grid/`. **Week 6 is closed:** Paradigm C (Qwen2.5-VL, WESAD+MAUS)
+is at chance (WESAD 0.412 [0.410, 0.414]; MAUS 0.400 [0.399, 0.400]).
+Surrogates (Weeks 7–8) are not started. The OpenAI
 API path was abandoned 2026-09-16 (rate-limit wall).
 
 Locked numbers and blockers live in [`PROGRESS.md`](PROGRESS.md). The design is in

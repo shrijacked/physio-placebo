@@ -159,7 +159,7 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 
 ### Week 6 — Paradigm C
 - [x] Plot rendering pipeline (fixed style, resolution, axes policy) · **Done means:** `configs/paradigm_c.yaml` + same-window PNG byte test
-- [ ] Paradigm C on WESAD + MAUS with Qwen2.5-VL-7B, real signal · **Done means:** results rows appended
+- [x] Paradigm C on WESAD + MAUS with Qwen2.5-VL-7B, real signal · **Done means:** `results/eval_grid/eval_vllm_qwen25_vl.json` (2026-09-21)
 
 ### Weeks 7–8 — surrogate ladder
 - [ ] Implement all 5 surrogates + the separate label-preserving condition exactly per §5.4 · **Done means:** each surrogate unit-tested (moments/spectrum/label-alignment assertions)
@@ -223,6 +223,7 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 | 2026-08-10 | Registration form grading adapted from Amol's ref structure to experimental deliverables: Reproduction+Pre-reg 20% / Mid-semester SDS report 30% / Final paper 30% / Open-source release 10% / Weekly engagement 10% | Survey-style bibliography/critical-analysis split from the ref does not fit this audit project; weights still sum to 100% with a Week-3 + Week-10 gate structure matching §9 |
 | 2026-09-16 | OpenAI API grid **abandoned**; restored Qwen3-8B / Llama-3.1-8B / Qwen2.5-VL via vLLM. Credits (~$2,500) do not lift 50 req/day limits (support 2026-09-10). Post-registration protocol deviation vs filed OSF models — disclose on OSF. | User-directed after support closed the rate-limit ticket |
 | 2026-09-21 | Weeks 4–5 closed: real-signal A/B eval grid on HTI A6000 (fp16 vLLM). Strongest cell Qwen3-8B WESAD A bin_mean 0.595 [0.550, 0.647]. Llama MAUS two cells constant-class 0.400. | `results/eval_grid/`; tag `week-05-done` |
+| 2026-09-21 | Week 6 closed: Paradigm C Qwen2.5-VL at chance (WESAD 0.412 [0.410, 0.414]; MAUS 0.400 [0.399, 0.400]). | `eval_vllm_qwen25_vl.json`; tag `week-06-done` |
 
 ## 12. Open questions  *(resolve and move answers to §11)*
 

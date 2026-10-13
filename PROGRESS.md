@@ -1,11 +1,21 @@
 # PROGRESS
 
 ## Current status
-- Semester week: **Week 6 CLOSED** (2026-09-21). Tag `week-06-done`.
-  Weeks 7–8 are next and **not started**.
+- Semester week: **Weeks 7–8 CLOSED** (2026-10-14). Tag `week-08-done`.
+  Surrogate ladder scored on every frozen cell (120 cells, 0 failures, raw
+  logprobs in `results/surrogates/eval/`). Classical ledger:
+  `results/surrogates/ledger/20261013T193152Z/ledger.json`.
+  Week 9 has not started.
+- Comparison arm (2026-10-11, not a week close): Health-LLM PMData stress.
+  Prompting and fine-tuning are separate tables. Qwen3-8B MAE 0.795 ± 0.020.
+  Llama-3.1-8B-Instruct MAE 2654 ± 43 (first number is a step count inside
+  generated Python; scorer not retuned). MedAlpaca-7b LoRA MAE 2.697 on eval
+  seed 0, next to the paper's fine-tuned 0.38 and our zero-shot 2.689.
 - Phase: real-signal A/B/C numbers are in. Surrogates wait for Weeks 7–8.
 - Last session: 2026-09-21 — Paradigm C eval finished on the HTI A6000
   (`eval_vllm_qwen25_vl.json`). 2 cells, 1,896 scored, 0 failures.
+- Living supervisor report: `reports/supervisor_master_report.tex` /
+  `.pdf`. Update it when a week is tagged done; do not write unclosed weeks.
 
 ## Week checklist
 - [x] Week 1 — data + harness foundation (**WESAD 15, MAUS 22, CogWear 10 usable / 11**)
@@ -173,6 +183,16 @@
 - ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-10-14: **Weeks 7–8 closed.** Five null rungs plus the label-preserving
+  permutation, on every frozen A/B/C cell. Ledger is LOSO logreg on surrogate
+  features. MAUS donor windows at a different sampling rate are resampled
+  onto the target length for the prompt; the ledger uses the donor's original
+  feature row. Week 9 not started.
+- 2026-10-11: **Health-LLM comparison arm, not a week open.** Prompting and
+  fine-tuning stay in separate PMData-stress MAE tables. LoRA recipe is
+  `configs/healthllm_finetune.lock.yaml` (Appendix A 7B settings, MedAlpaca
+  LoRA defaults, deviations written in that file). WESAD grid untouched.
+  Weeks 7–8 not started. OSF paragraph is local only (`docs/osf-prereg.md`).
 - 2026-09-21: **Week 6 closed.** Paradigm C real-signal eval on the HTI A6000
   (Qwen2.5-VL-7B-Instruct, fp16, instruction 4-shot). Both cells are at chance.
   Do not retune C prompts. Do not start Weeks 7–8 until asked.
@@ -268,8 +288,8 @@
 - MAUS on real data — **RESOLVED 2026-09-16**.
 - ~~Fidelity-anchor reproduction *number*~~ **RESOLVED 2026-09-20**: MAE 2.689 ± 0.038,
   gap +1.929, artifact `results/anchor/medalpaca/server_run/`.
-- Everything LLM-side after the real-signal A/B/C grid: surrogates (Weeks 7–8),
-  verbalizer ablation (Week 9). A/B/C numbers are in `results/eval_grid/`.
+- Verbalizer ablation (Week 9) is not started. Surrogate cells are in
+  `results/surrogates/eval/`. A/B/C real-signal numbers stay in `results/eval_grid/`.
 - `pip install -e .` required `required_permissions=all` in this sandbox (a `.pth` write);
   fresh-clone install on a second machine still unverified (GPU box required again).
 - Health-LLM releases **no evaluation code** (verified 2026-08-27: no `eval/` dir;

@@ -1,0 +1,1151 @@
+{
+  "created_utc": "2026-10-13T19:50:34.096221+00:00",
+  "git_sha": "unknown",
+  "config": {
+    "client": "vllm",
+    "model": "qwen3_8b",
+    "dataset": "cogwear",
+    "paradigm": "A",
+    "scheme": "uniform_stride",
+    "signal": "gaussian"
+  },
+  "config_sha256": "b67dc53a795143b43f7b47be5c45c33319da7f5c264884274fa0a4c9f7e2a3cc",
+  "library_versions": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.1",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.9.0",
+    "neurokit2": "0.2.13",
+    "cvxopt": "1.3.3"
+  },
+  "cell": {
+    "dataset": "cogwear",
+    "model": "qwen3_8b",
+    "paradigm": "A",
+    "scheme": "uniform_stride",
+    "signal": "gaussian",
+    "rows": [
+      {
+        "subject": "0",
+        "window_id": "0:baseline:0.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.529750347137451,
+          "B": -0.029750416055321693
+        }
+      },
+      {
+        "subject": "0",
+        "window_id": "0:baseline:30.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -0.825939416885376,
+          "B": -0.575939416885376
+        }
+      },
+      {
+        "subject": "0",
+        "window_id": "0:baseline:60.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -1.1368709802627563,
+          "B": -0.38687101006507874
+        }
+      },
+      {
+        "subject": "0",
+        "window_id": "0:baseline:90.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.1821796894073486,
+          "B": -0.11967968195676804
+        }
+      },
+      {
+        "subject": "0",
+        "window_id": "0:baseline:120.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -4.202569961547852,
+          "B": -0.015070038847625256
+        }
+      },
+      {
+        "subject": "0",
+        "window_id": "0:cognitive_load:0.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.293837308883667,
+          "B": -0.10633727163076401
+        }
+      },
+      {
+        "subject": "0",
+        "window_id": "0:cognitive_load:30.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.3502066135406494,
+          "B": -0.10020658373832703
+        }
+      },
+      {
+        "subject": "0",
+        "window_id": "0:cognitive_load:60.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.099454879760742,
+          "B": -0.13070476055145264
+        }
+      },
+      {
+        "subject": "0",
+        "window_id": "0:cognitive_load:90.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -1.8047446012496948,
+          "B": -0.1797446459531784
+        }
+      },
+      {
+        "subject": "0",
+        "window_id": "0:cognitive_load:120.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.3502066135406494,
+          "B": -0.10020658373832703
+        }
+      },
+      {
+        "subject": "0",
+        "window_id": "0:cognitive_load:150.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.753335475921631,
+          "B": -0.0658353641629219
+        }
+      },
+      {
+        "subject": "0",
+        "window_id": "0:cognitive_load:180.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -1.9369088411331177,
+          "B": -0.1556587964296341
+        }
+      },
+      {
+        "subject": "0",
+        "window_id": "0:cognitive_load:210.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.0485873222351074,
+          "B": -0.04858732968568802
+        }
+      },
+      {
+        "subject": "1",
+        "window_id": "1:baseline:0.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.167999029159546,
+          "B": -0.042999111115932465
+        }
+      },
+      {
+        "subject": "1",
+        "window_id": "1:baseline:30.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.841367244720459,
+          "B": -0.06011725217103958
+        }
+      },
+      {
+        "subject": "1",
+        "window_id": "1:cognitive_load:0.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -1.752799153327942,
+          "B": -0.1902991682291031
+        }
+      },
+      {
+        "subject": "1",
+        "window_id": "1:cognitive_load:30.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.8649370670318604,
+          "B": -0.02118716575205326
+        }
+      },
+      {
+        "subject": "1",
+        "window_id": "1:cognitive_load:60.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -5.193070411682129,
+          "B": -0.005570365581661463
+        }
+      },
+      {
+        "subject": "1",
+        "window_id": "1:cognitive_load:90.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.435387134552002,
+          "B": -0.09163712710142136
+        }
+      },
+      {
+        "subject": "1",
+        "window_id": "1:cognitive_load:120.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.1269280910491943,
+          "B": -0.12692804634571075
+        }
+      },
+      {
+        "subject": "1",
+        "window_id": "1:cognitive_load:150.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -0.9547401666641235,
+          "B": -0.48599016666412354
+        }
+      },
+      {
+        "subject": "10",
+        "window_id": "10:baseline:0.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.044825792312622,
+          "B": -0.13857576251029968
+        }
+      },
+      {
+        "subject": "10",
+        "window_id": "10:baseline:30.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.288041353225708,
+          "B": -0.03804141283035278
+        }
+      },
+      {
+        "subject": "10",
+        "window_id": "10:baseline:60.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.288041353225708,
+          "B": -0.03804141283035278
+        }
+      },
+      {
+        "subject": "10",
+        "window_id": "10:cognitive_load:0.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.321978807449341,
+          "B": -0.10322872549295425
+        }
+      },
+      {
+        "subject": "10",
+        "window_id": "10:cognitive_load:30.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -1.8836625814437866,
+          "B": -0.164912611246109
+        }
+      },
+      {
+        "subject": "10",
+        "window_id": "10:cognitive_load:60.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -1.8836625814437866,
+          "B": -0.164912611246109
+        }
+      },
+      {
+        "subject": "10",
+        "window_id": "10:cognitive_load:90.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.3482773303985596,
+          "B": -0.03577728569507599
+        }
+      },
+      {
+        "subject": "10",
+        "window_id": "10:cognitive_load:120.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.773245334625244,
+          "B": -0.023245446383953094
+        }
+      },
+      {
+        "subject": "10",
+        "window_id": "10:cognitive_load:150.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.665827989578247,
+          "B": -0.07207804173231125
+        }
+      },
+      {
+        "subject": "10",
+        "window_id": "10:cognitive_load:180.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.7241058349609375,
+          "B": -0.06785587221384048
+        }
+      },
+      {
+        "subject": "2",
+        "window_id": "2:baseline:0.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.3482773303985596,
+          "B": -0.03577728569507599
+        }
+      },
+      {
+        "subject": "2",
+        "window_id": "2:baseline:30.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.0783772468566895,
+          "B": -0.04712718725204468
+        }
+      },
+      {
+        "subject": "2",
+        "window_id": "2:baseline:60.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -1.9637140035629272,
+          "B": -0.15121398866176605
+        }
+      },
+      {
+        "subject": "2",
+        "window_id": "2:baseline:90.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -1.1582012176513672,
+          "B": -0.37695127725601196
+        }
+      },
+      {
+        "subject": "2",
+        "window_id": "2:baseline:120.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.9003260135650635,
+          "B": -0.05657599866390228
+        }
+      },
+      {
+        "subject": "2",
+        "window_id": "2:cognitive_load:0.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.521270275115967,
+          "B": -0.08377019315958023
+        }
+      },
+      {
+        "subject": "2",
+        "window_id": "2:cognitive_load:30.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.773245334625244,
+          "B": -0.023245446383953094
+        }
+      },
+      {
+        "subject": "2",
+        "window_id": "2:cognitive_load:60.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.753335475921631,
+          "B": -0.0658353641629219
+        }
+      },
+      {
+        "subject": "2",
+        "window_id": "2:cognitive_load:90.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.378518581390381,
+          "B": -0.09726862609386444
+        }
+      },
+      {
+        "subject": "2",
+        "window_id": "2:cognitive_load:120.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.288041353225708,
+          "B": -0.03804141283035278
+        }
+      },
+      {
+        "subject": "2",
+        "window_id": "2:cognitive_load:150.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.929882287979126,
+          "B": -0.05488219112157822
+        }
+      },
+      {
+        "subject": "2",
+        "window_id": "2:cognitive_load:180.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.753335475921631,
+          "B": -0.0658353641629219
+        }
+      },
+      {
+        "subject": "2",
+        "window_id": "2:cognitive_load:210.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.8955419063568115,
+          "B": -0.020541900768876076
+        }
+      },
+      {
+        "subject": "5",
+        "window_id": "5:baseline:0.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.521270275115967,
+          "B": -0.08377019315958023
+        }
+      },
+      {
+        "subject": "5",
+        "window_id": "5:baseline:30.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.4388773441314697,
+          "B": -0.03262723237276077
+        }
+      },
+      {
+        "subject": "5",
+        "window_id": "5:baseline:60.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.8708205223083496,
+          "B": -0.05832047387957573
+        }
+      },
+      {
+        "subject": "5",
+        "window_id": "5:cognitive_load:0.0",
+        "y": 1,
+        "yhat": 0,
+        "token": "A",
+        "failure": false,
+        "logprobs": {
+          "A": -0.6623854041099548,
+          "B": -0.7248854041099548
+        }
+      },
+      {
+        "subject": "5",
+        "window_id": "5:cognitive_load:30.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.9891414642333984,
+          "B": -0.051641397178173065
+        }
+      },
+      {
+        "subject": "5",
+        "window_id": "5:cognitive_load:60.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.3181421756744385,
+          "B": -0.03689223900437355
+        }
+      },
+      {
+        "subject": "5",
+        "window_id": "5:cognitive_load:90.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.492567777633667,
+          "B": -0.08631781488656998
+        }
+      },
+      {
+        "subject": "5",
+        "window_id": "5:cognitive_load:120.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.167999029159546,
+          "B": -0.042999111115932465
+        }
+      },
+      {
+        "subject": "5",
+        "window_id": "5:cognitive_load:150.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.521270275115967,
+          "B": -0.08377019315958023
+        }
+      },
+      {
+        "subject": "5",
+        "window_id": "5:cognitive_load:180.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.841367244720459,
+          "B": -0.06011725217103958
+        }
+      },
+      {
+        "subject": "5",
+        "window_id": "5:cognitive_load:210.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -0.8615548014640808,
+          "B": -0.5490548014640808
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:baseline:0.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.1380841732025146,
+          "B": -0.044334154576063156
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:baseline:30.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -1.8836625814437866,
+          "B": -0.164912611246109
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:baseline:60.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.578889846801758,
+          "B": -0.07888974994421005
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:baseline:90.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.288041353225708,
+          "B": -0.03804141283035278
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:baseline:120.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.6367831230163574,
+          "B": -0.07428312301635742
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:cognitive_load:0.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.492567777633667,
+          "B": -0.08631781488656998
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:cognitive_load:30.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.753335475921631,
+          "B": -0.0658353641629219
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:cognitive_load:60.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.6949362754821777,
+          "B": -0.06993623077869415
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:cognitive_load:90.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.578889846801758,
+          "B": -0.07888974994421005
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:cognitive_load:120.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.1269280910491943,
+          "B": -0.12692804634571075
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:cognitive_load:150.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.2579755783081055,
+          "B": -0.03922560438513756
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:cognitive_load:180.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.841367244720459,
+          "B": -0.06011725217103958
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:cognitive_load:210.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -5.224149703979492,
+          "B": -0.005399524699896574
+        }
+      },
+      {
+        "subject": "6",
+        "window_id": "6:cognitive_load:240.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -4.387509346008301,
+          "B": -0.012509571388363838
+        }
+      },
+      {
+        "subject": "7",
+        "window_id": "7:baseline:0.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -1.625434160232544,
+          "B": -0.21918417513370514
+        }
+      },
+      {
+        "subject": "7",
+        "window_id": "7:baseline:30.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.929882287979126,
+          "B": -0.05488219112157822
+        }
+      },
+      {
+        "subject": "7",
+        "window_id": "7:baseline:60.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.8708205223083496,
+          "B": -0.05832047387957573
+        }
+      },
+      {
+        "subject": "7",
+        "window_id": "7:cognitive_load:0.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.521270275115967,
+          "B": -0.08377019315958023
+        }
+      },
+      {
+        "subject": "7",
+        "window_id": "7:cognitive_load:30.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.4639394283294678,
+          "B": -0.08893945813179016
+        }
+      },
+      {
+        "subject": "7",
+        "window_id": "7:cognitive_load:60.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.2579755783081055,
+          "B": -0.03922560438513756
+        }
+      },
+      {
+        "subject": "7",
+        "window_id": "7:cognitive_load:90.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -1.8836625814437866,
+          "B": -0.164912611246109
+        }
+      },
+      {
+        "subject": "7",
+        "window_id": "7:cognitive_load:120.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.8708205223083496,
+          "B": -0.05832047387957573
+        }
+      },
+      {
+        "subject": "7",
+        "window_id": "7:cognitive_load:150.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -0.9356344938278198,
+          "B": -0.4981345236301422
+        }
+      },
+      {
+        "subject": "7",
+        "window_id": "7:cognitive_load:180.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.293837308883667,
+          "B": -0.10633727163076401
+        }
+      },
+      {
+        "subject": "9",
+        "window_id": "9:baseline:0.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.0720865726470947,
+          "B": -0.13458658754825592
+        }
+      },
+      {
+        "subject": "9",
+        "window_id": "9:baseline:30.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -1.8309202194213867,
+          "B": -0.17467015981674194
+        }
+      },
+      {
+        "subject": "9",
+        "window_id": "9:baseline:60.0",
+        "y": 0,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.8708205223083496,
+          "B": -0.05832047387957573
+        }
+      },
+      {
+        "subject": "9",
+        "window_id": "9:cognitive_load:0.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.167999029159546,
+          "B": -0.042999111115932465
+        }
+      },
+      {
+        "subject": "9",
+        "window_id": "9:cognitive_load:30.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.590472936630249,
+          "B": -0.027972843497991562
+        }
+      },
+      {
+        "subject": "9",
+        "window_id": "9:cognitive_load:60.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.1082098484039307,
+          "B": -0.04570977762341499
+        }
+      },
+      {
+        "subject": "9",
+        "window_id": "9:cognitive_load:90.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.2378222942352295,
+          "B": -0.11282224208116531
+        }
+      },
+      {
+        "subject": "9",
+        "window_id": "9:cognitive_load:120.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.321978807449341,
+          "B": -0.10322872549295425
+        }
+      },
+      {
+        "subject": "9",
+        "window_id": "9:cognitive_load:150.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -3.4086456298828125,
+          "B": -0.03364565595984459
+        }
+      },
+      {
+        "subject": "9",
+        "window_id": "9:cognitive_load:180.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.5500447750091553,
+          "B": -0.08129486441612244
+        }
+      },
+      {
+        "subject": "9",
+        "window_id": "9:cognitive_load:210.0",
+        "y": 1,
+        "yhat": 1,
+        "token": "B",
+        "failure": false,
+        "logprobs": {
+          "A": -2.1269280910491943,
+          "B": -0.12692804634571075
+        }
+      }
+    ],
+    "template_id": "instruction",
+    "n_shot": 0,
+    "prompt_dev_subjects": [
+      "4",
+      "8"
+    ],
+    "eval_subjects": [
+      "0",
+      "1",
+      "10",
+      "2",
+      "5",
+      "6",
+      "7",
+      "9"
+    ],
+    "scored_subjects": [
+      "0",
+      "1",
+      "10",
+      "2",
+      "5",
+      "6",
+      "7",
+      "9"
+    ],
+    "ci_lo": 0.3888888888888889,
+    "ci_hi": 0.41259881422924904,
+    "macro_f1": 0.4,
+    "per_subject": {
+      "0": 0.38095238095238093,
+      "1": 0.42857142857142855,
+      "10": 0.4117647058823529,
+      "2": 0.38095238095238093,
+      "5": 0.3888888888888889,
+      "6": 0.391304347826087,
+      "7": 0.4117647058823529,
+      "9": 0.42105263157894735
+    },
+    "n_scored": 90,
+    "n_failures": 0
+  }
+}

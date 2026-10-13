@@ -1,0 +1,7 @@
+{
+  "dataset": "maus",
+  "surrogate": "deleted",
+  "is_null": true,
+  "features": null,
+  "note": "signal deleted; no feature matrix"
+}

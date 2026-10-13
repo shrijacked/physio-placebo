@@ -32,6 +32,9 @@ def run_eval_cell(
     model_key: str,
     paradigm: str,
     scheme: str | None,
+    signal: str = "real",
+    feature_frame: pd.DataFrame | None = None,
+    windows: dict | None = None,
 ) -> dict:
     lock = load_frozen_prompts()
     if not lock.get("frozen"):
@@ -42,12 +45,20 @@ def run_eval_cell(
     all_subjects = sorted(load_locked_feature_matrix(dataset)["subject"].astype(str).unique())
     dev, eval_subs = prompt_dev_split(all_subjects, n_dev=int(spec["n_dev"]), seed=seed)
     need = list(eval_subs) + list(dev)
-    frame = _bodies_for_dataset(dataset, paradigm, scheme, subjects=need)
+    frame = _bodies_for_dataset(
+        dataset,
+        paradigm,
+        scheme,
+        subjects=need,
+        feature_frame=feature_frame,
+        windows=windows,
+        deleted=signal == "deleted",
+    )
     fold_frames = []
     for held in eval_subs:
         train = [s for s in need if s != held]
         work = frame
-        if paradigm == "B":
+        if paradigm == "B" and signal != "deleted":
             work = _fill_verbalizer(frame, train)
         held_rows = work[work["subject"].astype(str) == held]
         pool = work[work["subject"].astype(str).isin(dev)]
@@ -79,11 +90,27 @@ def run_eval_cell(
             seed=seed,
         )
         ci_lo, ci_hi = ci.lo, ci.hi
+    row_records = []
+    if signal != "real":
+        for rec in scored.to_dict(orient="records"):
+            row_records.append(
+                {
+                    "subject": rec["subject"],
+                    "window_id": rec["window_id"],
+                    "y": rec["y"],
+                    "yhat": rec["yhat"],
+                    "token": rec["token"],
+                    "failure": bool(rec["failure"]),
+                    "logprobs": rec["logprobs"],
+                }
+            )
     return {
         "dataset": dataset,
         "model": model_key,
         "paradigm": paradigm,
         "scheme": scheme,
+        "signal": signal,
+        "rows": row_records,
         "template_id": choice["template_id"],
         "n_shot": int(choice["n_shot"]),
         "prompt_dev_subjects": list(dev),

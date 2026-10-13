@@ -1,0 +1,26 @@
+{
+  "dataset": "cogwear",
+  "surrogate": "subject_perm_preserved",
+  "is_null": false,
+  "n_rows": 114,
+  "feature_nan_rate": 0.0,
+  "features_parquet": "results/surrogates/features/cogwear/subject_perm_preserved/features.parquet",
+  "features_sha256": "c32dcee597292944a7b48a70db2630ff114046a441837bb7292a4704ae25813d",
+  "seed": 1337,
+  "created_utc": "2026-10-13T19:23:17.476068+00:00",
+  "git_sha": "unknown",
+  "config": {
+    "dataset": "cogwear",
+    "surrogate": "subject_perm_preserved",
+    "seed": 1337
+  },
+  "config_sha256": "3b2a2d0569f49538181d53ee9e5deb710b6b7c8eb83a10a98985189b0f5e7602",
+  "library_versions": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.1",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.9.0",
+    "neurokit2": "0.2.13",
+    "cvxopt": "1.3.3"
+  }
+}

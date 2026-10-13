@@ -1,0 +1,26 @@
+{
+  "dataset": "wesad",
+  "surrogate": "gaussian",
+  "is_null": true,
+  "n_rows": 1042,
+  "feature_nan_rate": 0.14326082320324163,
+  "features_parquet": "results/surrogates/features/wesad/gaussian/features.parquet",
+  "features_sha256": "3a997bc7de144e6858313878de8c2b9c3ffbac0758331b7dd852de06d4e5ddff",
+  "seed": 1337,
+  "created_utc": "2026-10-13T19:24:21.424035+00:00",
+  "git_sha": "unknown",
+  "config": {
+    "dataset": "wesad",
+    "surrogate": "gaussian",
+    "seed": 1337
+  },
+  "config_sha256": "6d4933bbe2e7216fad26974ff84931f55fed514449d8b929c658fad140b371ef",
+  "library_versions": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.1",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.9.0",
+    "neurokit2": "0.2.13",
+    "cvxopt": "1.3.3"
+  }
+}

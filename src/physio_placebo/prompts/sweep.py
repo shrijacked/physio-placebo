@@ -12,13 +12,14 @@ from physio_placebo.data.loso import prompt_dev_split
 from physio_placebo.features.frozen import feature_columns
 from physio_placebo.features.matrix import assert_matches_locked_floor, load_locked_feature_matrix
 from physio_placebo.paradigms.plot import assert_c_dataset, plot_body
-from physio_placebo.paradigms.series import load_windows, series_body
+from physio_placebo.paradigms.series import load_windows, primary_channel, series_body
 from physio_placebo.paths import configs_dir
 from physio_placebo.prompts.templates import TEMPLATE_IDS, render_prompt
 from physio_placebo.prompts.verbalizer import train_medians, verbalize_row
 from physio_placebo.scoring.client import LogprobClient, ScoreRequest
 from physio_placebo.scoring.logprob import ScoringFailure, argmax_label, token_for_y, y_from_token
 from physio_placebo.stats.metrics import macro_f1, per_subject_macro_f1
+from physio_placebo.surrogates.ladder import deleted_text
 
 
 def load_sweep_spec() -> dict:
@@ -61,12 +62,26 @@ def _bodies_for_dataset(
     paradigm: str,
     scheme: str | None,
     subjects: Sequence[str] | None = None,
+    *,
+    feature_frame: pd.DataFrame | None = None,
+    windows: dict | None = None,
+    deleted: bool = False,
 ) -> pd.DataFrame:
-    assert_matches_locked_floor(dataset)
-    feat = load_locked_feature_matrix(dataset)
+    if feature_frame is None:
+        assert_matches_locked_floor(dataset)
+        feat = load_locked_feature_matrix(dataset)
+    else:
+        feat = feature_frame
     if subjects is not None:
         keep = set(map(str, subjects))
         feat = feat[feat["subject"].astype(str).isin(keep)].copy()
+    if deleted:
+        channel = "features" if paradigm == "B" else primary_channel(dataset)
+        out = feat.copy()
+        out["body"] = deleted_text(channel)
+        if paradigm == "C":
+            out["image"] = np.array([None] * len(out), dtype=object)
+        return out
     if paradigm == "B":
         cols = feature_columns(dataset)
         # Medians recomputed per scored subject; placeholder column filled later.
@@ -80,7 +95,7 @@ def _bodies_for_dataset(
             raise ValueError("Paradigm C has no downsample scheme")
         bodies: list[str] = []
         images: list[bytes] = []
-        cache: dict[str, object] = {}
+        cache: dict[str, object] = dict(windows or {})
         for r in feat.itertuples(index=False):
             sub = str(r.subject)
             if sub not in cache:
@@ -97,7 +112,7 @@ def _bodies_for_dataset(
     if paradigm != "A" or scheme is None:
         raise ValueError(f"bad paradigm/scheme {paradigm}/{scheme}")
     bodies = []
-    cache = {}
+    cache = dict(windows or {})
     for r in feat.itertuples(index=False):
         sub = str(r.subject)
         if sub not in cache:

@@ -1,0 +1,54 @@
+{
+  "mae_mean": 2654.1210038284466,
+  "mae_sd": 43.384513195565425,
+  "per_seed": {
+    "0": {
+      "n_items": 299,
+      "n_parsed": 282,
+      "n_parse_failures": 17,
+      "mae": 2660.6927605019096,
+      "parse_failure_rate": 0.056856187290969896,
+      "pred_file_sha256": "b0b54672009e5e473de2f8af9e718b103bc656f0268dbbd65895526bdf58af63"
+    },
+    "1": {
+      "n_items": 299,
+      "n_parsed": 284,
+      "n_parse_failures": 15,
+      "mae": 2607.825533586132,
+      "parse_failure_rate": 0.05016722408026756,
+      "pred_file_sha256": "d2a30502eb9713b102b5e5211a4ff9ce3914a7ab74db549d27a73056c5f85b58"
+    },
+    "2": {
+      "n_items": 299,
+      "n_parsed": 279,
+      "n_parse_failures": 20,
+      "mae": 2693.844717397298,
+      "parse_failure_rate": 0.06688963210702341,
+      "pred_file_sha256": "db50503914fa4160076b66faff0d115859fa1f56968b4a53c30c6bcf3acf5ba7"
+    }
+  },
+  "created_utc": "2026-10-10T20:51:48.870606+00:00",
+  "git_sha": "unknown",
+  "config": {
+    "model_key": "llama31_8b",
+    "hf_id": "meta-llama/Llama-3.1-8B-Instruct",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "max_new_tokens": 120,
+    "do_sample": false,
+    "chat_template": true,
+    "enable_thinking": null
+  },
+  "config_sha256": "3589b7be463e938df987cdc7cc003412ad28ecdb381d02d81e648a628cc3e077",
+  "library_versions": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.1",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.9.0",
+    "neurokit2": "0.2.13",
+    "cvxopt": "1.3.3"
+  }
+}

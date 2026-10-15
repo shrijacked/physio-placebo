@@ -1,0 +1,54 @@
+{
+  "mae_mean": 0.7948717948717948,
+  "mae_sd": 0.019596873836395693,
+  "per_seed": {
+    "0": {
+      "n_items": 299,
+      "n_parsed": 299,
+      "n_parse_failures": 0,
+      "mae": 0.7725752508361204,
+      "parse_failure_rate": 0.0,
+      "pred_file_sha256": "4821d6b27baf7cae41ed58b71168aa563836ed79bd032bf3ee930dab651c8ce3"
+    },
+    "1": {
+      "n_items": 299,
+      "n_parsed": 299,
+      "n_parse_failures": 0,
+      "mae": 0.8093645484949833,
+      "parse_failure_rate": 0.0,
+      "pred_file_sha256": "1b4422f118ff0e46acdae9fb3948d0a153dec3633022d6b3ece184c6eb6ecb8c"
+    },
+    "2": {
+      "n_items": 299,
+      "n_parsed": 299,
+      "n_parse_failures": 0,
+      "mae": 0.802675585284281,
+      "parse_failure_rate": 0.0,
+      "pred_file_sha256": "8ee9226f32086787e325771dd53bcc81182c9a6521c329e90ad723ff8e40f7a8"
+    }
+  },
+  "created_utc": "2026-10-10T19:52:45.013745+00:00",
+  "git_sha": "unknown",
+  "config": {
+    "model_key": "qwen3_8b",
+    "hf_id": "Qwen/Qwen3-8B",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "max_new_tokens": 120,
+    "do_sample": false,
+    "chat_template": true,
+    "enable_thinking": false
+  },
+  "config_sha256": "079f00bb25e59c562697fa7e9624590df0a71678160dad2cbb2defe94a4160ed",
+  "library_versions": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.1",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.9.0",
+    "neurokit2": "0.2.13",
+    "cvxopt": "1.3.3"
+  }
+}

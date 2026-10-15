@@ -22,7 +22,36 @@ from physio_placebo.paths import REPO_ROOT
 from physio_placebo.provenance import sha256_file
 
 SPLIT_MANIFEST = REPO_ROOT / "results" / "anchor" / "split_manifest.json"
-DEFAULT_EVAL_JSON = REPO_ROOT / "data/third_party/Health-LLM/zero-shot/data/pmdata/stress.json"
+
+
+def resolve_healthllm_root() -> Path:
+    """Released clone lives under ``configs/data/...`` in this checkout.
+
+    ``data/third_party/Health-LLM`` is checked first so a future symlink still wins.
+    """
+    candidates = (
+        REPO_ROOT / "data" / "third_party" / "Health-LLM",
+        REPO_ROOT / "configs" / "data" / "third_party" / "Health-LLM",
+    )
+    marker = Path("zero-shot") / "data" / "pmdata" / "stress.json"
+    for root in candidates:
+        if (root / marker).is_file():
+            return root
+    return candidates[-1]
+
+
+HEALTHLLM_ROOT = resolve_healthllm_root()
+DEFAULT_EVAL_JSON = HEALTHLLM_ROOT / "zero-shot" / "data" / "pmdata" / "stress.json"
+DEFAULT_TRAIN_POOL_JSON = HEALTHLLM_ROOT / "PMData_stress_train_all.json"
+MEDALPACA_PROMPT = {
+    "primer": (
+        "Below is an instruction that describes a task, paired with an input that "
+        "provides further context. Write a response that appropriately completes the request."
+    ),
+    "instruction": "\n\n### Instruction:\n",
+    "input": "\n\n### Input:\n",
+    "output": "\n\n### Response:\n",
+}
 SEEDS = (0, 1, 2)
 STRESS_FORMAT_CHOICES = [0, 1, 2, 3, 4, 5]
 ZERO_SHOT_INSTRUCTION = (
@@ -147,6 +176,51 @@ def label_distribution(items: Sequence[dict[str, Any]]) -> dict[str, int]:
 def aggregate_seed_maes(per_seed: dict[int, dict[str, Any]]) -> tuple[float, float]:
     maes = [per_seed[s]["mae"] for s in SEEDS]
     return statistics.mean(maes), statistics.stdev(maes)
+
+
+def record_body(item: dict[str, Any]) -> str:
+    """Sensor text. Eval JSON uses ``input``; their generator's eval writer used ``question``."""
+    body = item.get("input", item.get("question"))
+    if not isinstance(body, str) or body == "":
+        raise ValueError("record has no input or question text")
+    return body
+
+
+def train_complement(
+    pool: Sequence[dict[str, Any]], eval_items: Sequence[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """Train rows whose sensor text is not in the locked eval split."""
+    banned = {record_body(item) for item in eval_items}
+    return [item for item in pool if record_body(item) not in banned]
+
+
+def assert_disjoint(
+    train_items: Sequence[dict[str, Any]], eval_items: Sequence[dict[str, Any]]
+) -> None:
+    overlap = {record_body(item) for item in train_items} & {
+        record_body(item) for item in eval_items
+    }
+    if overlap:
+        raise ValueError(f"eval text leaked into train: {len(overlap)} items")
+
+
+def medalpaca_train_text(item: dict[str, Any]) -> str:
+    """MedAlpaca default template (``prompt_templates/medalpaca.json``)."""
+    instruction = item.get("instruction")
+    sensor = item.get("input")
+    output = item.get("output")
+    if not isinstance(instruction, str) or not isinstance(sensor, str) or not isinstance(output, str):
+        raise ValueError("train item needs instruction, input, and output strings")
+    parts = MEDALPACA_PROMPT
+    return (
+        parts["primer"]
+        + parts["instruction"]
+        + instruction
+        + parts["input"]
+        + sensor
+        + parts["output"]
+        + output
+    )
 
 
 def remaining_prompts(

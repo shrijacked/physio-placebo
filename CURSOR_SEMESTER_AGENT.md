@@ -202,7 +202,11 @@ physio-placebo/
 ├── tests/                         # pytest; every module has tests; regression tests for every bug
 ├── scripts/                       # week-runner scripts, reproduction script
 ├── results/                       # timestamped run dirs, raw logprobs + metrics (gitignore large raw)
+├── reports/                       # supervisor and meeting notes; figures live in reports/figures/
 └── docs/                          # weekly notes, OSF prereg text, paper draft
+    ├── proposal/                  # frozen prof-facing proposal
+    ├── registration/              # course registration form
+    └── plans/                     # week plans
 ```
 
 - Python ≥3.11, `pytest`, `ruff`, type hints on public functions.

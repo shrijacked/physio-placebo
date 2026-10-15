@@ -64,8 +64,16 @@ without re-freezing fails `tests/test_feature_hash.py`.
 src/physio_placebo/   loaders, LOSO, frozen features, classical floor, provenance
 scripts/              download / prepare / extract / floor runners
 tests/                fixture-based; does not need the real GB-scale archives
+configs/              frozen run settings
 results/              committed metrics, manifests, parquet feature tables
-docs/                 Health-LLM notes, fidelity-anchor recipe, OSF prereg (filed 2026-08-30)
+notebooks/            Colab fidelity-anchor notebook
+reports/              supervisor and meeting notes, plus figures/
+docs/                 notes, OSF prereg, proposal, registration, week plans
+  proposal/           prof-facing proposal (tex + pdf); wording is frozen
+  registration/       CS4002 registration form
+  plans/              week plans
+PROGRESS.md           living status
+PROJECT_PLAN.md       design and decision log
 ```
 
 `results/**/*.npz` stay on disk only. Everything else under `results/` that is a metric

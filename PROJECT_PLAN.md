@@ -2,8 +2,8 @@
 
 **Project:** physio-placebo: Is the LLM Reading the Signal, or Is the Verbalizer Doing the Classifying?
 **Student:** Shrijak Kumar · **Advisor:** Dr. Siddharth, Plaksha University
-**Prof-facing proposal (verbatim, do not edit without approval):** `independent_study_proposal.tex` / `.pdf`
-**Provenance / full analysis:** `TOURNAMENT_REPORT.md`
+**Prof-facing proposal (verbatim, do not edit without approval):** `docs/proposal/independent_study_proposal.tex` / `.pdf`
+**Provenance / full analysis:** `docs/TOURNAMENT_REPORT.md`
 **Semester clock:** Week 1 starts on ______ (fill in once the prof approves) · 15 weeks total
 **Doc last updated:** 2026-08-10
 
@@ -216,7 +216,7 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 
 | Date | Decision | Rationale / evidence |
 |---|---|---|
-| 2026-07-28 | Project = physio-placebo (surrogate-controlled audit); runner-up = gaze-grounded reward-model audit (see proposal §7) | Idea-selection analysis in `TOURNAMENT_REPORT.md` |
+| 2026-07-28 | Project = physio-placebo (surrogate-controlled audit); runner-up = gaze-grounded reward-model audit (see proposal §7) | Idea-selection analysis in `docs/TOURNAMENT_REPORT.md` |
 | 2026-08-10 | Proposal wording locked; prof-facing PDF contains no selection-process language | Shrijak's instruction |
 | 2026-08-10 | SensorLM cannot be a model-under-test (no public weights for SensorLM or LSM-2; verified via official repo + Hugging Face API) | Repo contains only `captioning.py`, `constants.py`, SigLIP training patch; HF search returns 0 models |
 | 2026-08-10 | Proposed ablation variant (iv): SensorLM captioning templates as industry-standard verbalizer — **pending prof sign-off** | Strengthens verbalizer-leakage claim at near-zero compute; Apache 2.0 license permits reuse |

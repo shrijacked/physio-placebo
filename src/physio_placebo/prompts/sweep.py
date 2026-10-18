@@ -125,12 +125,21 @@ def _bodies_for_dataset(
     return out
 
 
-def _fill_verbalizer(df: pd.DataFrame, train_subjects: Sequence[str]) -> pd.DataFrame:
+def _fill_verbalizer(
+    df: pd.DataFrame,
+    train_subjects: Sequence[str],
+    *,
+    variant: str = "i",
+) -> pd.DataFrame:
     cols = df.attrs["verbalizer_cols"]
     train = df[df["subject"].astype(str).isin(set(map(str, train_subjects)))]
     medians = train_medians(train, cols)
+    values = {col: train[col].to_numpy(dtype=float) for col in cols}
     out = df.copy()
-    out["body"] = [verbalize_row(row, medians, cols) for _, row in df.iterrows()]
+    out["body"] = [
+        verbalize_row(row, medians, cols, variant=variant, train_values=values)
+        for _, row in df.iterrows()
+    ]
     return out
 
 

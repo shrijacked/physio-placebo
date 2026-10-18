@@ -46,6 +46,40 @@ def test_verbalizer_loads_locked_maus_and_does_not_use_eval_subjects_for_medians
     _ = med_all
 
 
+def test_neutralized_keeps_the_number_and_drops_the_adjectives():
+    cols = ["eda_level_mean", "hrv_sdnn"]
+    row = pd.Series({"eda_level_mean": 10.0, "hrv_sdnn": 1.0})
+    medians = {"eda_level_mean": 5.0, "hrv_sdnn": 5.0}
+    train = {
+        "eda_level_mean": pd.Series([0.0, 5.0, 10.0]).to_numpy(),
+        "hrv_sdnn": pd.Series([1.0, 5.0, 9.0]).to_numpy(),
+    }
+    text = verbalize_row(row, medians, cols, variant="ii", train_values=train)
+    assert "eda_level_mean is 10 (percentile 100)." in text
+    assert "hrv_sdnn is 1 (percentile 33)." in text
+    for word in ("elevated", "reduced", "stress-typical", "calmer-typical", "unspecified"):
+        assert word not in text
+
+
+def test_mis_signed_flips_the_words_and_keeps_the_number():
+    cols = ["eda_level_mean", "hrv_sdnn"]
+    row = pd.Series({"eda_level_mean": 10.0, "hrv_sdnn": 1.0})
+    medians = {"eda_level_mean": 5.0, "hrv_sdnn": 5.0}
+    original = verbalize_row(row, medians, cols)
+    flipped = verbalize_row(row, medians, cols, variant="iii")
+    assert "10" in original and "10" in flipped
+    assert "eda_level_mean is elevated (10), stress-typical." in original
+    assert "eda_level_mean is reduced (10), calmer-typical." in flipped
+    assert "hrv_sdnn is reduced (1), stress-typical." in original
+    assert "hrv_sdnn is elevated (1), calmer-typical." in flipped
+
+
+def test_neutralized_rejects_a_missing_training_fold():
+    row = pd.Series({"hrv_sdnn": 1.0})
+    with pytest.raises(ValueError, match="training-fold"):
+        verbalize_row(row, {"hrv_sdnn": 1.0}, ["hrv_sdnn"], variant="ii")
+
+
 def test_empty_train_fold_rejected():
     with pytest.raises(ValueError, match="no training rows"):
         verbalize_locked_dataset("maus", ["no-such-subject"])

@@ -35,6 +35,8 @@ def run_eval_cell(
     signal: str = "real",
     feature_frame: pd.DataFrame | None = None,
     windows: dict | None = None,
+    verbalizer_variant: str = "i",
+    save_rows: bool = False,
 ) -> dict:
     lock = load_frozen_prompts()
     if not lock.get("frozen"):
@@ -59,7 +61,7 @@ def run_eval_cell(
         train = [s for s in need if s != held]
         work = frame
         if paradigm == "B" and signal != "deleted":
-            work = _fill_verbalizer(frame, train)
+            work = _fill_verbalizer(frame, train, variant=verbalizer_variant)
         held_rows = work[work["subject"].astype(str) == held]
         pool = work[work["subject"].astype(str).isin(dev)]
         fold_frames.append(
@@ -91,7 +93,7 @@ def run_eval_cell(
         )
         ci_lo, ci_hi = ci.lo, ci.hi
     row_records = []
-    if signal != "real":
+    if save_rows or signal != "real":
         for rec in scored.to_dict(orient="records"):
             row_records.append(
                 {
@@ -110,6 +112,7 @@ def run_eval_cell(
         "paradigm": paradigm,
         "scheme": scheme,
         "signal": signal,
+        "verbalizer_variant": verbalizer_variant,
         "rows": row_records,
         "template_id": choice["template_id"],
         "n_shot": int(choice["n_shot"]),

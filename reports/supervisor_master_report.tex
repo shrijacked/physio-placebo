@@ -66,14 +66,14 @@
 \definecolor{Ok}{HTML}{1F6B4A}
 \definecolor{Muted}{HTML}{5C6B70}
 
-\newcommand{\ReportDate}{14 October 2026}
-\newcommand{\ReportThrough}{Week 8}
+\newcommand{\ReportDate}{19 October 2026}
+\newcommand{\ReportThrough}{Week 9}
 \newcommand{\ReportNext}{Week 9 (verbalizer ablation) --- not started}
 
 \hypersetup{
-  pdftitle={physio-placebo: living supervisor report (through Week 8)},
+  pdftitle={physio-placebo: independent study report through Week 9},
   pdfauthor={Shrijak Kumar},
-  pdfsubject={Independent study living report},
+  pdfsubject={Independent study report},
   linkcolor=Accent,
   urlcolor=AccentSoft,
 }
@@ -92,7 +92,7 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.3pt}
 \fancyhead[L]{\small\color{AccentSoft} physio-placebo}
-\fancyhead[R]{\small\color{AccentSoft} living report \textbullet\ through \ReportThrough}
+\fancyhead[R]{\small\color{AccentSoft} independent study \textbullet\ through \ReportThrough}
 \fancyfoot[L]{\small\color{Muted} Shrijak Kumar \textbullet\ Dr.\ Siddharth}
 \fancyfoot[R]{\small\color{Muted} \thepage\ / \pageref{LastPage}}
 \fancyfoot[C]{}
@@ -108,244 +108,300 @@
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
 \newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
 
-\begin{document}
+\newcommand{\AskedBox}[1]{%
+  \par\noindent\colorbox{Ask!8}{%
+    \parbox{\dimexpr\textwidth-2\fboxsep}{\small #1}%
+  }\par\vspace{0.55em}%
+}
 
+\begin{document}
 {\large\scshape\color{AccentSoft} Independent study --- report through Week 8\par}
 \vspace{0.35em}
 {\color{Accent}\hrule height 1.15pt}
 \vspace{0.65em}
 {\LARGE\bfseries\color{Accent} physio-placebo\par}
 \vspace{0.2em}
-{\large Is the model reading the recording, or the words we put around it?\par}
+{\large Is the model reading the recording, or the words around it?\par}
 \vspace{0.55em}
 {\color{Accent}\hrule height 1.15pt}
-\vspace{0.75em}
+\vspace{0.7em}
 
 \begin{tabular}{@{}L{3.5cm}L{12.0cm}@{}}
 \textbf{Student} & Shrijak Kumar \\
 \textbf{Advisor} & Dr.\ Siddharth, Plaksha University \\
-\textbf{This edition} & \ReportDate \\
-\textbf{Closed through} & \ReportThrough \\
-\textbf{Still ahead} & Week 9, then the summary score in Week 10 \\
-\textbf{Repository} & \url{https://github.com/shrijacked/physio-placebo} \\
-\textbf{Pre-registration} & \url{https://osf.io/62r5t} \quad DOI 10.17605/OSF.IO/62R5T \\
+\textbf{Date} & \ReportDate \\
+\textbf{Covers} & the work through Week 8 \\
+\textbf{Code} & \url{https://github.com/shrijacked/physio-placebo} \\
+\textbf{Public plan} & \url{https://osf.io/62r5t} \quad DOI 10.17605/OSF.IO/62R5T \\
 \end{tabular}
 
-\vspace{0.15em}
-{\small\color{Muted}
-Every score uses macro-F1. For two classes, that is the average of how well the
-model catches each class, so always guessing the common class cannot look
-brilliant. On these datasets that guessing score is about 0.41, not 0.50.
-A bracket is a 95\% interval from resampling people, not windows. Seed 1337
-throughout.
-\par}
+\vspace{0.8em}
 
-\section{Where things stand}
+Recent papers report that a language model can take a wearable recording and
+judge stress or mental effort. The recording is rarely shown on its own. It is
+first turned into sentences: heart rate is high, the skin looks sweaty, the
+pattern is the stress pattern. Those sentences already suggest the label. The
+open question is whether the model is using the recording.
+
+The project name refers to that possibility. A placebo resembles the treatment.
+Here the prompt can resemble evidence.
+
+The experiment uses public lab recordings in which the label is the assigned
+task. Each recording is cut into minutes. Each minute is shown to a language
+model with public weights, in three forms: the numbers, short sentences about
+heart and skin, and a line plot. The recording is then replaced by noise, by
+another person, or by nothing. A score that remains high does not depend on
+that minute of physiology.
+
+On the stress recordings, a simple logistic regression on ordinary heart and
+skin features scores 0.92. The best language model, on the real minute, scores
+0.60. A plot of the trace does no better than guessing, which is about 0.41
+here, because always picking the common class is not a coin flip when the
+classes are uneven. Noise, a flat line, a blank prompt, and another person who
+was doing something else all fall back to that line. A scrambled trace that
+keeps the spectrum still carries the answer, and so does a recording from a
+different person who was under the same kind of stress. When the model is
+reading sentences, it follows whatever class information those sentences still
+contain. That sentence test has now been run. On WESAD, Qwen loses little when
+the judgment words are removed, and loses a great deal when those words are
+flipped. The numbers are in the sentence section below.
+
+A second experiment was requested at the last meeting: a comparison with a
+recent paper on matched terms. Same public data, same kind of model, prompting
+beside prompting, and fine-tuning beside fine-tuning. That paper uses daily
+self-ratings of stress from 1 to 5, together with step counts and sleep. It
+does not use these lab minutes. The comparison is reported separately, in
+Section~\ref{sec:asked}, so the two scores are not placed in one table.
+
+\vspace{0.7em}
+\noindent\colorbox{Ask}{%
+\begin{minipage}{\dimexpr\textwidth-2\fboxsep}
+\color{white}\small
+\textbf{The comparison from the last meeting} is Section~\ref{sec:asked}.
+Same published dataset, same kind of model. Prompting in one table,
+fine-tuning in another. It does not use WESAD, MAUS, or CogWear.
+\end{minipage}}
+
+\section{Scoring}
+
+Each minute is one question. The model does not write a paragraph. I look at
+two letters and take the one it considers more likely. \texttt{A} is the
+calmer class. \texttt{B} is the harder one. On WESAD that is calm versus the
+speech. On MAUS it is the easy memory round versus the hard one. On CogWear it
+is sitting quietly versus the color-word test.
+
+The wording of the question was chosen on two people per dataset and then left
+alone. Those two people are not in the scores. When a sentence says a value is
+high or low, that word is set from everyone else, never from the person being
+scored. The language models are not trained on these recordings. The only
+trained model in the report is in the brown section, because that paper
+trained one, and the request was to compare a fine-tune with a fine-tune.
+
+The same procedure is applied to each dataset. A range in brackets is a 95\%
+interval from redrawing the people one thousand times. The resampling unit is
+the person, so one long recording does not dominate the interval.
+
+\section{The score}
+
+Every wearable score in this report is an average of two hit rates: how often
+the calm minutes are caught, and how often the hard minutes are caught.
+Averaging them matters. On WESAD most minutes are calm, so a model that always
+says ``calm'' looks almost fine if you only count overall accuracy. It looks
+ordinary once calm and stress are weighted the same. That ordinary score is
+about 0.41. I call it guessing. It is not 0.50, because the two classes are
+not the same size.
+
+The logistic regression is the one place a model is fit on these recordings.
+It is trained on everyone except the person being scored, tested on that
+person, and this is repeated until each person has been left out once. That is
+the fair way to ask whether the features carry the class for a new person,
+rather than for a person the model has already seen.
+
+\section{The recordings, and why these ones}
+
+I wanted a label I could point to in the lab protocol. Stress means the person
+was doing the stressful task. It does not mean they wrote ``I feel stressed''
+in a diary. If that sentence is already in the prompt, the heart trace is
+optional, and the check is over before it starts.
+
+The files also had to be public. Anyone should be able to download the same
+recordings and rerun this. A private watch corpus cannot be checked, and I
+cannot see whether a result used the pulse or some other field that was
+already the answer.
+
+Three tasks, not one. The claim in the papers is not ``this one dataset.'' It
+is stress, and mental workload, and mental effort. If I only ran the dataset
+where everything is easy, a success would be a success on that dataset. WESAD
+is the one the field already uses for lab stress, and a simple model solves
+it, so a language model near guessing there is failing a test that can be
+passed. MAUS and CogWear are in the study so I cannot sell a WESAD result as a
+general one. On those two the simple model is weak. That is useful. It means
+there is less in the recording for anyone to read, and a language-model score
+near guessing is not a surprise.
+
+This is what one recording looks like. A person sits in a lab, wearing the
+sensors, doing a timed task. I take 60 seconds. The next piece starts 30
+seconds later, so neighboring minutes share half their samples. A piece never
+crosses from the task into the rest period. The next section prints one of
+those minutes the way the model actually receives it. A few seconds of the raw
+heart trace show up again when I start swapping the recording out.
+
+\textbf{WESAD} is fifteen people from the public stress dataset released by
+the University of Siegen. They wear a chest belt and a wristband. The belt
+records the electrical heart trace, skin conductance (how easily the skin
+passes a tiny current, which rises with sweat), and breathing, 700 times a
+second. The wristband records pulse with a light, 64 times a second, and skin
+conductance more slowly. The hard class is a public speaking task, the Trier
+Social Stress Test. The calm class is sitting quietly, plus watching a funny
+clip. The files also contain a meditation block. I leave it out. It is not
+the speech, and it is not the quiet sitting or the funny clip. Motion,
+muscle activity, and temperature are in the files too. I do not use them. The
+question is heart, sweat, and breath.
+
+\textbf{MAUS} is twenty-two people doing a memory game, the n-back, with a
+wrist pulse sensor. In the easy rounds (0-back) they respond to the item on
+the screen now. In the hard rounds (2-back and 3-back) they have to remember
+what came two or three items ago. The label is that difficulty, not a stress
+rating. The files also contain a chest heart trace and a fingertip pulse. I
+use the wrist pulse. That is the wearable in the claim, and it keeps this
+dataset from becoming a second chest-ECG study. Resting recordings are in the
+release and are not part of the task, so they are out.
+
+\textbf{CogWear} is a wristband study from PhysioNet. The hard class is the
+Stroop test: the word ``blue'' printed in red ink, and the person has to name
+the ink. The other class is sitting quietly. I use the pilot group, ten people
+with both pulse and skin conductance. An eleventh person is missing the
+skin-conductance file in the public release, so that person is out. A second
+cohort in the same archive played a different protocol, so I did not pool them
+together. A headband EEG is in the files. I leave it out. A headset is a
+different question from a watch.
+
+I did not add daily self-ratings as a fourth wearable task. People scoring
+their own day from 1 to 5 is the brown section, on a dataset called PMData,
+because a published paper did that experiment and I was asked to meet it on
+its own terms. Private industrial corpora, including the Fitbit data behind
+SensorLM, are not here. There is nothing public to download.
 
 \begin{center}
 {\small
-\begin{tabularx}{\textwidth}{@{}L{3.3cm}L{2.6cm}Y@{}}
+\begin{tabular}{@{}lccc@{}}
+\toprule
 \rowcolor{TableHead}
-\textbf{Block} & \textbf{State} & \textbf{One-line result} \\
+\textbf{Dataset} & \textbf{People included} & \textbf{Minutes} & \textbf{What the two classes are} \\
 \midrule
-Week 1 --- data & Closed & Three public datasets, windowed, no windows dropped \\
-Week 2 --- simple models & Closed & On WESAD, logistic regression reaches 0.92 \\
-Week 3 --- a published number & Closed & We did not reproduce Health-LLM's 0.76 \\
-Weeks 4--6 --- real recordings & Closed & Best language-model score is 0.60; plots are at chance \\
-Your comparison request & Done & Prompting and fine-tuning kept in separate tables \\
-Weeks 7--8 --- replacements & Closed & Noise collapses WESAD; spectrum and ``same condition'' do not \\
-Week 9 --- adjectives & Not started & Strip the words, then flip them \\
-Week 10 --- one summary ratio & Not started & Only after Week 9 \\
+WESAD & 15 of 15 & 1{,}042 & 731 calm / 311 stress \\
+MAUS & 22 of 22 & 1{,}086 & 362 easy / 724 hard \\
+CogWear & 10 of 11 & 114 & 39 rest / 75 Stroop \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 }
 \end{center}
 
-The short version. On WESAD, logistic regression on ordinary heart and skin
-features reaches 0.92. The best language model on the real recording reaches
-0.60. Showing the model a plot instead of numbers does nothing: it sits at
-chance. When I replace the recording, Gaussian noise, a flat line, an empty
-prompt, and another person in the wrong condition all fall to that same chance
-line. Two replacements do not. A phase-randomized ECG, which keeps the
-spectrum, still scores 0.88 with logistic regression. Another person who was
-in the same condition scores 0.95. The language model, when it is reading
-feature sentences, follows that pattern and even exaggerates it.
+No minute was dropped for a missing sample. From each minute I compute the same
+kind of summary a standard physiology toolbox would: heart rate, how much the time
+between beats varies, skin conductance, and breathing where the belt recorded
+it. The toolbox is NeuroKit2, version 0.2.13, and I have not edited it. The
+logistic regression and the sentences are built from those same summaries.
 
-\section{The study, in one paragraph}
-
-A run of papers now claims that a language model can tell stress or mental workload
-from a wearable. They rarely check whether the model needed the recording. I take
-three public lab datasets, show each 60-second window to an open model in three
-ways, and then replace the recording with noise, with another person, or with
-nothing. If the score survives, the model was not reading that trace. The sharper
-test, still to come, is whether it is reading the numbers or the adjectives around
-them (``elevated heart rate, stress-typical''). Either outcome is worth reporting.
-That was filed before these runs, at \url{https://osf.io/62r5t}.
-
-The model does not write a paragraph. For each window I look at the probability
-of two letters. \texttt{A} is the calmer class (non-stress, low workload, or
-rest). \texttt{B} is the harder class (stress, high workload, or Stroop).
-Whichever letter is more probable is the prediction. The wording of the prompt
-was chosen on two people and then left alone. Those two people are not in the
-scores below. For the verbalized features, the words ``high'' and ``low'' are
-set from the other people, never from the person being scored. There is no
-training of the language model on WESAD, MAUS, or CogWear. Fine-tuning appears
-only in the Health-LLM comparison, because that paper fine-tuned.
+\section{What a model is shown}
 
 \begin{figure}[!ht]
 \centering
 \begin{tikzpicture}[
-  node distance=0.42cm,
+  node distance=0.38cm,
   box/.style={
     draw=Accent, fill=TableHead, rounded corners=2pt, align=center,
-    minimum width=2.55cm, minimum height=1.15cm, font=\small, inner sep=2pt
+    minimum width=2.7cm, minimum height=1.2cm, font=\small, inner sep=2pt
   },
   arr/.style={-{Latex}, draw=Accent, line width=0.7pt}
 ]
-\node[box] (w) {60\,s window\\[-1pt]\footnotesize one person, one condition};
-\node[box, right=of w] (b) {three views\\[-1pt]\footnotesize numbers, words, or a plot};
-\node[box, right=of b] (s) {one forward pass\\[-1pt]\footnotesize $\arg\max$ of $A$ and $B$};
-\node[box, right=of s] (e) {held-out person\\[-1pt]\footnotesize then a bootstrap};
+\node[box] (w) {one minute\\[-1pt]\footnotesize one person, one activity};
+\node[box, right=of w] (b) {three views\\[-1pt]\footnotesize numbers, sentences, plot};
+\node[box, right=of b] (s) {which letter\\[-1pt]\footnotesize is more likely, A or B};
+\node[box, right=of s] (e) {score\\[-1pt]\footnotesize the people not used\\[-1pt]\footnotesize to write the prompt};
 \draw[arr] (w) -- (b);
 \draw[arr] (b) -- (s);
 \draw[arr] (s) -- (e);
 \end{tikzpicture}
-\caption{What one scored window is. The prompt wording is chosen on two people
-and then frozen. The numbers in this report are the other people.}
+\caption{What happens to one minute. The wording is chosen on two people and
+then left alone. Every score below is the other people.}
 \end{figure}
 
-{\small
-Here is one WESAD window, shown the three ways the models see it.
-\textbf{A} is the ECG itself, averaged into 128 numbers so it fits in a prompt.
-\textbf{B} is eighteen short sentences about heart rate, heart-rate variability,
-skin conductance, and breathing. Four of them are printed below. Words like
-``stress-typical'' are deliberate. Week~9 asks what happens when they are removed.
-\textbf{C} is a line plot of the ECG, with no name and no class written on it.
-The plot in Figure~2 is this kind of picture. Figure~3 is a different window,
-subject S10 during stress, drawn as a trace so the later replacements are easy
-to compare by eye.
-\par}
+Here is one real WESAD minute, in the three forms. The numbers are the chest
+heart trace, called an ECG in the prompt, averaged into 128 values so a
+prompt can hold it. The sentences are four of the eighteen lines the model
+actually sees. ``eda'' is skin conductance. ``hrv'' is heart-rate variation.
+Words like ``stress-typical'' are deliberate. The later test, not run yet,
+takes those words out and then reverses them. The plot is a drawing of that
+same minute, with no name and no label on it.
+
 \input{figures/input_excerpts.tex}
+
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.86\textwidth]{figures/fig_input_c.png}
-\caption{The plot the vision model sees for the window quoted above. No name, no class.}
-\end{figure}
-
-\begin{figure}[!ht]
-\centering
-\includegraphics[width=\textwidth]{figures/fig_waveforms.pdf}
-\caption{Eight seconds from one stress window of WESAD subject S10, chest ECG.
-The top trace is the recording. The three below it are the replacements used
-later: phase-randomized, Gaussian noise matched to the whole dataset, and a
-flat line at that same mean. The person and the label stay put. Only the trace changes.}
+\caption{The drawing the vision model receives for the minute quoted above.
+Nothing on the figure says who it is, or which class it is.}
 \end{figure}
 
 \FloatBarrier
-\section{The three datasets}
 
-Each example is one minute of a recording, and the next window starts 30 seconds
-later, so neighbors overlap. A window never crosses from one condition into
-another. WESAD is the standard lab stress set: a public speaking task against
-calm and a comedy clip, from a chest belt and a wristband, 15 people. MAUS is
-easy versus hard n-back, from a wrist pulse, 22 people. CogWear
-is a color-word Stroop against rest, from a wristband, 10 people. None of the
-windows were dropped for missing samples.
+\section{A simple model, before any language model}
 
-\begin{center}
-{\small
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-\rowcolor{TableHead}
-\textbf{Dataset} & \textbf{People} & \textbf{Windows} & \textbf{Class split} & \textbf{Dropped} \\
-\midrule
-WESAD & 15 / 15 & 1{,}042 & 731 non-stress / 311 stress & 0 \\
-MAUS & 22 / 22 & 1{,}086 & 362 low / 724 high & 0 \\
-CogWear & 10 / 11 & 114 & 39 baseline / 75 Stroop & 0 \\
-\bottomrule
-\end{tabular}
-}
-\end{center}
+I wanted a baseline that does not involve a language model at all. Before any
+of those runs, I fit a logistic regression and a small decision tree on the
+features. If a straight line through heart rate and skin conductance can
+separate the classes, then the information is in the recording. A language
+model that scores near guessing is leaving that information unused.
 
-CogWear subject~3 is out because PhysioNet is missing that person's EDA file. The
-feature code is frozen (NeuroKit2 0.2.13). The same code feeds the linear model
-and the feature sentences, so those two are looking at the same numbers.
-
-\section{What a simple model can already do}
-
-Before any language model ran, I fit a logistic regression and a small decision
-tree on the same features the sentences are built from. The shuffle ceiling is
-a sanity check: shuffle the labels inside each person, refit a thousand times,
-and take the score that 95\% of those shuffles fall below. A real model has to
-clear that line. ``Guessing'' is always picking the more common class.
+The shuffle ceiling is a check against luck. I shuffle the labels inside each
+person, refit a thousand times, and take the score that 95\% of those
+shuffles fall below. A real result has to clear that line.
 
 \begin{center}
 {\small
 \begin{tabular}{@{}lccccc@{}}
 \toprule
 \rowcolor{TableHead}
-\textbf{Dataset} & \textbf{Logistic reg.} & \textbf{Small tree} & \textbf{Guessing} & \textbf{Shuffle ceiling} & \textbf{Signal} \\
+\textbf{Dataset} & \textbf{Logistic regression} & \textbf{Small tree} & \textbf{Guessing} & \textbf{Shuffle ceiling} & \textbf{Useful?} \\
 \midrule
-WESAD ($n{=}15$) & 0.918 & 0.848 & 0.412 & 0.433 & Strong \\
-MAUS ($n{=}22$) & 0.444 & 0.482 & 0.400 & 0.413 & Weak \\
-CogWear ($n{=}10$) & 0.569 & 0.560 & 0.397 & 0.541 & Weak \\
+WESAD (15 people) & 0.918 & 0.848 & 0.412 & 0.433 & Yes \\
+MAUS (22 people) & 0.444 & 0.482 & 0.400 & 0.413 & Barely \\
+CogWear (10 people) & 0.569 & 0.560 & 0.397 & 0.541 & Barely \\
 \bottomrule
 \end{tabular}
 }
 \end{center}
 
-WESAD is the dataset that can test whether a model is using the recording. A linear
-model is far above chance there, so an LLM that ignores the trace has a high score
-to miss. MAUS and CogWear are weak even for logistic regression. On those two, a
-language-model score near 0.4 is not evidence of anything, and the ratio we
-pre-registered for later will often be undefined. The raw gap is what I will report.
+WESAD is the dataset that can answer the question. The linear model is far
+above guessing, so there is something for a language model to miss. MAUS and
+CogWear are weak even for the linear model. On those two, a language-model
+score near 0.4 does not mean much. When I later compress each result into one
+ratio, those two will often be left blank, and I will show the raw gap instead.
 
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=\textwidth,height=2.15in,keepaspectratio]{figures/fig_floors_vs_llm.pdf}
-\caption{Best simple model against the best language-model score on the real
-recording. Each language-model bar is the best of that model's three settings.
-WESAD is the only dataset where the simple model is far above guessing.}
+\caption{The best simple model against the best language-model score on the
+real recording. Each language-model bar is that model's best of the three
+ways of showing a minute. WESAD is the only dataset where the simple model
+is far above guessing. The score is the average of the two class hit rates,
+explained above.}
 \end{figure}
-
-\section{Checking one published number before trusting the pipeline}
-
-The plan was filed publicly before the language-model grid ran
-(\url{https://osf.io/62r5t}). Three predictions are on that filing, and none of
-them are scored yet. I expect plots and raw number-lists to lose most of their
-advantage once the recording is replaced. I expect the worded features to lose
-more than half their advantage once the adjectives are stripped. I expect
-flipped adjectives (``low'' where the value is high) to change the prediction
-on more than 40\% of windows. Week 10 is where those get a single number.
-Week 9 is the adjective half.
-
-As a check that I was running the published method and not a lookalike, I
-reproduced one Health-LLM setting before the rest of the grid: PMData stress,
-MedAlpaca-7B, no examples in the prompt. Their paper says MAE $0.76 \pm 0.1$.
-This rerun is $\mathbf{2.689 \pm 0.038}$. The answers are often ``out of 5'' or
-``out of 10'', and the scorer, which was fixed in advance, reads the first
-number, so it records 5 or 10. I left that rule alone. The gap is part of the
-result, not a bug I papered over.
-
-\begin{figure}[!ht]
-\centering
-\includegraphics[width=0.58\textwidth]{figures/fig_anchor_mae.pdf}
-\caption{The published Health-LLM number ($0.76\pm 0.1$) next to this rerun
-($2.689\pm 0.038$). Lower is better. The gap is the result.}
-\end{figure}
-
-The models in the rest of this report are open weights: Qwen3-8B and
-Llama-3.1-8B for text, and Qwen2.5-VL-7B for plots. The registration originally
-named a GPT model. That path was dropped because the account was capped at 50
-requests a day, and the registration has a public note saying so.
 
 \section{Language models on the real recording}
 
-``Every nth'' keeps one sample out of every few, so the minute still fits in a
-prompt. ``128 averages'' chops the minute into 128 bins and averages inside
-each bin. ``Sentences'' are the feature lines. The two
-people used to pick the wording are WESAD S2 and S8, MAUS 015 and 023, and
-CogWear 4 and 8. No window failed to score.
+The text models are Qwen3-8B and Llama-3.1-8B. Both are open weights, which
+means anyone can download them. The public plan originally named GPT-4.1. I
+switched, because that account was capped at 50 requests a day. The plan has
+a public note saying so.
+
+``Every \(n\)th sample'' keeps one sample out of every few, so the minute
+fits in a prompt. ``128 averages'' splits the minute into 128 bins and
+averages inside each bin. ``Feature sentences'' are the lines from the
+previous section. The two people set aside for wording are WESAD S2 and S8,
+MAUS 015 and 023, and CogWear 4 and 8. Every minute in this table produced
+a score.
 
 \begin{center}
 {\small
@@ -354,13 +410,13 @@ CogWear 4 and 8. No window failed to score.
 \rowcolor{TableHead}
 \textbf{Dataset} & \textbf{What the model sees} & \textbf{Qwen3-8B} & \textbf{Llama-3.1-8B} \\
 \midrule
-WESAD & every nth sample & 0.427 [0.392, 0.465] & 0.333 [0.301, 0.370] \\
+WESAD & every \(n\)th sample & 0.427 [0.392, 0.465] & 0.333 [0.301, 0.370] \\
 WESAD & 128 averages & \textbf{0.595 [0.550, 0.647]} & 0.230 [0.227, 0.233] \\
 WESAD & feature sentences & 0.584 [0.462, 0.699] & 0.283 [0.247, 0.324] \\
-MAUS & every nth sample & 0.467 [0.436, 0.499] & 0.413 [0.403, 0.426] \\
+MAUS & every \(n\)th sample & 0.467 [0.436, 0.499] & 0.413 [0.403, 0.426] \\
 MAUS & 128 averages & 0.483 [0.452, 0.516] & 0.400 [0.400, 0.400] \\
 MAUS & feature sentences & 0.487 [0.439, 0.531] & 0.400 [0.400, 0.400] \\
-CogWear & every nth sample & 0.576 [0.443, 0.689] & 0.404 [0.392, 0.417] \\
+CogWear & every \(n\)th sample & 0.576 [0.443, 0.689] & 0.404 [0.392, 0.417] \\
 CogWear & 128 averages & 0.396 [0.380, 0.411] & 0.440 [0.399, 0.495] \\
 CogWear & feature sentences & 0.475 [0.393, 0.504] & 0.479 [0.375, 0.640] \\
 \bottomrule
@@ -368,152 +424,119 @@ CogWear & feature sentences & 0.475 [0.393, 0.504] & 0.479 [0.375, 0.640] \\
 }
 \end{center}
 
-The bold row is the best language-model result in the study so far: Qwen, on
-WESAD, reading the ECG as 128 averages, with no worked examples in the prompt.
-It clears guessing (0.41). It does not come close to logistic regression (0.92).
-Llama's two MAUS rows at 0.400 with no interval width are not a crash. On every
-held-out person, Llama gave the same answer every time. CogWear's intervals are
-wide because only 90 windows are scored.
+The bold row is the best language-model result so far. Qwen, on WESAD, reading
+the heart trace as 128 averages, with no examples in the prompt, scores 0.595.
+The range sits above guessing. It does not come close to the logistic
+regression at 0.918.
+
+The feature sentences are close behind, at 0.584, but the range is wide. It
+reaches down toward guessing, so I would not call that one settled.
+
+Llama's two MAUS rows sit at 0.400 with a range that has no width. That is not
+a crashed run. On every person in the table, Llama gave the same answer every
+time. CogWear's ranges are wide because only 90 minutes are scored.
 
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=\textwidth,height=2.2in,keepaspectratio]{figures/fig_ab_grid.pdf}
-\caption{Language models on the real recording. Dark bars are Qwen, orange bars
-are Llama. The dashed line is guessing. The only bar that clearly clears that
-line, with the interval above it, is Qwen on WESAD with the averaged ECG.}
+\caption{Qwen in dark teal, Llama in orange, on the real recording. The
+dashed line is guessing. The bar that clears it, with the whole range above
+the line, is Qwen on WESAD with the averaged heart trace.}
 \end{figure}
 
-\section{Showing the model a plot instead}
+\section{A drawing, instead of numbers}
 
-Qwen2.5-VL-7B sees a line drawing of the chest ECG on WESAD, or the wrist pulse
-on MAUS. The drawing has no name and no class on it. The same window always
-makes the same file. CogWear has no plot condition. The prompt here includes
-four example plots, chosen before these scores.
+The third model, Qwen2.5-VL-7B, sees a line drawing. On WESAD that is the
+chest heart trace. On MAUS it is the wrist pulse. The drawing has no name and
+no class written on it. The same minute always makes the same file. CogWear
+has no drawing condition. The prompt includes four example drawings, chosen
+before these scores were computed.
 
 \begin{center}
 {\small
 \begin{tabular}{@{}lccc@{}}
 \toprule
 \rowcolor{TableHead}
-\textbf{Dataset} & \textbf{Prompt} & \textbf{macro-F1 [95\% CI]} & \textbf{Windows} \\
+\textbf{Dataset} & \textbf{What was in the prompt} & \textbf{Score} & \textbf{Minutes} \\
 \midrule
-WESAD & four example plots & 0.412 [0.410, 0.414] & 906 \\
-MAUS & four example plots & 0.400 [0.399, 0.400] & 990 \\
+WESAD & four example drawings & 0.412 [0.410, 0.414] & 906 \\
+MAUS & four example drawings & 0.400 [0.399, 0.400] & 990 \\
 \bottomrule
 \end{tabular}
 }
 \end{center}
 
-Both sit on chance, and the intervals are tight because the model almost always
-picks the same class. That is what we expected for plots. I have not gone back
-and rewritten the plot prompt to chase a higher number.
+Both sit on guessing. The ranges are tight because the model almost always
+picks the same class. The prompt was not revised after these scores.
 
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=\textwidth,height=2.15in,keepaspectratio]{figures/fig_paradigm_c.pdf}
-\caption{The plot condition next to guessing and next to Qwen's number and word
-conditions. The vision model does not beat guessing on either dataset.}
+\caption{Guessing, Qwen's best number version, Qwen's sentences, and the
+vision model. The drawing does not beat guessing on WESAD or on MAUS.}
 \end{figure}
 
-\section{What you asked for: a matched comparison}
+\section{Replacing the recording}
 
-After the last meeting you asked for recent papers, from a real venue, and for
-the comparison to stay matched. Same public dataset, same open model, and
-prompting next to prompting, fine-tuning next to fine-tuning. A WESAD macro-F1
-does not belong next to a paper that reports MAE on daily step counts.
+The prompts stay as they were. For each minute I swap the trace and score
+again. Five swaps are there to remove the class. One is there for a different
+reason.
 
-The paper that meets that bar is Health-LLM (Kim et al., CHIL 2024). The task
-is PMData stress, a score from 1 to 5. The metric is mean absolute error: how
-far the predicted score is from the person's own rating. Lower is better. The inputs are
-two weeks of steps, calories, resting heart rate, sleep, and that day's mood.
-The model with public weights is MedAlpaca-7B. Their Table~3 is frozen
-prompting. Their Table~4 is the same model after fine-tuning. SensorLM
-(NeurIPS 2025) is a conference paper in the same area, but the weights and the
-Fitbit corpus are not public, so it is not in these tables.
-
-The zero-shot rerun uses their prompt and the locked 299-item eval. The
-first-number scorer was fixed before the run. Many completions say ``out of 5''
-or ``out of 10'', and the scorer reads 5 or 10. That is why our MedAlpaca MAE
-is far above theirs. I did not change the scorer to close the gap.
-
-\begin{center}
-{\small
-\begin{tabular}{@{}llcc@{}}
-\toprule
-\rowcolor{TableHead}
-\textbf{Row} & \textbf{Model} & \textbf{Adaptation} & \textbf{MAE} \\
-\midrule
-Paper Table 3 & MedAlpaca-7b & no examples & $0.76 \pm 0.1$ \\
-This rerun & MedAlpaca-7b & no examples & $2.689 \pm 0.038$ \\
-Our model, their prompt & Qwen3-8B & no examples & $0.795 \pm 0.020$ \\
-Our model, their prompt & Llama-3.1-8B & no examples & $2654 \pm 43$ \\
-\bottomrule
-\end{tabular}}
-\end{center}
-
-\noindent Qwen answers \texttt{Answer: 3}. Llama writes Python that pastes step counts;
-the locked first-number scorer reads those counts. The scorer was not changed.
-Always answering 3 on this eval has MAE 0.401, which is still below Qwen.
-
-\begin{center}
-{\small
-\begin{tabular}{@{}llcc@{}}
-\toprule
-\rowcolor{TableHead}
-\textbf{Row} & \textbf{Model} & \textbf{Adaptation} & \textbf{MAE} \\
-\midrule
-Paper Table 4 & MedAlpaca-7b & fine-tuned on PMData & 0.38 \\
-This rerun & MedAlpaca-7b & fine-tuned, small adapter & 2.697 \\
-\bottomrule
-\end{tabular}}
-\end{center}
-
-297 of 299 fine-tuned answers parsed. They still say ``out of 5'', so the
-scorer still reads 5. The same model's zero-shot seed on this eval was 2.714.
-Fine-tuning did not move it. Their published fine-tuned error is 0.38. Ours is
-2.70. Training follows their 7B recipe: 3 epochs, batch 128, learning rate
-$2\times 10^{-5}$, and the small adapter from the MedAlpaca defaults. I did not
-oversample, because they never published the rule, and I skipped the 100-step
-warmup, because this training set is only 653 rows. Qwen, on their prompt,
-lands near their paper number and still loses to always answering 3 (error
-0.401 on this split). Llama does not answer with a stress score. It writes
-Python, and the scorer reads a step count out of that code.
-
-\section{Weeks 7--8 --- what survives when the recording is replaced}
-
-The prompts stay frozen. For each window I swap the trace and score again.
-There are five replacements that are meant to destroy the signal, and one that
-is not. That last one keeps the condition and changes the person. It answers a
-different question: is the model using this recording, or the fact that
-stressed people look alike? It is in the tables. It is not a null.
+\begin{itemize}
+  \item \textbf{Gaussian noise.} Random noise with the same average and spread
+        as that sensor across the whole dataset. Stress and calm are not given
+        their own noise.
+  \item \textbf{Phase-randomized.} The sizes of the wiggles stay the same.
+        That is the spectrum. Their timing is scrambled, so it no longer looks
+        like that person's heartbeat.
+  \item \textbf{Wrong person, wrong activity.} A minute from someone else, and
+        I do not force it to be the same activity.
+  \item \textbf{Flat line.} Every sample is replaced by the average of that sensor.
+  \item \textbf{Nothing left.} The prompt says the signal was removed, and
+        there are no digits left in it.
+  \item \textbf{Same activity, other person.} Another person who was doing the
+        same thing. This one is not trying to destroy the signal. It asks
+        whether the model needs this recording, or whether stressed people
+        simply look like each other.
+\end{itemize}
 
 \begin{figure}[!ht]
 \centering
 \begin{tikzpicture}[
   rung/.style={
     draw=Accent, fill=TableHead, rounded corners=1.5pt, align=center,
-    font=\footnotesize, inner sep=3pt, minimum height=0.72cm, text width=2.15cm
+    font=\footnotesize, inner sep=3pt, minimum height=0.78cm, text width=2.15cm
   },
   keep/.style={rung, fill=white, draw=Ask}
 ]
 \node[rung] (g) {Gaussian\\noise};
-\node[rung, right=0.18cm of g] (i) {phase\\randomized};
-\node[rung, right=0.18cm of i] (b) {wrong person,\\wrong condition};
-\node[rung, right=0.18cm of b] (f) {flat line};
-\node[rung, right=0.18cm of f] (d) {nothing\\left};
-\node[keep, below=0.55cm of b] (p) {wrong person,\\same condition\\[-1pt]\scriptsize not a null};
+\node[rung, right=0.16cm of g] (i) {phase\\randomized};
+\node[rung, right=0.16cm of i] (b) {wrong person,\\wrong activity};
+\node[rung, right=0.16cm of b] (f) {flat line};
+\node[rung, right=0.16cm of f] (d) {nothing\\left};
+\node[keep, below=0.55cm of b] (p) {same activity,\\other person\\[-1pt]\scriptsize kept on purpose};
 \end{tikzpicture}
-\caption{The five replacements that are meant to wipe the class, and the one
-underneath that keeps it on purpose.}
+\caption{Five ways of removing the class, and one swap that keeps it.
+The lower box is not a destroyed signal. It is a different question.}
 \end{figure}
 
-One hundred and twenty settings were scored this way, with no failed windows.
-The probability of each letter is saved with every window. Before looking at
-the language models, the same features go through the same logistic regression
-as in Week~2. That table says how much class information each replacement still
-holds. A replacement is not assumed to be empty. It is measured.
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_waveforms.pdf}
+\caption{Eight seconds of chest ECG from one stress minute, WESAD person S10.
+This is a different minute from the prompt example above, chosen so the four
+traces can share a scale. Top is the recording. Below it: phase-randomized,
+Gaussian noise, and a flat line at the same average. The person and the label
+stay. Only the trace changes. On a shared scale the flat line is actually flat.}
+\end{figure}
 
-Classical logistic regression on those features:
+I scored every setup from the real-recording experiment on every replacement.
+That is 120 runs, and none of them failed. The probability of each letter is
+saved with every minute.
+
+Before looking at the language models, I put the same features through the
+same logistic regression. This says how much class information each
+replacement still holds. I measure that. I do not assume a replacement is empty.
 
 \begin{center}
 {\small
@@ -524,81 +547,356 @@ Classical logistic regression on those features:
 \midrule
 Gaussian noise & 0.412 & 0.400 & 0.486 \\
 Phase-randomized & 0.880 & 0.405 & 0.458 \\
-Wrong person, wrong condition & 0.411 & 0.405 & 0.380 \\
+Wrong person, wrong activity & 0.411 & 0.405 & 0.380 \\
 Flat line & 0.412 & --- & 0.397 \\
 Signal deleted & --- & --- & --- \\
-Same condition, other person & 0.954 & 0.494 & 0.773 \\
+Same activity, other person & 0.954 & 0.494 & 0.773 \\
 \bottomrule
 \end{tabular}}
 \end{center}
 
-A dash means there was nothing to fit. A flat MAUS pulse has no heartbeats, so
-the features are empty. Deleting the signal leaves no features on any dataset.
+A dash means there was nothing to fit. A flat pulse on MAUS has no heartbeats,
+so the features come out empty. Deleting the signal leaves no features on any
+dataset.
 
-Read the WESAD column from the top. Noise, a flat line, and a window from the
-wrong person in the wrong condition all fall to 0.41, which is the majority
-floor. A phase-randomized ECG, which keeps the spectrum and throws away the
-waveform, is still at 0.88. Another stressed person's recording, with the
-label kept, is at 0.95. So on this dataset the class is mostly in the spectrum
-and in the kind of person, not in one individual's pulse shape. MAUS and
-CogWear never had that strong a classical signal, and the ladder does not
-create one.
+The WESAD column is the one that says something. Noise, a flat line, and the
+wrong person in the wrong activity all fall to 0.41, which is guessing. A
+phase-randomized heart trace is still at 0.88. Another person doing the same
+thing is at 0.95. On this dataset the class lives mostly in the spectrum, and
+in the kind of person, rather than in the shape of one individual's pulse.
+MAUS and CogWear never had a strong linear score, and swapping the trace does
+not create one.
 
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_ledger.pdf}
-\caption{Logistic regression on each replacement. The missing MAUS flat-line
-bar is the empty-feature case above, not a score of zero. The dashed line is
-guessing on WESAD.}
+\caption{Logistic regression on each replacement. The missing orange bar, MAUS
+with a flat line, is the empty-feature case in the table, not a score of zero.
+The dashed line is guessing on WESAD.}
 \end{figure}
 
-The same replacements were then given to the frozen prompts. Below is Qwen3-8B
-on WESAD, the only place a language model had cleared chance on the real
-recording. Llama's intervals all touch guessing or sit under it, so a second
-chart would not show a pattern. Green is the real recording.
-Brown keeps the condition and changes the person. Teal is a null. The legend
-is on the figure.
+The same replacements then went to the language models. The chart is Qwen on
+WESAD, which is the only place a language model had clearly cleared guessing
+on the real recording. I did run Llama on the replacements as well. Its ranges
+on the real recording already touch guessing or sit under it, and the
+replacements do not produce a pattern worth a second chart.
 
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_surrogate_qwen.pdf}
-\caption{Qwen3-8B on WESAD, held-out people only. Left: ECG as 128 averages
-(0.60 on the real recording). Right: feature sentences (0.58 on the real
-recording). Green is the real recording. Teal bars are the null replacements.
-Brown keeps the stress label and changes the person. A flat line and an empty
-prompt sit on chance. Sentences built from a phase-randomized trace score 0.70,
-higher than the real recording. Sentences from another stressed person score 0.83.}
+\caption{Qwen3-8B on WESAD, people held out of the prompt wording. Left: the
+heart trace as 128 averages (0.60 on the real recording). Right: the feature
+sentences (0.58 on the real recording). Green is the real recording. Teal is a
+replacement meant to remove the class. Brown keeps the activity and changes
+the person. The legend is on the figure.}
 \end{figure}
 
-That last pair is the result I want on the table. When the words in the prompt
-are built from features that still contain the class, Qwen does well even if
-the waveform is no longer the original person's. When the features are noise
-or absent, Qwen falls to chance or below it. The raw-ECG setting moves less. It
-was only modestly above chance to begin with, and several replacements stay in
-that same band. The dependence score that turns these gaps into one ratio is
-Week 10. It is not in this PDF.
+The right-hand panel is the sentence condition. On the real recording Qwen
+scores 0.58. Sentences built from a phase-randomized trace score 0.70, above
+the real recording. Sentences from another stressed person score 0.83.
+Sentences built from noise fall to about 0.29, below guessing. A flat line and
+an empty prompt sit on guessing.
 
-\section{What is left}
+The left-hand chart moves less. The raw trace was only modestly above guessing
+to begin with, and several replacements stay in that same band.
 
-Week 9 is the adjective test, on the feature sentences only. Three wordings of
-the same numbers: as they are now, with the evaluative words removed, and with
-those words flipped. There is an optional fourth wording, SensorLM's plain
-statistical sentences (mean, max, min, spread), with none of their activity or
-mood lines. I would like a yes or no on that fourth wording before I freeze
-the set.
+On WESAD this agrees with the logistic regression. When the sentences still
+contain the class, Qwen scores well even if the
+waveform is no longer that person's. When the sentences are noise, or gone,
+Qwen falls to guessing or below it.
 
-Week 10 turns the gaps in this report into one ratio per condition,
+\FloatBarrier
+
+\section{\texorpdfstring{\textcolor{Ask}{What you asked for}}{What you asked for}}
+\label{sec:asked}
+
+\AskedBox{%
+\textbf{The answer, before the tables.}\\[0.35em]
+The paper that matches the request is Health-LLM, from CHIL 2024.
+Their task is a daily stress rating from 1 to 5. Lower error is better.\\[0.2em]
+Prompting their model: they report 0.76. This rerun is 2.69, because the model
+says ``out of 5'' and the scoring rule writes down 5.\\[0.2em]
+Qwen, on their prompt, is at 0.80. Close to their prompting result, and worse
+than always answering 3.\\[0.2em]
+Fine-tuning their model on their data leaves the error at 2.70. Their paper
+says 0.38 after fine-tuning.\\[0.2em]
+None of these numbers are wearable scores.%
+}
+
+At the last meeting you asked me to find recent papers, from a real venue, and
+to compare like with like. If a paper only prompted the model, that result
+sits next to prompting. If a paper fine-tuned, that result sits next to a
+fine-tune of the same kind of model, on the same public data. A
+classification score on WESAD does not belong next to an error on a 1-to-5
+stress rating. This section is only the second kind of number.
+
+SensorLM, from NeurIPS 2025, is about wearables and language models, but the
+weights and the Fitbit recordings are not public, so it is not in the tables.
+Other recent papers keep their labels private, or they are not language
+models. I left those out for the same reason. Every paper in that reading,
+and the earlier papers this study is written against, is named in
+Appendix~\ref{app:papers}.
+
+\subsection{\textcolor{Ask}{Their task}}
+
+PMData is a public daily-life dataset. People wore a consumer tracker and,
+each day, rated their stress from 1 to 5. The model sees two weeks of steps,
+calories, resting heart rate, sleep, and that day's mood, and it has to give
+that day's rating. The error is the average distance from the person's own
+number. Always answering 3, on the 299 days I use as the test, is off by
+0.401. That constant prediction is the reference for the errors below.
+
+The model they released is MedAlpaca-7B. Their Table~3 is prompting, with no
+examples in the prompt. Their Table~4 is the same model after it has been
+fine-tuned on PMData. I kept those as two tables.
+
+\subsection{\textcolor{Ask}{Prompting only}}
+
+I used their prompt, and a test set of 299 days that was fixed before the run.
+The scoring rule was fixed too: read the first number in the answer. I did not
+change the rule when the number looked wrong.
+
+A lot of MedAlpaca's answers say ``out of 5'' or ``out of 10.'' The rule
+records 5 or 10. A stress rating only goes to 5, so those answers are far
+from a typical day. That is why this rerun sits at 2.69 while the paper says
+0.76. I left the rule as it was.
+
+Qwen, given the same words, answers ``Answer: 3.'' Its error is 0.795, near
+the paper's prompting result, and still worse than the constant answer of 3.
+
+Llama, given the same words, does not answer with a stress rating. It writes
+a short Python program, and the rule reads a step count out of that program.
+The error is about 2,650. The scoring rule was not changed.
+
+\begin{center}
+{\small
+\begin{tabular}{@{}llcc@{}}
+\toprule
+\rowcolor{Ask!15}
+\textbf{Row} & \textbf{Model} & \textbf{What was done} & \textbf{Average error} \\
+\midrule
+Their Table 3 & MedAlpaca-7B & no examples & $0.76 \pm 0.1$ \\
+This rerun & MedAlpaca-7B & no examples, same rule & $2.689 \pm 0.038$ \\
+Our model, their prompt & Qwen3-8B & no examples, same rule & $0.795 \pm 0.020$ \\
+Our model, their prompt & Llama-3.1-8B & no examples, same rule & $2654 \pm 43$ \\
+\bottomrule
+\end{tabular}}
+\end{center}
+
+\noindent Lower is better. This table is prompting. It is not a WESAD score,
+and it is not the fine-tuning table below.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.58\textwidth]{figures/fig_anchor_mae.pdf}
+\caption{Prompting only, MedAlpaca-7B, no examples. Their published error
+against this rerun. Lower is better. The gap is what the fixed scoring rule
+does with answers that say ``out of 5.''}
+\end{figure}
+
+\FloatBarrier
+\subsection{\textcolor{Ask}{Fine-tuning only}}
+
+Their Table~4 says that fine-tuning MedAlpaca on PMData brings the error down
+to 0.38.
+
+I fine-tuned the same model on the training examples they released. The recipe
+is the 7B one in their appendix: 3 epochs, batches of 128, learning rate
+\(2\times 10^{-5}\), and the small adapter from the MedAlpaca defaults. An
+adapter here means a small add-on, rather than retraining every weight. One
+training example also appeared in the locked test set, so I dropped it. The
+training file has 653 examples. I did not oversample, because they never
+published the rule for it. I also skipped their 100-step warmup. With only
+653 examples at this batch size there are a handful of steps, and a warmup
+that long would never reach the learning rate.
+
+Their 0.38 uses their own test split. My number uses the 299 days I had
+already locked. Same model, same task, same error. I am not claiming the two
+test lists are the same list.
+
+Of the fine-tuned answers, 297 of 299 could be parsed. They still say ``out of
+5,'' so the rule still records 5. Before fine-tuning, this same setup scored
+2.714. After fine-tuning it scores 2.697. The training did not change the habit.
+
+\begin{center}
+{\small
+\begin{tabular}{@{}llcc@{}}
+\toprule
+\rowcolor{Ask!15}
+\textbf{Row} & \textbf{Model} & \textbf{What was done} & \textbf{Average error} \\
+\midrule
+Their Table 4 & MedAlpaca-7B & fine-tuned on PMData & 0.38 \\
+This rerun & MedAlpaca-7B & fine-tuned, small adapter & 2.697 \\
+\bottomrule
+\end{tabular}}
+\end{center}
+
+\noindent Lower is better. This table is fine-tuning. It does not get compared
+with the prompting table, and it does not get compared with WESAD.
+
+\AskedBox{%
+\textbf{What I take from this.}
+On their task, with their model and a scoring rule fixed in advance, I do not
+reproduce their numbers. The model keeps saying ``out of 5,'' and fine-tuning
+does not break that habit.
+Qwen, which was not trained on their data, lands near their published prompting
+error and still loses to always answering 3.
+Llama does not answer the question that was asked.
+This says something about running their experiment. It does not say whether a
+language model can read a WESAD minute.%
+}
+
+\section{The sentence test}
+
+The prompts stay the ones frozen in September. Only the sentences change.
+Three wordings of the same numbers: as written, with the judgment words
+removed, and with those words flipped. Removing them leaves the number and
+its percentile among the other people. Flipping them swaps ``elevated'' with
+``reduced,'' and ``stress-typical'' with ``calmer-typical,'' and leaves the
+number alone. Both models, all three datasets, every minute scored. No
+failures.
+
+The plan filed before these runs made two predictions. Removing the judgment
+words should cost more than half of whatever advantage the original wording
+had over the shuffle floor. Flipping the words should change the predicted
+letter on more than 40\% of minutes. If the original wording was not
+convincingly above that floor, the first prediction is left unscored.
+
+Qwen on WESAD is the clear case. Original sentences score 0.581
+[0.460, 0.695]. Without the judgment words, 0.554 [0.441, 0.662]. That is
+about 17\% of the margin over the shuffle floor, not half. With the words
+flipped, 0.313 [0.224, 0.403], and the letter changes on 63\% of minutes
+[0.522, 0.737].
+
+Qwen on MAUS starts at 0.485 [0.438, 0.529]. Without the judgment words it
+falls to 0.399 [0.345, 0.448], which removes the whole margin over the floor.
+Flipping the words changes 71\% of minutes [0.647, 0.768], and the score is
+0.507 [0.466, 0.546].
+
+Qwen on CogWear starts at 0.475 [0.393, 0.504]. That interval reaches the
+shuffle floor, so the margin prediction is not scored. Removing the words
+raises the score to 0.542 [0.426, 0.612]. Flipping them raises it to 0.597
+[0.513, 0.658] and changes 72\% of minutes [0.510, 0.907]. Ninety minutes,
+so that interval is wide.
+
+Llama does not clear the shuffle floor on the original wording, on any of
+the three datasets, so the margin prediction is not scored for it. On WESAD
+the original wording is 0.278 [0.245, 0.316] and both altered wordings are
+0.230, with 3\% of minutes flipping [0.009, 0.057]. On MAUS the original and
+the stripped wording sit at 0.400, and the flipped wording scores 0.503
+[0.450, 0.553], changing 27\% of minutes [0.149, 0.399]. On CogWear the
+original wording is 0.479 [0.375, 0.640] and the other two are 0.404, with
+8\% of minutes flipping [0.000, 0.177].
+
+Where the original wording was above the floor, the filed prediction about
+removing the words holds on MAUS and does not hold on WESAD. The prediction
+about flipped words holds for Qwen on all three datasets and does not hold
+for Llama. SensorLM's statistical sentences were not part of this run.
+
+\section{Remaining work}
+
+The replacement charts already show what happens when the recording is
+swapped. The sentence test above is the second of the three filed
+predictions. The third, flipped words changing more than 40\% of minutes,
+is now scored as well.
+
+What remains is one ratio per setup. In words, it is how much of the gap
+between the real recording and guessing disappears when the recording is
+replaced:
 \[
-\mathrm{SDS}
-=
-\frac{M_{\mathrm{real}}-M_{\mathrm{surrogate}}}{M_{\mathrm{real}}-M_{\mathrm{chance}}},
+\frac{\text{real} - \text{replacement}}{\text{real} - \text{guessing}}.
 \]
-where $M$ is macro-F1 and $M_{\mathrm{chance}}$ is the shuffle floor from Week~2.
-If the real recording was never convincingly above that floor, the ratio is
-left blank and only the gap is shown. MAUS and CogWear are where that will
-happen. The ratio is not in this PDF.
+If the real recording was never convincingly above guessing, I will leave the
+ratio blank and show the gap on its own. MAUS and CogWear are where that will
+happen. The ratio is not in this report.
 
-\vspace{0.85em}
+\section{Where the work stands}
+
+\begin{center}
+{\small
+\begin{tabularx}{\textwidth}{@{}L{4.4cm}Y@{}}
+\rowcolor{TableHead}
+\textbf{Piece} & \textbf{State} \\
+\midrule
+Three public datasets, cut into minutes & Done. Nothing dropped for missing samples. \\
+A simple model on the same features & Done. WESAD reaches 0.92. The other two are weak. \\
+Language models on the real recording & Done. Best score is 0.60. Drawings sit on guessing. \\
+Replacing the recording & Done. On WESAD, noise collapses and the spectrum does not. \\
+\textcolor{Ask}{The comparison from the last meeting} & \textcolor{Ask}{Done. Section~\ref{sec:asked}. Separate dataset, separate score.} \\
+Removing and flipping the judgment words & Done. Qwen on WESAD loses 17\% of its margin when the words go, and 63\% of minutes flip when the words reverse. \\
+One ratio per setup & Not started. Next. \\
+\bottomrule
+\end{tabularx}
+}
+\end{center}
+
+\appendix
+\section{Papers I read}
+\label{app:papers}
+
+Two lists. The first is the reading for the comparison you asked for: recent
+papers on language models and wearable or daily-life health data, from 2023
+through October 2026. A paper enters the brown tables only when the dataset,
+the task, the kind of model, and the score can sit next to Health-LLM. The
+second list is older. Those papers are why the wearable study exists. They
+are not PMData numbers, and they are not in those tables.
+
+\subsection{The comparison reading}
+
+\begin{center}
+{\small
+\begin{tabularx}{\textwidth}{@{}L{6.4cm}Y@{}}
+\rowcolor{TableHead}
+\textbf{Paper} & \textbf{Where it sits} \\
+\midrule
+Kim et al., \emph{Health-LLM: Large Language Models for Health Prediction via Wearable Sensor Data}. CHIL 2024. arXiv:2401.06866.
+& In the brown tables. PMData stress, MedAlpaca-7B, prompting and fine-tuning kept apart. \\
+\addlinespace
+Zhang et al., \emph{SensorLM: Learning the Language of Wearable Sensors}. NeurIPS 2025. arXiv:2506.09108.
+& Not in the tables. Wearables and language, but the Fitbit recordings and the weights are not public. \\
+\addlinespace
+Zheng et al., \emph{ProMind-LLM: Proactive Mental Health Care via Causal Reasoning with Sensor Data}. arXiv:2505.14038. No conference on the arXiv record.
+& Out. PMData and GLOBEM, but the labels are a private psychologist coding, not the public stress rating. \\
+\addlinespace
+Soyebo et al., \emph{On-Device Language Models for Privacy-Preserving Stress Prediction: A Multimodal Evaluation on Mobile Health}. Preprint, 2026. arXiv:2609.11961.
+& Not in the tables. Same daily summaries and the same error, but a preprint, and much smaller models. \\
+\addlinespace
+Hagos et al., \emph{From Stress to Affect: Multimodal Deep Learning for Physiological Emotion Recognition Across Wearable Sensor Modalities}. Under review. arXiv:2609.20991.
+& Not in the tables. WESAD, but the models are trained classifiers, not a language model. \\
+\bottomrule
+\end{tabularx}}
+\end{center}
+
+No conference paper in this reading fine-tunes Llama-3.1 or Qwen3 on WESAD.
+The wearable scores in the body of this report are our own experiment.
+
+\subsection{Papers this study is written against}
+
+\begin{center}
+{\small
+\begin{tabularx}{\textwidth}{@{}L{6.4cm}Y@{}}
+\rowcolor{TableHead}
+\textbf{Paper} & \textbf{Why it is here} \\
+\midrule
+Jo et al., \emph{Are EEG-to-Text Models Working?} arXiv:2405.06459.
+& They showed an EEG-to-text model can still look good after the brain recording is swapped for noise. Different task. Same doubt. \\
+\addlinespace
+Tan et al., \emph{Are Language Models Actually Useful for Time Series Forecasting?} NeurIPS 2024. arXiv:2406.16964.
+& They asked whether a language model actually helps at forecasting a time series. Often it does not. Not physiology. A reminder that a negative result still counts. \\
+\addlinespace
+Xu et al., \emph{LSM-2: Learning from Incomplete Wearable Sensor Data}. arXiv:2506.05321.
+& A newer Google sensor model. The paper is public. The code and the weights are not, so I cannot run it. \\
+\addlinespace
+Zhu et al., \emph{VitalAgent: A Tool-Augmented Agent for Reactive and Proactive Physiological Monitoring over Wearable Health Data}. arXiv:2605.29483.
+& A 2026 system that compares having the true heart rate against not having it. Useful, and it is not the same test as replacing the recording with noise. \\
+\bottomrule
+\end{tabularx}}
+\end{center}
+
+WESAD, MAUS, CogWear, and PMData are the recordings, not extra papers in
+this list.
+
+\vspace{0.9em}
 {\color{Accent}\hrule height 0.6pt}
 \vspace{0.4em}
 {\small\color{AccentSoft}

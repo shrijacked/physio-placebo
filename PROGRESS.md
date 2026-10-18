@@ -1,11 +1,15 @@
 # PROGRESS
 
 ## Current status
-- Semester week: **Weeks 7–8 CLOSED** (2026-10-14). Tag `week-08-done`.
+- Semester week: **Week 9 CLOSED** (2026-10-19). Tag `week-09-done`.
+  Paradigm B only, variants (i) original, (ii) neutralized, (iii) mis-signed.
+  Qwen3-8B and Llama-3.1-8B, WESAD / MAUS / CogWear, 18 cells, 0 failures.
+  Panel: `results/verbalizer_ablation/panel.json`. SensorLM (iv) was not run.
+  Week 10 has not started.
+- Weeks 7–8 CLOSED (2026-10-14). Tag `week-08-done`.
   Surrogate ladder scored on every frozen cell (120 cells, 0 failures, raw
   logprobs in `results/surrogates/eval/`). Classical ledger:
   `results/surrogates/ledger/20261013T193152Z/ledger.json`.
-  Week 9 has not started.
 - Comparison arm (2026-10-11, not a week close): Health-LLM PMData stress.
   Prompting and fine-tuning are separate tables. Qwen3-8B MAE 0.795 ± 0.020.
   Llama-3.1-8B-Instruct MAE 2654 ± 43 (first number is a step count inside
@@ -183,6 +187,19 @@
 - ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-10-19: **Week 9 closed.** Original / neutralized / mis-signed on the
+  frozen Paradigm B prompts, both text models, three datasets, rows saved.
+  Qwen WESAD loses 17% of its above-chance margin when the adjectives go
+  (prediction was >50%) and flips 63% of minutes when they reverse
+  (prediction was >40%). Qwen MAUS loses the whole margin and flips 71%.
+  Qwen CogWear and all Llama original wordings do not clear the permutation
+  floor, so the margin prediction is unscored there. SensorLM (iv) not run.
+  Panel `results/verbalizer_ablation/panel.json`. Tag `week-09-done`.
+- 2026-10-19: **Week 9 started, three wordings only.** Original, neutralized
+  (number plus training-fold percentile, no evaluative words), and mis-signed
+  (direction words flipped, number unchanged). Same frozen prompt IDs.
+  Exemplars use the same wording as the minute being scored. SensorLM stays
+  out until a yes.
 - 2026-10-14: **Weeks 7–8 closed.** Five null rungs plus the label-preserving
   permutation, on every frozen A/B/C cell. Ledger is LOSO logreg on surrogate
   features. MAUS donor windows at a different sampling rate are resampled
@@ -288,8 +305,9 @@
 - MAUS on real data — **RESOLVED 2026-09-16**.
 - ~~Fidelity-anchor reproduction *number*~~ **RESOLVED 2026-09-20**: MAE 2.689 ± 0.038,
   gap +1.929, artifact `results/anchor/medalpaca/server_run/`.
-- Verbalizer ablation (Week 9) is not started. Surrogate cells are in
+- Verbalizer ablation (Week 9) — **RESOLVED 2026-10-19**. Surrogate cells stay in
   `results/surrogates/eval/`. A/B/C real-signal numbers stay in `results/eval_grid/`.
+  Week 10 SDS card is not started.
 - `pip install -e .` required `required_permissions=all` in this sandbox (a `.pth` write);
   fresh-clone install on a second machine still unverified (GPU box required again).
 - Health-LLM releases **no evaluation code** (verified 2026-08-27: no `eval/` dir;

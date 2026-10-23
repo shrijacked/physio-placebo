@@ -120,7 +120,8 @@ This run does not.
 
 Figure 7's bullet list of the days, with "can you predict user's stress level",
 makes the model refuse. All eight answers are "I cannot predict stress levels".
-There is no number to score.
+Rounding heart rate to two decimals, as the figure prints `65.61`, does not
+change that. There is no number to score.
 
 Table 2 ends the stress prompt with "What will my stress level be?" On the
 same averages, seven answers are "Your stress level will be 2 out of 5." One

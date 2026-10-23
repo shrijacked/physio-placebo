@@ -58,4 +58,26 @@ Seven answers copy the sensor list, so the first number is a step count.
 One answer is `The predicted stress is 3 out of 5.` The eight-item MAE is 10,
 worse than 2.69. A full rerun of this wrapper would not land on 0.76.
 
+That run went through the Hugging Face pipeline. The pipeline's tokenizer
+limit is 512, and these prompts are longer than that, so a later check called
+`Inferer.__call__` directly: same prompt function, no truncation, 128 new
+tokens, then split on `### Response:`. The checkpoint can hold 2048 tokens.
+The eight prompts were 545 to 864 tokens, so the question was still in the
+window. `pad_token_id` was set to 0, which is what their tokenizer setup does.
+Leaving the checkpoint's `-1` makes the current transformers build return
+empty strings; that empty run is not a result.
+
+Three fillings of their template, same eight items, same first-number rule:
+
+| How the template was filled | Eight-item MAE | What it wrote |
+|---|---|---|
+| The dataset's own instruction and the sensor text | 9.86 | Six copies of the sensor list, two refusals |
+| The released zero-shot question in the input slot | 6.25 | Five copies, three real lines (`The predicted stress is 3 out of 5` or `Answer: 0`) |
+| Health-assistant line as the instruction, sensor text plus the example as the input | 10.0 | Seven copies, one `The predicted stress is 3 out of 5` |
+
+None of these is 0.76. The copies make the first number a step count. Scoring
+only the sentences that look like a rating would be a different rule than the
+locked one, and it would throw away most of the items. A full 299-item rerun
+of this generator would not land on the paper's number.
+
 The locked 2.689 number is still the raw-string run. It has not been replaced.

@@ -134,6 +134,9 @@ Figure 3's sentence, "Please return the stress level between 1 and 5", on
 the same averages: seven 3s and one 4. The eight-item error is 0.5. Answering
 3 on all 299 questions is 0.401.
 
+Figure 8 sampling at temperature 0.4, on the released raw question, still
+returns `out of 5` on all eight. The first number is 5.
+
 None of these moves the full-set 0.970 result onto 0.76.
 
 The instruction stored on each stress row ("a personalized healthcare agent

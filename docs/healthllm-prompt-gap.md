@@ -155,3 +155,11 @@ makes all eight answers "the predicted stress level is 3." Answering 3 on
 every one of the 299 questions scores 0.401. That is not 0.76 either.
 
 The locked 2.689 number is still the raw-string run. It has not been replaced.
+
+## Their repository has nothing else
+
+`mitmedialab/Health-LLM` at main (`ca095854`) is the same tree we have:
+`inference.py`, `gen_dataset.py`, the MedAlpaca inferer, and the paper PDF.
+There is no evaluation script and no other prompt file. The 0.76 number is
+not recoverable from those files with this checkpoint and the first-number
+score.

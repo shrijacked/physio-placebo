@@ -147,6 +147,11 @@ returns `out of 5` on all eight. The first number is 5. Temperature 0.7,
 their other sampling block, does the same: eight answers, first number 5
 (`out of 5`, `/5`, or `/5, low stress`).
 
+Their few-shot branch, three averaged examples plus the same `Answer: {n}`
+line, fits in 520 tokens and then generates nothing. All eight completions
+are empty. The prompt already ends in `Answer: 3`, and the examples have
+already shown a finished answer, so the model stops.
+
 None of these moves the full-set 0.970 result onto 0.76.
 
 The instruction stored on each stress row ("a personalized healthcare agent

@@ -167,6 +167,11 @@ trained to predict stress which ranges from 1 to 5") with the same averages
 makes all eight answers "the predicted stress level is 3." Answering 3 on
 every one of the 299 questions scores 0.401. That is not 0.76 either.
 
+Their zero-shot sentence, "You are a health assistant. Your mission is to
+read the following input health query and return your prediction," on the
+same averages and with no `Answer:` line, also says 3 on all eight. Without
+a `Response:` cue the completion is empty.
+
 The locked 2.689 number is still the raw-string run. It has not been replaced.
 
 ## Their repository has nothing else

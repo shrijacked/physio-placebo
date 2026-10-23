@@ -152,6 +152,14 @@ line, fits in 520 tokens and then generates nothing. All eight completions
 are empty. The prompt already ends in `Answer: 3`, and the examples have
 already shown a finished answer, so the model stops.
 
+Dropping only that trailing `Answer: {n}` line, and keeping their three
+examples, makes MedAlpaca write `Answer: The predicted stress level is N`
+on every question. All 299 parse. The answers are 3 on 205 questions, 4 on
+82, 2 on 7, 1 on 4, and 5 on 1. MAE is 0.532. That is outside 0.76 ± 0.1.
+It is closer to their few-shot chain-of-thought self-consistency cell, which
+they report as 0.50 ± 0.2, than to the zero-shot cell. The examples are drawn
+the way their script draws them, from the same file, starting at row 50.
+
 None of these moves the full-set 0.970 result onto 0.76.
 
 The instruction stored on each stress row ("a personalized healthcare agent

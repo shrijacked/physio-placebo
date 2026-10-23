@@ -132,7 +132,8 @@ averaged paragraph gives six 2s and two 3s.
 
 Figure 3's sentence, "Please return the stress level between 1 and 5", on
 the same averages: seven 3s and one 4. The eight-item error is 0.5. Answering
-3 on all 299 questions is 0.401.
+3 on all 299 questions is 0.401. The same sentence on Figure 3's bracketed
+day list, heart rate rounded to one decimal, answers `3` on all eight.
 
 Figure 8 sampling at temperature 0.4, on the released raw question, still
 returns `out of 5` on all eight. The first number is 5. Temperature 0.7,

@@ -130,6 +130,10 @@ is "Your stress level will be low."
 Figure 8's sampling setting (temperature 0.4, top 50, top-p 0.9) on the
 averaged paragraph gives six 2s and two 3s.
 
+Figure 3's sentence, "Please return the stress level between 1 and 5", on
+the same averages: seven 3s and one 4. The eight-item error is 0.5. Answering
+3 on all 299 questions is 0.401.
+
 None of these moves the full-set 0.970 result onto 0.76.
 
 The instruction stored on each stress row ("a personalized healthcare agent

@@ -103,3 +103,17 @@ what the model writes.
 The prompt ends in `Answer: 3` and already contains `[Mood]: 4 out of 5`.
 The model continues that phrase. The first number in the continuation is 5
 or 10. That is the 2.689.
+
+## Their averaged paragraph, on all 299
+
+Table 1's basic prompt replaces the day-by-day list with the 14-day mean.
+Figure 7 puts that paragraph under `Instruction` / `Question` / `Response`.
+Figure 8's greedy setting is one beam, no sampling, 128 new tokens. Same
+first-number rule. All 299 answers parse.
+
+The model writes `The predicted stress score/level is 2` on 268 items, `3`
+on 26, and `1` on 5. MAE is 0.970. Answering 2 every time would be 1.020.
+Answering 3 every time would be 0.401. The paper's 0.76 sits between those.
+This run does not.
+
+The locked 2.689 number is still the raw-string run. It has not been replaced.

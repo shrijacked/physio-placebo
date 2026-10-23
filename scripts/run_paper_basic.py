@@ -65,7 +65,15 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=8)
     ap.add_argument("--out-dir", default="results/anchor/paper_basic")
+    ap.add_argument(
+        "--variant",
+        action="append",
+        choices=("figure7", "figure1", "medalpaca"),
+        default=None,
+        help="which paper frame to run; default is all three",
+    )
     args = ap.parse_args()
+    variants = args.variant or ["figure7", "figure1", "medalpaca"]
     items = load_eval_items()
     if args.limit is not None:
         items = items[: args.limit]
@@ -83,14 +91,20 @@ def main() -> None:
     )
     model.eval()
 
-    per_variant: dict[str, list[dict]] = {"figure7": [], "figure1": [], "medalpaca": []}
+    out_dir = Path(args.out_dir)
+    if not out_dir.is_absolute():
+        out_dir = REPO_ROOT / out_dir
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    per_variant: dict[str, list[dict]] = {name: [] for name in variants}
     for item in items:
         built = _prompts(item["input"])
         label = item["output"]
-        for name, (prompt, marker) in built.items():
+        for name in variants:
+            prompt, marker = built[name]
             answer = _generate(model, tok, prompt, marker)
             pred = parse_first_number(answer)
-            print(f"{name} label={parse_label(label)} pred={pred} ans={answer[:160]!r}")
+            print(f"{name} label={parse_label(label)} pred={pred} ans={answer[:160]!r}", flush=True)
             per_variant[name].append(
                 {
                     "label": label,
@@ -98,11 +112,9 @@ def main() -> None:
                     "prompt_sent": prompt,
                 }
             )
-
-    out_dir = Path(args.out_dir)
-    if not out_dir.is_absolute():
-        out_dir = REPO_ROOT / out_dir
-    out_dir.mkdir(parents=True, exist_ok=True)
+            (out_dir / f"{name}.partial.json").write_text(
+                json.dumps(per_variant[name]) + "\n"
+            )
     summary = {}
     for name, records in per_variant.items():
         scored = score_records(records)

@@ -81,3 +81,25 @@ locked one, and it would throw away most of the items. A full 299-item rerun
 of this generator would not land on the paper's number.
 
 The locked 2.689 number is still the raw-string run. It has not been replaced.
+
+## The raw question, with nothing cut off
+
+The locked run went through a pipeline whose tokenizer stops at 512 tokens.
+Seed 0's 299 questions are 176 to 1133 tokens, median 674. 254 of them are
+over 512. The paper says its prompts are 202 ± 42 tokens. The released
+questions are longer than that.
+
+The 45 questions that fit in 512 tokens already show the question, including
+the `Answer:` example. Their locked answers are still `out of 5` (32),
+`out of 10` (5), or `/5` (5).
+
+Generating those strings again with no cut at 512, greedy, 120 new tokens,
+reproduces the locked text. Four questions that fit and four that do not all
+came back `out of 5` or `/5`, the same words as the locked file. On the
+longest questions, a 512-token cut does drop the question (the tail ends in
+the middle of the heart-rate list). Putting the question back does not change
+what the model writes.
+
+The prompt ends in `Answer: 3` and already contains `[Mood]: 4 out of 5`.
+The model continues that phrase. The first number in the continuation is 5
+or 10. That is the 2.689.

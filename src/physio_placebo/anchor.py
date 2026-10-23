@@ -216,14 +216,19 @@ def paper_basic_prompt(item_input: str) -> str:
     )
 
 
+_LIST_PREC = {"steps": ".1f", "calories": ".1f", "rhr": ".2f", "sleep": ".1f"}
+
+
 def _bracket_list_text(text: str, kind: str) -> str:
+    """Figure 7 prints heart rate as ``65.61`` and the other sensors as ``5260.0``."""
     match = _PAPER_LISTS[kind].search(text)
     if match is None:
         raise ValueError(f"no {kind} list in sensor text")
-    parts = [part.strip() for part in match.group(1).split(",") if part.strip()]
-    if not parts:
+    values = [float(part) for part in match.group(1).split(",") if part.strip()]
+    if not values:
         raise ValueError(f"empty {kind} list")
-    return "[" + ", ".join(parts) + "]"
+    rendered = ", ".join(format(value, _LIST_PREC[kind]) for value in values)
+    return "[" + rendered + "]"
 
 
 def paper_figure7_question(item_input: str) -> str:

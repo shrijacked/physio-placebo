@@ -116,7 +116,9 @@ def test_paper_basic_prompt_is_the_averaged_paragraph():
     assert figure1.endswith("\n### Response:")
     listed = paper_figure7_list_prompt(sensor)
     assert "  • Steps: [100.0, 300.0] steps\n" in listed
-    assert "  • Resting Heart Rate: [60.0, 70.0] beats/min\n" in listed
+    assert "  • Resting Heart Rate: [60.00, 70.00] beats/min\n" in listed
+    long_hr = sensor.replace("[60.0, 70.0]", "[68.19040298461914]")
+    assert "Resting Heart Rate: [68.19] beats/min" in paper_figure7_list_prompt(long_hr)
     assert listed.endswith(
         "In this regard, can you predict user's stress level between 1 and 5?\nResponse:"
     )

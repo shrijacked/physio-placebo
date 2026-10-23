@@ -114,7 +114,13 @@ first-number rule. All 299 answers parse.
 The model writes `The predicted stress score/level is 2` on 268 items, `3`
 on 26, and `1` on 5. MAE is 0.970. Answering 2 every time would be 1.020.
 Answering 3 every time would be 0.401. The paper's 0.76 sits between those.
-This run does not.
+This run does not. That run was greedy. The appendix says the default
+decoder is sampling.
+
+Sampling, temperature 0.4, top 50, top-p 0.9, same averaged paragraph, same
+Figure 7 frame, seed 0: all 299 parse. The answers are 3 on 141 questions,
+2 on 129, 1 on 28, and 4 on 1. MAE is 0.823. That is inside 0.76 ± 0.1.
+It is one seed, not their three-seed mean.
 
 The 31 answers that are not 2 are not random. Mean steps on those questions
 are about 5200, against about 3200 when the answer is 2. The five answers of

@@ -95,6 +95,7 @@ def main() -> None:
         action="store_true",
         help="Figure 8 sampling block, which the paper calls the default decoder",
     )
+    ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
     variants = args.variant or ["figure7", "figure1", "medalpaca"]
     items = load_eval_items()
@@ -105,7 +106,7 @@ def main() -> None:
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
     if args.sample:
-        torch.manual_seed(0)
+        torch.manual_seed(args.seed)
 
     tok = AutoTokenizer.from_pretrained(HF_MODEL)
     tok.pad_token_id = 0

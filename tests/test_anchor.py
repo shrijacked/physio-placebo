@@ -25,6 +25,7 @@ from physio_placebo.anchor import (
     paper_basic_prompt,
     paper_basic_question,
     paper_figure1_prompt,
+    paper_figure7_list_prompt,
     parse_first_number,
     parse_label,
     remaining_prompts,
@@ -113,6 +114,13 @@ def test_paper_basic_prompt_is_the_averaged_paragraph():
     figure1 = paper_figure1_prompt(sensor)
     assert figure1.startswith("### Instruction: You are an intelligent healthcare agent.\n")
     assert figure1.endswith("\n### Response:")
+    listed = paper_figure7_list_prompt(sensor)
+    assert "  • Steps: [100.0, 300.0] steps\n" in listed
+    assert "  • Resting Heart Rate: [60.0, 70.0] beats/min\n" in listed
+    assert listed.endswith(
+        "In this regard, can you predict user's stress level between 1 and 5?\nResponse:"
+    )
+    assert "averaged" not in listed
 
 
 def test_format_rand_nums_are_seed_deterministic():

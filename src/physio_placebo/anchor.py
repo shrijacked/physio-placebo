@@ -216,6 +216,48 @@ def paper_basic_prompt(item_input: str) -> str:
     )
 
 
+def _bracket_list_text(text: str, kind: str) -> str:
+    match = _PAPER_LISTS[kind].search(text)
+    if match is None:
+        raise ValueError(f"no {kind} list in sensor text")
+    parts = [part.strip() for part in match.group(1).split(",") if part.strip()]
+    if not parts:
+        raise ValueError(f"empty {kind} list")
+    return "[" + ", ".join(parts) + "]"
+
+
+def paper_figure7_question(item_input: str) -> str:
+    """Figure 7 zero-shot question: the days as bullets, then their question line.
+
+    The printed exemplar is readiness. Stress uses the same sentence with the
+    range from ``gen_dataset.py`` (1 to 5). The age/sex/height line in the
+    figure is not in the released stress questions, and their participant table
+    is only a stub, so it is left out.
+    """
+    mood_match = _PAPER_MOOD.search(item_input)
+    if mood_match is None:
+        raise ValueError("no mood value in sensor text")
+    mood = float(mood_match.group(1))
+    return (
+        "The analysis of recent 2-weeks sensor readings show:\n"
+        f"  • Steps: {_bracket_list_text(item_input, 'steps')} steps\n"
+        f"  • Burned Calories: {_bracket_list_text(item_input, 'calories')} calories\n"
+        f"  • Resting Heart Rate: {_bracket_list_text(item_input, 'rhr')} beats/min\n"
+        f"  • Sleep Minutes: {_bracket_list_text(item_input, 'sleep')} minutes\n"
+        f"  • Mood: {mood:g} out of 5\n"
+        "In this regard, can you predict user's stress level between 1 and 5?"
+    )
+
+
+def paper_figure7_list_prompt(item_input: str) -> str:
+    """Figure 7 frame around the bullet-list question."""
+    return (
+        f"Instruction: {PAPER_BASIC_INSTRUCTION}\n"
+        f"Question: {paper_figure7_question(item_input)}\n"
+        "Response:"
+    )
+
+
 def paper_figure1_prompt(item_input: str) -> str:
     """Figure 1 frame: ``### Instruction`` / ``### Question`` / ``### Response``."""
     return (

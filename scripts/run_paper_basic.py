@@ -17,6 +17,7 @@ from physio_placebo.anchor import (
     paper_basic_prompt,
     paper_basic_question,
     paper_figure1_prompt,
+    paper_figure7_list_prompt,
     parse_first_number,
     parse_label,
     score_records,
@@ -31,6 +32,7 @@ def _prompts(item_input: str) -> dict[str, tuple[str, str]]:
     return {
         "figure7": (paper_basic_prompt(item_input), "Response:"),
         "figure1": (paper_figure1_prompt(item_input), "### Response:"),
+        "figure7list": (paper_figure7_list_prompt(item_input), "Response:"),
         "medalpaca": (
             medalpaca_generate_prompt(
                 instruction="You are an intelligent healthcare agent.",
@@ -68,7 +70,7 @@ def main() -> None:
     ap.add_argument(
         "--variant",
         action="append",
-        choices=("figure7", "figure1", "medalpaca"),
+        choices=("figure7", "figure7list", "figure1", "medalpaca"),
         default=None,
         help="which paper frame to run; default is all three",
     )

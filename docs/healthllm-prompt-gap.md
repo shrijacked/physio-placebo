@@ -116,6 +116,13 @@ on 26, and `1` on 5. MAE is 0.970. Answering 2 every time would be 1.020.
 Answering 3 every time would be 0.401. The paper's 0.76 sits between those.
 This run does not.
 
+The 31 answers that are not 2 are not random. Mean steps on those questions
+are about 5200, against about 3200 when the answer is 2. The five answers of
+1 all have mood 5. The model is glancing at steps and mood, then still
+saying 2 unless steps are very high. Answering 3 every time is 0.401, which
+is better than 0.76, so the paper's number is not "use the steps more
+carefully." It is a weaker prediction than always saying 3.
+
 ## The other wordings in the paper, eight items
 
 Figure 7's bullet list of the days, with "can you predict user's stress level",

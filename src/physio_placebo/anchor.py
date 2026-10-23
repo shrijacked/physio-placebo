@@ -254,6 +254,44 @@ def paper_figure7_question(item_input: str) -> str:
     )
 
 
+def paper_case_prompt(item_input: str) -> str:
+    """Figure 3 layout: bracketed one-decimal days, then "Please return".
+
+    The printed case is readiness. Stress keeps the same lines and uses the
+    1-to-5 range from their generator. Sleep minutes stay, because that is a
+    stress feature in Table 2. No age or height: their participant table is a stub.
+    """
+    mood_match = _PAPER_MOOD.search(item_input)
+    if mood_match is None:
+        raise ValueError("no mood value in sensor text")
+    mood = float(mood_match.group(1))
+
+    def shown(kind: str) -> str:
+        match = _PAPER_LISTS[kind].search(item_input)
+        if match is None:
+            raise ValueError(f"no {kind} list in sensor text")
+        values = [float(part) for part in match.group(1).split(",") if part.strip()]
+        if not values:
+            raise ValueError(f"empty {kind} list")
+        # Figure 3 prints 2184.0 and 67.7, one decimal.
+        return "[" + ", ".join(f"{value:.1f}" for value in values) + "]"
+
+    question = (
+        "The analysis of recent 2-weeks sensor readings show:\n"
+        f"[Steps]: {shown('steps')} steps\n"
+        f"[Burned Calories]: {shown('calories')} calories\n"
+        f"[Resting Heart Rate]: {shown('rhr')} beats/min\n"
+        f"[Sleep Minutes]: {shown('sleep')} minutes\n"
+        f"[Mood]: {mood:g} out of 5\n"
+        "Please return the stress level between 1 and 5."
+    )
+    return (
+        f"Instruction: {PAPER_BASIC_INSTRUCTION}\n"
+        f"Question: {question}\n"
+        "Response:"
+    )
+
+
 def paper_figure7_list_prompt(item_input: str) -> str:
     """Figure 7 frame around the bullet-list question."""
     return (

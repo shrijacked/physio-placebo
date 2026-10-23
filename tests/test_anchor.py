@@ -24,6 +24,7 @@ from physio_placebo.anchor import (
     medalpaca_wrapped_question,
     paper_basic_prompt,
     paper_basic_question,
+    paper_case_prompt,
     paper_figure1_prompt,
     paper_figure7_list_prompt,
     parse_first_number,
@@ -123,6 +124,12 @@ def test_paper_basic_prompt_is_the_averaged_paragraph():
         "In this regard, can you predict user's stress level between 1 and 5?\nResponse:"
     )
     assert "averaged" not in listed
+    case = paper_case_prompt(sensor)
+    assert "[Steps]: [100.0, 300.0] steps\n" in case
+    assert "[Resting Heart Rate]: [60.0, 70.0] beats/min\n" in case
+    assert case.endswith("Please return the stress level between 1 and 5.\nResponse:")
+    long_case = paper_case_prompt(sensor.replace("[60.0, 70.0]", "[68.19040298461914]"))
+    assert "[Resting Heart Rate]: [68.2] beats/min" in long_case
 
 
 def test_format_rand_nums_are_seed_deterministic():

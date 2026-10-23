@@ -45,20 +45,34 @@ def _prompts(item_input: str) -> dict[str, tuple[str, str]]:
     }
 
 
-def _generate(model, tok, prompt: str, marker: str) -> str:
+def _generate(model, tok, prompt: str, marker: str, *, sample: bool) -> str:
     import torch
     from transformers import GenerationConfig
 
     ids = tok(prompt, return_tensors="pt", truncation=False)["input_ids"].to("cuda")
-    # Figure 8 greedy search. pad_token_id 0 is their tokenizer assignment;
-    # the checkpoint's -1 makes this transformers build return empty text.
-    cfg = GenerationConfig(
-        pad_token_id=0,
-        do_sample=False,
-        num_beams=1,
-        early_stopping=False,
-        max_new_tokens=128,
-    )
+    # Figure 8. The paper's appendix says the default method is sampling
+    # (temperature 0.4, top_k 50, top_p 0.9). Greedy is the other block.
+    # pad_token_id 0 is their tokenizer assignment; the checkpoint's -1
+    # makes this transformers build return empty text.
+    if sample:
+        cfg = GenerationConfig(
+            pad_token_id=0,
+            do_sample=True,
+            top_k=50,
+            num_beams=1,
+            max_new_tokens=128,
+            early_stopping=True,
+            temperature=0.4,
+            top_p=0.9,
+        )
+    else:
+        cfg = GenerationConfig(
+            pad_token_id=0,
+            do_sample=False,
+            num_beams=1,
+            early_stopping=False,
+            max_new_tokens=128,
+        )
     with torch.no_grad():
         output = model.generate(input_ids=ids, generation_config=cfg)
     decoded = tok.decode(output[0], skip_special_tokens=True)
@@ -76,6 +90,11 @@ def main() -> None:
         default=None,
         help="which paper frame to run; default is all three",
     )
+    ap.add_argument(
+        "--sample",
+        action="store_true",
+        help="Figure 8 sampling block, which the paper calls the default decoder",
+    )
     args = ap.parse_args()
     variants = args.variant or ["figure7", "figure1", "medalpaca"]
     items = load_eval_items()
@@ -84,6 +103,9 @@ def main() -> None:
 
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
+
+    if args.sample:
+        torch.manual_seed(0)
 
     tok = AutoTokenizer.from_pretrained(HF_MODEL)
     tok.pad_token_id = 0
@@ -106,7 +128,7 @@ def main() -> None:
         label = item["output"]
         for name in variants:
             prompt, marker = built[name]
-            answer = _generate(model, tok, prompt, marker)
+            answer = _generate(model, tok, prompt, marker, sample=args.sample)
             pred = parse_first_number(answer)
             print(f"{name} label={parse_label(label)} pred={pred} ans={answer[:160]!r}", flush=True)
             per_variant[name].append(

@@ -9,6 +9,7 @@ import pytest
 
 from physio_placebo.anchor import (
     DEFAULT_EVAL_JSON,
+    PAPER_BASIC_INSTRUCTION,
     PAPER_MEDALPACA,
     SEEDS,
     SPLIT_MANIFEST,
@@ -21,6 +22,9 @@ from physio_placebo.anchor import (
     locked_eval_sha256,
     medalpaca_wrap_released_question,
     medalpaca_wrapped_question,
+    paper_basic_prompt,
+    paper_basic_question,
+    paper_figure1_prompt,
     parse_first_number,
     parse_label,
     remaining_prompts,
@@ -83,6 +87,32 @@ def test_medalpaca_prompt_matches_their_generate_prompt():
     assert "Answer: 3" in wrapped
     assert parse_first_number("out of 5") == 5.0
     assert medalpaca_wrap_released_question(zero_shot_question(item_input, 3)) == wrapped
+
+
+def test_paper_basic_prompt_is_the_averaged_paragraph():
+    sensor = (
+        "The recent 14-days sensor readings show: [Steps]: [100.0, 300.0] steps, "
+        "[Burned Calorories]: [10.0, 30.0] calories, "
+        "[Resting Heart Rate]: [60.0, 70.0] beats/min, "
+        "[SleepMinutes]: [400.0, 500.0] minutes, [Mood]: 4 out of 5; "
+        "What would be the predicted stress?"
+    )
+    question = paper_basic_question(sensor)
+    assert question == (
+        "The analysis of recent period: 14 days averaged sensor readings show: "
+        "Steps: 200.0 steps, Burned Calories: 20.0 calories, "
+        "Resting Heart Rate: 65.00 beats/min, Sleep Minutes: 450.0 minutes, "
+        "Mood: 4 out of 5. In this regard, what is the predicted stress "
+        "score/level between 1 and 5?"
+    )
+    assert "[100.0, 300.0]" not in question
+    prompt = paper_basic_prompt(sensor)
+    assert prompt.startswith(f"Instruction: {PAPER_BASIC_INSTRUCTION}\n")
+    assert prompt.endswith("\nResponse:")
+    assert "Answer:" not in prompt
+    figure1 = paper_figure1_prompt(sensor)
+    assert figure1.startswith("### Instruction: You are an intelligent healthcare agent.\n")
+    assert figure1.endswith("\n### Response:")
 
 
 def test_format_rand_nums_are_seed_deterministic():

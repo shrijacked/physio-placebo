@@ -71,6 +71,15 @@ PAPER_GPT35_FEWSHOT = {
 
 _NUMBER = re.compile(r"-?\d+(?:\.\d+)?")
 _LABEL = re.compile(r"is (\d+)")
+_PAPER_LISTS = {
+    "steps": re.compile(r"\[Steps\]: \[([^\]]*)\]"),
+    "calories": re.compile(r"\[Burned Calorories\]: \[([^\]]*)\]"),
+    "rhr": re.compile(r"\[Resting Heart Rate\]: \[([^\]]*)\]"),
+    "sleep": re.compile(r"\[SleepMinutes\]: \[([^\]]*)\]"),
+}
+_PAPER_MOOD = re.compile(r"\[Mood\]: (\d+(?:\.\d+)?) out of 5")
+# Figure 7, zero-shot exemplar. Table 1 is the basic (averaged) context.
+PAPER_BASIC_INSTRUCTION = "You are an intelligent healthcare agent."
 
 
 def locked_eval_sha256() -> str:
@@ -162,6 +171,58 @@ def medalpaca_wrap_released_question(question: str) -> str:
             input=question[len(ZERO_SHOT_INSTRUCTION) :],
         )
     return medalpaca_generate_prompt(input=question)
+
+
+def _mean_bracket_list(text: str, kind: str) -> float:
+    match = _PAPER_LISTS[kind].search(text)
+    if match is None:
+        raise ValueError(f"no {kind} list in sensor text")
+    values = [float(part) for part in match.group(1).split(",") if part.strip()]
+    if not values:
+        raise ValueError(f"empty {kind} list")
+    return sum(values) / len(values)
+
+
+def paper_basic_question(item_input: str) -> str:
+    """Table 1 basic context, with the stress range from their generator.
+
+    ``gen_dataset.py`` already averages the 14-day window (``steps_14d`` and
+    the three siblings) and then writes the raw lists into the string. Table 1
+    is the paragraph of those averages. Stress is range 1 to 5 in that script.
+    """
+    steps = _mean_bracket_list(item_input, "steps")
+    calories = _mean_bracket_list(item_input, "calories")
+    rhr = _mean_bracket_list(item_input, "rhr")
+    sleep = _mean_bracket_list(item_input, "sleep")
+    mood_match = _PAPER_MOOD.search(item_input)
+    if mood_match is None:
+        raise ValueError("no mood value in sensor text")
+    mood = float(mood_match.group(1))
+    return (
+        "The analysis of recent period: 14 days averaged sensor readings show: "
+        f"Steps: {steps:.1f} steps, Burned Calories: {calories:.1f} calories, "
+        f"Resting Heart Rate: {rhr:.2f} beats/min, Sleep Minutes: {sleep:.1f} minutes, "
+        f"Mood: {mood:g} out of 5. In this regard, what is the predicted stress "
+        "score/level between 1 and 5?"
+    )
+
+
+def paper_basic_prompt(item_input: str) -> str:
+    """Figure 7 zero-shot frame around the Table 1 basic paragraph."""
+    return (
+        f"Instruction: {PAPER_BASIC_INSTRUCTION}\n"
+        f"Question: {paper_basic_question(item_input)}\n"
+        "Response:"
+    )
+
+
+def paper_figure1_prompt(item_input: str) -> str:
+    """Figure 1 frame: ``### Instruction`` / ``### Question`` / ``### Response``."""
+    return (
+        f"### Instruction: {PAPER_BASIC_INSTRUCTION}\n"
+        f"### Question: {paper_basic_question(item_input)}\n"
+        "### Response:"
+    )
 
 
 def medalpaca_wrapped_question(item_input: str, rand_num: int | float | str) -> str:

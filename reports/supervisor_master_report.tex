@@ -66,9 +66,9 @@
 \definecolor{Ok}{HTML}{1F6B4A}
 \definecolor{Muted}{HTML}{5C6B70}
 
-\newcommand{\ReportDate}{19 October 2026}
+\newcommand{\ReportDate}{23 October 2026}
 \newcommand{\ReportThrough}{Week 9}
-\newcommand{\ReportNext}{Week 9 (verbalizer ablation) --- not started}
+\newcommand{\ReportNext}{Week 10, the one ratio per setup, not started}
 
 \hypersetup{
   pdftitle={physio-placebo: independent study report through Week 9},
@@ -115,7 +115,7 @@
 }
 
 \begin{document}
-{\large\scshape\color{AccentSoft} Independent study --- report through Week 8\par}
+{\large\scshape\color{AccentSoft} Independent study --- report through \ReportThrough\par}
 \vspace{0.35em}
 {\color{Accent}\hrule height 1.15pt}
 \vspace{0.65em}
@@ -130,7 +130,7 @@
 \textbf{Student} & Shrijak Kumar \\
 \textbf{Advisor} & Dr.\ Siddharth, Plaksha University \\
 \textbf{Date} & \ReportDate \\
-\textbf{Covers} & the work through Week 8 \\
+\textbf{Covers} & the work through \ReportThrough \\
 \textbf{Code} & \url{https://github.com/shrijacked/physio-placebo} \\
 \textbf{Public plan} & \url{https://osf.io/62r5t} \quad DOI 10.17605/OSF.IO/62R5T \\
 \end{tabular}
@@ -331,8 +331,8 @@ Here is one real WESAD minute, in the three forms. The numbers are the chest
 heart trace, called an ECG in the prompt, averaged into 128 values so a
 prompt can hold it. The sentences are four of the eighteen lines the model
 actually sees. ``eda'' is skin conductance. ``hrv'' is heart-rate variation.
-Words like ``stress-typical'' are deliberate. The later test, not run yet,
-takes those words out and then reverses them. The plot is a drawing of that
+Words like ``stress-typical'' are deliberate. The sentence test later in
+this report takes those words out, and then reverses them. The plot is a drawing of that
 same minute, with no name and no label on it.
 
 \input{figures/input_excerpts.tex}
@@ -429,8 +429,11 @@ the heart trace as 128 averages, with no examples in the prompt, scores 0.595.
 The range sits above guessing. It does not come close to the logistic
 regression at 0.918.
 
-The feature sentences are close behind, at 0.584, but the range is wide. It
-reaches down toward guessing, so I would not call that one settled.
+The feature sentences are close behind, at 0.584 [0.462, 0.699]. The range
+starts above guessing and is wide. The sentence section scores this same
+prompt again. That pass is 0.581 [0.460, 0.695] for Qwen and 0.278
+[0.245, 0.316] for Llama, against 0.283 [0.247, 0.324] here. The two passes
+agree in the second decimal.
 
 Llama's two MAUS rows sit at 0.400 with a range that has no width. That is not
 a crashed run. On every person in the table, Llama gave the same answer every
@@ -686,14 +689,6 @@ Our model, their prompt & Llama-3.1-8B & no examples, same rule & $2654 \pm 43$ 
 \noindent Lower is better. This table is prompting. It is not a WESAD score,
 and it is not the fine-tuning table below.
 
-\begin{figure}[!ht]
-\centering
-\includegraphics[width=0.58\textwidth]{figures/fig_anchor_mae.pdf}
-\caption{Prompting only, MedAlpaca-7B, no examples. Their published error
-against this rerun. Lower is better. The gap is what the fixed scoring rule
-does with answers that say ``out of 5.''}
-\end{figure}
-
 \FloatBarrier
 \subsection{\textcolor{Ask}{Fine-tuning only}}
 
@@ -734,6 +729,15 @@ This rerun & MedAlpaca-7B & fine-tuned, small adapter & 2.697 \\
 \noindent Lower is better. This table is fine-tuning. It does not get compared
 with the prompting table, and it does not get compared with WESAD.
 
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_asked.pdf}
+\caption{The two tables, drawn. Left is prompting. Right is fine-tuning.
+Lower is better. The dashed line is the error from always answering 3.
+Llama is not on the chart. Its error is about 2{,}650, because it wrote a
+program and the scoring rule read a step count. It is in the prompting table.}
+\end{figure}
+
 \AskedBox{%
 \textbf{What I take from this.}
 On their task, with their model and a scoring rule fixed in advance, I do not
@@ -749,6 +753,8 @@ language model can read a WESAD minute.%
 \section{The sentence test}
 
 The prompts stay the ones frozen in September. Only the sentences change.
+The original wording here is a second scoring of the feature-sentence row
+above, not a different prompt.
 Three wordings of the same numbers: as written, with the judgment words
 removed, and with those words flipped. Removing them leaves the number and
 its percentile among the other people. Flipping them swaps ``elevated'' with
@@ -762,35 +768,59 @@ had over the shuffle floor. Flipping the words should change the predicted
 letter on more than 40\% of minutes. If the original wording was not
 convincingly above that floor, the first prediction is left unscored.
 
-Qwen on WESAD is the clear case. Original sentences score 0.581
-[0.460, 0.695]. Without the judgment words, 0.554 [0.441, 0.662]. That is
-about 17\% of the margin over the shuffle floor, not half. With the words
-flipped, 0.313 [0.224, 0.403], and the letter changes on 63\% of minutes
-[0.522, 0.737].
+Read the figure left to right. Dark is the original wording. Teal is the
+same numbers with the judgment words removed. Brown is those words flipped.
+The whiskers are the interval from redrawing people. The dashed line is
+guessing.
 
-Qwen on MAUS starts at 0.485 [0.438, 0.529]. Without the judgment words it
-falls to 0.399 [0.345, 0.448], which removes the whole margin over the floor.
-Flipping the words changes 71\% of minutes [0.647, 0.768], and the score is
-0.507 [0.466, 0.546].
+\begin{center}
+{\footnotesize
+\begin{tabular}{@{}llccc@{}}
+\toprule
+\rowcolor{TableHead}
+\textbf{Model} & \textbf{Dataset} & \textbf{As written} & \textbf{Words removed} & \textbf{Words flipped} \\
+\midrule
+Qwen & WESAD & 0.581 [0.460, 0.695] & 0.554 [0.441, 0.662] & 0.313 [0.224, 0.403] \\
+Qwen & MAUS & 0.485 [0.438, 0.529] & 0.399 [0.345, 0.448] & 0.507 [0.466, 0.546] \\
+Qwen & CogWear & 0.475 [0.393, 0.504] & 0.542 [0.426, 0.612] & 0.597 [0.513, 0.658] \\
+Llama & WESAD & 0.278 [0.245, 0.316] & 0.230 [0.227, 0.233] & 0.230 [0.227, 0.233] \\
+Llama & MAUS & 0.400 [0.400, 0.400] & 0.400 [0.400, 0.400] & 0.503 [0.450, 0.553] \\
+Llama & CogWear & 0.479 [0.375, 0.640] & 0.404 [0.392, 0.417] & 0.404 [0.392, 0.417] \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
 
-Qwen on CogWear starts at 0.475 [0.393, 0.504]. That interval reaches the
-shuffle floor, so the margin prediction is not scored. Removing the words
-raises the score to 0.542 [0.426, 0.612]. Flipping them raises it to 0.597
-[0.513, 0.658] and changes 72\% of minutes [0.510, 0.907]. Ninety minutes,
-so that interval is wide.
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_sentence_test.pdf}
+\caption{The three wordings. Left is Qwen. Right is Llama. Dark bars are the
+sentences as written. Teal bars have the judgment words removed. Brown bars
+have those words flipped. The dashed line is guessing.}
+\end{figure}
 
-Llama does not clear the shuffle floor on the original wording, on any of
-the three datasets, so the margin prediction is not scored for it. On WESAD
-the original wording is 0.278 [0.245, 0.316] and both altered wordings are
-0.230, with 3\% of minutes flipping [0.009, 0.057]. On MAUS the original and
-the stripped wording sit at 0.400, and the flipped wording scores 0.503
-[0.450, 0.553], changing 27\% of minutes [0.149, 0.399]. On CogWear the
-original wording is 0.479 [0.375, 0.640] and the other two are 0.404, with
-8\% of minutes flipping [0.000, 0.177].
+The last column is the one to use when the question is whether flipping the
+words changed the letter.
 
-Where the original wording was above the floor, the filed prediction about
-removing the words holds on MAUS and does not hold on WESAD. The prediction
-about flipped words holds for Qwen on all three datasets and does not hold
+\begin{center}
+{\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\rowcolor{TableHead}
+\textbf{Share of minutes that change} & \textbf{WESAD} & \textbf{MAUS} & \textbf{CogWear} \\
+\midrule
+Qwen & 63\% [52, 74] & 71\% [65, 77] & 72\% [51, 91] \\
+Llama & 3\% [1, 6] & 27\% [15, 40] & 8\% [0, 18] \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+Qwen on WESAD loses about 17\% of its margin when the words are removed. The
+plan said more than half, so that prediction does not hold there. On MAUS the
+whole margin goes, so it does hold. CogWear's original wording was not clearly
+above the floor, so that prediction is not scored. Flipping the words changes
+more than 40\% of Qwen's minutes on all three datasets. It does not do that
 for Llama. SensorLM's statistical sentences were not part of this run.
 
 \section{Remaining work}

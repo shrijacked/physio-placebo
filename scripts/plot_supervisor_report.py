@@ -404,6 +404,86 @@ def fig_ledger() -> None:
     plt.close(fig)
 
 
+def _grouped(ax, series: list[tuple[str, list[float], list[tuple[float, float]], str]]) -> None:
+    xs = np.arange(3)
+    w = 0.24
+    for i, (name, ys, errs, color) in enumerate(series):
+        yerr = np.array([[e[0] for e in errs], [e[1] for e in errs]])
+        ax.bar(
+            xs + (i - 1) * w,
+            ys,
+            w,
+            color=color,
+            yerr=yerr,
+            capsize=2,
+            label=name,
+            error_kw={"elinewidth": 0.7},
+        )
+    ax.axhline(0.41, color=MAJORITY, ls="--", lw=0.9)
+    ax.set_xticks(xs, ["WESAD", "MAUS", "CogWear"])
+    ax.set_ylim(0, 1.0)
+
+
+def fig_sentence_test() -> None:
+    """Week 9. Three wordings. Error bars are the person-resampled intervals."""
+    qwen = [
+        ("As written", [0.581, 0.485, 0.475], [(0.121, 0.114), (0.047, 0.044), (0.082, 0.029)], QWEN),
+        ("Words removed", [0.554, 0.399, 0.542], [(0.113, 0.108), (0.054, 0.049), (0.116, 0.070)], SOFT),
+        ("Words flipped", [0.313, 0.507, 0.597], [(0.089, 0.090), (0.041, 0.039), (0.084, 0.061)], PAPER),
+    ]
+    llama = [
+        ("As written", [0.278, 0.400, 0.479], [(0.033, 0.038), (0.0, 0.0), (0.104, 0.161)], QWEN),
+        ("Words removed", [0.230, 0.400, 0.404], [(0.003, 0.003), (0.0, 0.0), (0.012, 0.013)], SOFT),
+        ("Words flipped", [0.230, 0.503, 0.404], [(0.003, 0.003), (0.053, 0.050), (0.012, 0.013)], PAPER),
+    ]
+    fig, axes = plt.subplots(1, 2, figsize=(6.8, 3.25), sharey=True)
+    _grouped(axes[0], qwen)
+    _grouped(axes[1], llama)
+    axes[0].set_title("Qwen3-8B")
+    axes[1].set_title("Llama-3.1-8B")
+    axes[0].set_ylabel("score")
+    axes[0].legend(frameon=False, fontsize=7, loc="upper right")
+    axes[0].plot([], [], color=MAJORITY, ls="--", label="Guessing")
+    handles, labels = axes[0].get_legend_handles_labels()
+    axes[0].legend(handles, labels, frameon=False, fontsize=7, loc="upper right")
+    fig.tight_layout()
+    fig.savefig(OUT / "fig_sentence_test.pdf")
+    plt.close(fig)
+
+
+def fig_asked() -> None:
+    """Health-LLM comparison. Llama is omitted: its error is about 2,650."""
+    fig, axes = plt.subplots(1, 2, figsize=(6.6, 3.15), sharey=True)
+    prompt = [
+        ("Their paper", 0.76, 0.10, PAPER),
+        ("This rerun", 2.689, 0.038, ACCENT),
+        ("Qwen, same prompt", 0.795, 0.020, LLAMA),
+    ]
+    tuned = [
+        ("Their paper", 0.38, 0.0, PAPER),
+        ("This rerun", 2.697, 0.0, ACCENT),
+    ]
+    for ax, rows, title in (
+        (axes[0], prompt, "Prompting, no examples"),
+        (axes[1], tuned, "After fine-tuning"),
+    ):
+        xs = np.arange(len(rows))
+        ys = [r[1] for r in rows]
+        err = [r[2] for r in rows]
+        colors = [r[3] for r in rows]
+        ax.bar(xs, ys, 0.62, color=colors, yerr=err, capsize=3, error_kw={"elinewidth": 0.8})
+        ax.set_xticks(xs, [r[0] for r in rows], fontsize=8)
+        ax.set_title(title)
+        ax.axhline(0.401, color=MAJORITY, ls="--", lw=0.9)
+    axes[0].set_ylabel("average error (lower is better)")
+    axes[0].set_ylim(0, 3.2)
+    axes[0].plot([], [], color=MAJORITY, ls="--", label="Always answer 3")
+    axes[0].legend(frameon=False, fontsize=7, loc="upper left")
+    fig.tight_layout()
+    fig.savefig(OUT / "fig_asked.pdf")
+    plt.close(fig)
+
+
 def fig_anchor() -> None:
     fig, ax = plt.subplots(figsize=(4.4, 2.85))
     ax.bar([0], [0.76], 0.55, color=PAPER, yerr=[[0.1], [0.1]], capsize=3, label="Paper")
@@ -432,6 +512,8 @@ def main() -> None:
     fig_ab_grid(qwen, llama)
     fig_paradigm_c(qwen, vl)
     fig_anchor()
+    fig_asked()
+    fig_sentence_test()
     fig_waveforms()
     fig_surrogate_qwen()
     fig_ledger()

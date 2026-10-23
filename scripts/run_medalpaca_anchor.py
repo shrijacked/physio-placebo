@@ -33,6 +33,7 @@ from physio_placebo.anchor import (
     build_zero_shot_prompts,
     load_eval_items,
     locked_eval_sha256,
+    medalpaca_generate_prompt,
     remaining_prompts,
     score_records,
 )
@@ -91,7 +92,7 @@ def _write_prompts(out_dir: Path, items) -> dict:
     return manifest
 
 
-def _load_pipeline():
+def _load_pipeline(max_new_tokens: int = MAX_NEW_TOKENS):
     import torch
     from transformers import pipeline as hf_pipeline
 
@@ -115,7 +116,7 @@ def _load_pipeline():
         # the completion, not the step-count numbers in the prompt.
         out = pipe(
             question,
-            max_new_tokens=MAX_NEW_TOKENS,
+            max_new_tokens=max_new_tokens,
             return_full_text=False,
             do_sample=False,
         )
@@ -124,11 +125,21 @@ def _load_pipeline():
     return medalpaca_pl
 
 
-def _run_inference(out_dir: Path, items) -> dict:
-    medalpaca_pl = _load_pipeline()
+def _run_inference(
+    out_dir: Path,
+    items,
+    *,
+    wrap: bool,
+    seeds: tuple[int, ...],
+    limit: int | None,
+    max_new_tokens: int,
+) -> dict:
+    medalpaca_pl = _load_pipeline(max_new_tokens)
     per_seed = {}
-    for seed in SEEDS:
+    for seed in seeds:
         prompts = build_zero_shot_prompts(items, seed)
+        if limit is not None:
+            prompts = prompts[:limit]
         pred_path = out_dir / f"stress_sd{seed}.json"
         partial_path = out_dir / f"stress_sd{seed}.partial.json"
         source = pred_path if pred_path.is_file() else partial_path
@@ -137,8 +148,13 @@ def _run_inference(out_dir: Path, items) -> dict:
         if records and todo:
             print(f"seed {seed}: resuming at item {len(records) + 1}/{len(prompts)}")
         for prompt in todo:
+            sent = (
+                medalpaca_generate_prompt(input=prompt["question"])
+                if wrap
+                else prompt["question"]
+            )
             try:
-                answer = medalpaca_pl(prompt["question"])["generated_text"]
+                answer = medalpaca_pl(sent)["generated_text"]
             except Exception as exc:  # noqa: BLE001 — match their N/A swallow, but log it
                 print(f"seed={seed} no={prompt['no']}: {exc}", file=sys.stderr)
                 answer = "N/A"
@@ -146,6 +162,7 @@ def _run_inference(out_dir: Path, items) -> dict:
                 {
                     "no": prompt["no"],
                     "question": prompt["question"],
+                    "prompt_sent": sent,
                     "answer": answer,
                     "label": prompt["label"],
                 }
@@ -178,7 +195,16 @@ def main() -> None:
         default=None,
         help="write/resume directory (use a Drive path on Colab so disconnects don't wipe work)",
     )
+    ap.add_argument(
+        "--medalpaca-template",
+        action="store_true",
+        help="wrap each released zero-shot string with DataHandler.generate_prompt",
+    )
+    ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--seed", type=int, action="append", default=None)
     args = ap.parse_args()
+    seeds = tuple(args.seed) if args.seed else SEEDS
+    max_new_tokens = 128 if args.medalpaca_template else MAX_NEW_TOKENS
 
     items = load_eval_items()
     out_dir = _out_dir(Path(args.out_dir) if args.out_dir else None)
@@ -188,6 +214,10 @@ def main() -> None:
         "eval_sha256": locked_eval_sha256(),
         "paper_target": PAPER_MEDALPACA,
         "dry_run": args.dry_run,
+        "medalpaca_template": args.medalpaca_template,
+        "max_new_tokens": max_new_tokens,
+        "seeds": list(seeds),
+        "limit": args.limit,
         "prompt_manifest": prompt_manifest,
     }
 
@@ -197,7 +227,14 @@ def main() -> None:
         print("inference still needs a CUDA GPU; this is not the Week-3 number.")
         return
 
-    per_seed = _run_inference(out_dir, items)
+    per_seed = _run_inference(
+        out_dir,
+        items,
+        wrap=args.medalpaca_template,
+        seeds=seeds,
+        limit=args.limit,
+        max_new_tokens=max_new_tokens,
+    )
     mae_mean, mae_sd = aggregate_seed_maes(per_seed)
     meta["per_seed"] = {str(k): v for k, v in per_seed.items()}
     meta["mae_mean"] = round(mae_mean, 4)

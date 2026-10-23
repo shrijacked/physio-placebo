@@ -118,6 +118,43 @@ def zero_shot_question(item_input: str, rand_num: int | float | str) -> str:
     return ZERO_SHOT_INSTRUCTION + item_input + format_prompt(rand_num)
 
 
+def medalpaca_template() -> dict[str, str]:
+    """Vendored ``medalpaca/prompt_templates/medalpaca.json``. Not rewritten."""
+    path = (
+        resolve_healthllm_root()
+        / "medalpaca"
+        / "prompt_templates"
+        / "medalpaca.json"
+    )
+    return json.loads(path.read_text())
+
+
+def medalpaca_generate_prompt(
+    instruction: str | None = None,
+    input: str | None = None,
+    output: str | None = None,
+) -> str:
+    """Copy of ``DataHandler.generate_prompt`` in their ``handler.py``.
+
+    The f-string is theirs. ``instruction``, ``input``, and ``output`` are the
+    same arguments ``Inferer.__call__`` passes through.
+    """
+    template = medalpaca_template()
+    if not any([instruction, input, output]):
+        raise ValueError("At least one of `instruction`, `input`, `output` should be defined")
+    return (
+        f'{template["primer"]}'
+        f'{template["instruction"]}{instruction or ""}'
+        f'{template["input"]}{input or ""}'
+        f'{template["output"]}{output or ""}'
+    )
+
+
+def medalpaca_wrapped_question(item_input: str, rand_num: int | float | str) -> str:
+    """``Inferer(input=question)`` around the released zero-shot string."""
+    return medalpaca_generate_prompt(input=zero_shot_question(item_input, rand_num))
+
+
 def build_zero_shot_prompts(
     items: Sequence[dict[str, Any]], seed: int
 ) -> list[dict[str, Any]]:

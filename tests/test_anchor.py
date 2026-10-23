@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -17,6 +18,7 @@ from physio_placebo.anchor import (
     label_distribution,
     load_eval_items,
     locked_eval_sha256,
+    medalpaca_wrapped_question,
     parse_first_number,
     parse_label,
     remaining_prompts,
@@ -47,6 +49,35 @@ def test_zero_shot_prompt_ignores_eval_instruction_field():
     assert item_input in prompt
     assert prompt.endswith("Answer: 3")
     assert "personalized healthcare agent" not in prompt
+    assert "### Instruction:" not in prompt
+
+
+def test_medalpaca_prompt_matches_their_generate_prompt():
+    item_input = "sensor blob; [Mood]: 4 out of 5; What would be the predicted stress?"
+    raw = zero_shot_question(item_input, 3)
+    template = json.loads(
+        (
+            Path(__file__).resolve().parents[1]
+            / "configs"
+            / "data"
+            / "third_party"
+            / "Health-LLM"
+            / "medalpaca"
+            / "prompt_templates"
+            / "medalpaca.json"
+        ).read_text()
+    )
+    expected = (
+        f'{template["primer"]}'
+        f'{template["instruction"]}{""}'
+        f'{template["input"]}{raw}'
+        f'{template["output"]}{""}'
+    )
+    assert medalpaca_wrapped_question(item_input, 3) == expected
+    assert expected.endswith("\n\n### Response:\n")
+    assert "### Instruction:\n\n\n### Input:\n" in expected
+    assert raw in expected
+    assert parse_first_number("out of 5") == 5.0
 
 
 def test_format_rand_nums_are_seed_deterministic():

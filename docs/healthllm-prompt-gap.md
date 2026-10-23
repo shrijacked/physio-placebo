@@ -116,4 +116,24 @@ on 26, and `1` on 5. MAE is 0.970. Answering 2 every time would be 1.020.
 Answering 3 every time would be 0.401. The paper's 0.76 sits between those.
 This run does not.
 
+## The other wordings in the paper, eight items
+
+Figure 7's bullet list of the days, with "can you predict user's stress level",
+makes the model refuse. All eight answers are "I cannot predict stress levels".
+There is no number to score.
+
+Table 2 ends the stress prompt with "What will my stress level be?" On the
+same averages, seven answers are "Your stress level will be 2 out of 5." One
+is "Your stress level will be low."
+
+Figure 8's sampling setting (temperature 0.4, top 50, top-p 0.9) on the
+averaged paragraph gives six 2s and two 3s.
+
+None of these moves the full-set 0.970 result onto 0.76.
+
+The instruction stored on each stress row ("a personalized healthcare agent
+trained to predict stress which ranges from 1 to 5") with the same averages
+makes all eight answers "the predicted stress level is 3." Answering 3 on
+every one of the 299 questions scores 0.401. That is not 0.76 either.
+
 The locked 2.689 number is still the raw-string run. It has not been replaced.

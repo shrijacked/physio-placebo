@@ -456,8 +456,9 @@ def fig_asked() -> None:
     fig, axes = plt.subplots(1, 2, figsize=(6.6, 3.15), sharey=True)
     prompt = [
         ("Their paper", 0.76, 0.10, PAPER),
-        ("This rerun", 2.689, 0.038, ACCENT),
-        ("Qwen, same prompt", 0.795, 0.020, LLAMA),
+        ("Raw list", 2.689, 0.038, ACCENT),
+        ("14-day average", 0.841, 0.016, SOFT),
+        ("Qwen", 0.795, 0.020, LLAMA),
     ]
     tuned = [
         ("Their paper", 0.38, 0.0, PAPER),
@@ -472,7 +473,9 @@ def fig_asked() -> None:
         err = [r[2] for r in rows]
         colors = [r[3] for r in rows]
         ax.bar(xs, ys, 0.62, color=colors, yerr=err, capsize=3, error_kw={"elinewidth": 0.8})
-        ax.set_xticks(xs, [r[0] for r in rows], fontsize=8)
+        ax.set_xticks(xs, [r[0] for r in rows], fontsize=7)
+        if len(rows) > 3:
+            ax.tick_params(axis="x", labelrotation=18)
         ax.set_title(title)
         ax.axhline(0.401, color=MAJORITY, ls="--", lw=0.9)
     axes[0].set_ylabel("average error (lower is better)")

@@ -617,8 +617,11 @@ Qwen falls to guessing or below it.
 \textbf{The answer, before the tables.}\\[0.35em]
 The paper that matches the request is Health-LLM, from CHIL 2024.
 Their task is a daily stress rating from 1 to 5. Lower error is better.\\[0.2em]
-Prompting their model: they report 0.76. This rerun is 2.69, because the model
-says ``out of 5'' and the scoring rule writes down 5.\\[0.2em]
+Prompting their model: they report 0.76. On the raw day-by-day list, this
+rerun is 2.69, because the model says ``out of 5'' and the scoring rule writes
+down 5. On their short prompt, the 14-day average, with the sampling decoder
+their appendix calls the default, the error is 0.84, inside the band around
+0.76.\\[0.2em]
 Qwen, on their prompt, is at 0.80. Close to their prompting result, and worse
 than always answering 3.\\[0.2em]
 Fine-tuning their model on their data leaves the error at 2.70. Their paper
@@ -664,7 +667,14 @@ records 5 or 10. A stress rating only goes to 5, so those answers are far
 from a typical day. That is why this rerun sits at 2.69 while the paper says
 0.76. I left the rule as it was.
 
-Qwen, given the same words, answers ``Answer: 3.'' Its error is 0.795, near
+Their own paper also writes the two weeks as one average per sensor, not as
+the raw list, and the appendix sets sampling as the default decoder. I ran
+that prompt, temperature 0.4, three seeds, same first-number rule, same 299
+days. The errors are 0.823, 0.853, and 0.846. The mean is 0.841, and the
+spread is 0.016. Their published band is \(0.76 \pm 0.1\), so 0.841 is inside
+it. It is not the same point as 0.76. The model says 2 or 3, not ``out of 5.''
+
+Qwen, given the raw list, answers ``Answer: 3.'' Its error is 0.795, near
 the paper's prompting result, and still worse than the constant answer of 3.
 
 Llama, given the same words, does not answer with a stress rating. It writes
@@ -679,7 +689,8 @@ The error is about 2,650. The scoring rule was not changed.
 \textbf{Row} & \textbf{Model} & \textbf{What was done} & \textbf{Average error} \\
 \midrule
 Their Table 3 & MedAlpaca-7B & no examples & $0.76 \pm 0.1$ \\
-This rerun & MedAlpaca-7B & no examples, same rule & $2.689 \pm 0.038$ \\
+This rerun, raw list & MedAlpaca-7B & day-by-day list, greedy & $2.689 \pm 0.038$ \\
+This rerun, their average & MedAlpaca-7B & 14-day average, sampling & $0.841 \pm 0.016$ \\
 Our model, their prompt & Qwen3-8B & no examples, same rule & $0.795 \pm 0.020$ \\
 Our model, their prompt & Llama-3.1-8B & no examples, same rule & $2654 \pm 43$ \\
 \bottomrule
@@ -734,15 +745,17 @@ with the prompting table, and it does not get compared with WESAD.
 \includegraphics[width=\textwidth]{figures/fig_asked.pdf}
 \caption{The two tables, drawn. Left is prompting. Right is fine-tuning.
 Lower is better. The dashed line is the error from always answering 3.
+On the left, the raw list is 2.69 and the 14-day average with sampling is 0.84.
 Llama is not on the chart. Its error is about 2{,}650, because it wrote a
 program and the scoring rule read a step count. It is in the prompting table.}
 \end{figure}
 
 \AskedBox{%
 \textbf{What I take from this.}
-On their task, with their model and a scoring rule fixed in advance, I do not
-reproduce their numbers. The model keeps saying ``out of 5,'' and fine-tuning
-does not break that habit.
+On the raw list, with their model and a scoring rule fixed in advance, I do not
+get 0.76. The model says ``out of 5,'' and fine-tuning does not break that
+habit. On the 14-day average, with sampling, the error is 0.84, inside their
+published band and not equal to 0.76.
 Qwen, which was not trained on their data, lands near their published prompting
 error and still loses to always answering 3.
 Llama does not answer the question that was asked.

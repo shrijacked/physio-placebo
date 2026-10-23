@@ -46,5 +46,16 @@ number. MedAlpaca, fed the raw string, does not answer the question.
   `Answer: 3`, and the model keeps writing.
 
 Changing the locked first-number rule cannot turn these completions into 0.76.
-The next experiment, if approved, is to wrap the same question in MedAlpaca's
-instruction template, generate again, and score with the same first-number rule.
+
+## Their own prompt function, tried
+
+`DataHandler.generate_prompt` in `medalpaca/handler.py` is how MedAlpaca builds a
+prompt. The released zero-shot words were passed in as the instruction and the
+sensor text, which is the two-argument call that function has. Eight items,
+seed 0, same first-number rule:
+
+Seven answers copy the sensor list, so the first number is a step count.
+One answer is `The predicted stress is 3 out of 5.` The eight-item MAE is 10,
+worse than 2.69. A full rerun of this wrapper would not land on 0.76.
+
+The locked 2.689 number is still the raw-string run. It has not been replaced.

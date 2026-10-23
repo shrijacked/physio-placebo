@@ -33,7 +33,7 @@ from physio_placebo.anchor import (
     build_zero_shot_prompts,
     load_eval_items,
     locked_eval_sha256,
-    medalpaca_generate_prompt,
+    medalpaca_wrap_released_question,
     remaining_prompts,
     score_records,
 )
@@ -149,7 +149,7 @@ def _run_inference(
             print(f"seed {seed}: resuming at item {len(records) + 1}/{len(prompts)}")
         for prompt in todo:
             sent = (
-                medalpaca_generate_prompt(input=prompt["question"])
+                medalpaca_wrap_released_question(prompt["question"])
                 if wrap
                 else prompt["question"]
             )

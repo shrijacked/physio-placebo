@@ -120,13 +120,17 @@ def zero_shot_question(item_input: str, rand_num: int | float | str) -> str:
 
 def medalpaca_template() -> dict[str, str]:
     """Vendored ``medalpaca/prompt_templates/medalpaca.json``. Not rewritten."""
-    path = (
-        resolve_healthllm_root()
-        / "medalpaca"
-        / "prompt_templates"
-        / "medalpaca.json"
+    rel = Path("medalpaca") / "prompt_templates" / "medalpaca.json"
+    roots = (
+        resolve_healthllm_root(),
+        REPO_ROOT / "data" / "third_party" / "Health-LLM",
+        REPO_ROOT / "configs" / "data" / "third_party" / "Health-LLM",
     )
-    return json.loads(path.read_text())
+    for root in roots:
+        path = root / rel
+        if path.is_file():
+            return json.loads(path.read_text())
+    raise FileNotFoundError(rel)
 
 
 def medalpaca_generate_prompt(
@@ -150,9 +154,26 @@ def medalpaca_generate_prompt(
     )
 
 
+def medalpaca_wrap_released_question(question: str) -> str:
+    """Split a released zero-shot string into the two slots ``generate_prompt`` has."""
+    if question.startswith(ZERO_SHOT_INSTRUCTION):
+        return medalpaca_generate_prompt(
+            instruction=ZERO_SHOT_INSTRUCTION.strip(),
+            input=question[len(ZERO_SHOT_INSTRUCTION) :],
+        )
+    return medalpaca_generate_prompt(input=question)
+
+
 def medalpaca_wrapped_question(item_input: str, rand_num: int | float | str) -> str:
-    """``Inferer(input=question)`` around the released zero-shot string."""
-    return medalpaca_generate_prompt(input=zero_shot_question(item_input, rand_num))
+    """Their ``generate_prompt`` with the two pieces the zero-shot loop concatenates.
+
+    Instruction is the released health-assistant line. Input is the sensor text
+    plus their ``Answer:`` example. ``Inferer`` passes those as separate arguments.
+    """
+    return medalpaca_generate_prompt(
+        instruction=ZERO_SHOT_INSTRUCTION.strip(),
+        input=item_input + format_prompt(rand_num),
+    )
 
 
 def build_zero_shot_prompts(
@@ -211,7 +232,9 @@ def label_distribution(items: Sequence[dict[str, Any]]) -> dict[str, int]:
 
 
 def aggregate_seed_maes(per_seed: dict[int, dict[str, Any]]) -> tuple[float, float]:
-    maes = [per_seed[s]["mae"] for s in SEEDS]
+    maes = [per_seed[s]["mae"] for s in sorted(per_seed)]
+    if len(maes) < 2:
+        return maes[0], 0.0
     return statistics.mean(maes), statistics.stdev(maes)
 
 

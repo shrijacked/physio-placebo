@@ -15,9 +15,11 @@ from physio_placebo.anchor import (
     ZERO_SHOT_INSTRUCTION,
     build_zero_shot_prompts,
     constant3_mae,
+    format_prompt,
     label_distribution,
     load_eval_items,
     locked_eval_sha256,
+    medalpaca_wrap_released_question,
     medalpaca_wrapped_question,
     parse_first_number,
     parse_label,
@@ -54,7 +56,6 @@ def test_zero_shot_prompt_ignores_eval_instruction_field():
 
 def test_medalpaca_prompt_matches_their_generate_prompt():
     item_input = "sensor blob; [Mood]: 4 out of 5; What would be the predicted stress?"
-    raw = zero_shot_question(item_input, 3)
     template = json.loads(
         (
             Path(__file__).resolve().parents[1]
@@ -67,17 +68,21 @@ def test_medalpaca_prompt_matches_their_generate_prompt():
             / "medalpaca.json"
         ).read_text()
     )
+    sensor = item_input + format_prompt(3)
     expected = (
         f'{template["primer"]}'
-        f'{template["instruction"]}{""}'
-        f'{template["input"]}{raw}'
+        f'{template["instruction"]}{ZERO_SHOT_INSTRUCTION.strip()}'
+        f'{template["input"]}{sensor}'
         f'{template["output"]}{""}'
     )
-    assert medalpaca_wrapped_question(item_input, 3) == expected
-    assert expected.endswith("\n\n### Response:\n")
-    assert "### Instruction:\n\n\n### Input:\n" in expected
-    assert raw in expected
+    wrapped = medalpaca_wrapped_question(item_input, 3)
+    assert wrapped == expected
+    assert wrapped.endswith("\n\n### Response:\n")
+    assert "### Instruction:\nYou are a health assistant." in wrapped
+    assert item_input in wrapped
+    assert "Answer: 3" in wrapped
     assert parse_first_number("out of 5") == 5.0
+    assert medalpaca_wrap_released_question(zero_shot_question(item_input, 3)) == wrapped
 
 
 def test_format_rand_nums_are_seed_deterministic():

@@ -135,7 +135,9 @@ the same averages: seven 3s and one 4. The eight-item error is 0.5. Answering
 3 on all 299 questions is 0.401.
 
 Figure 8 sampling at temperature 0.4, on the released raw question, still
-returns `out of 5` on all eight. The first number is 5.
+returns `out of 5` on all eight. The first number is 5. Temperature 0.7,
+their other sampling block, does the same: eight answers, first number 5
+(`out of 5`, `/5`, or `/5, low stress`).
 
 None of these moves the full-set 0.970 result onto 0.76.
 

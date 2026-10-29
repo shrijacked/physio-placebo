@@ -462,7 +462,8 @@ def fig_asked() -> None:
     ]
     tuned = [
         ("Their paper", 0.38, 0.0, PAPER),
-        ("This rerun", 2.697, 0.0, ACCENT),
+        ("Every weight", 0.442, 0.007, SOFT),
+        ("Small adapter", 2.697, 0.0, ACCENT),
     ]
     for ax, rows, title in (
         (axes[0], prompt, "Prompting, no examples"),

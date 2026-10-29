@@ -624,8 +624,9 @@ their appendix calls the default, the error is 0.84, inside the band around
 0.76.\\[0.2em]
 Qwen, on their prompt, is at 0.80. Close to their prompting result, and worse
 than always answering 3.\\[0.2em]
-Fine-tuning their model on their data leaves the error at 2.70. Their paper
-says 0.38 after fine-tuning.\\[0.2em]
+Fine-tuning every weight of their model on their data, with their 7B recipe,
+brings the error to 0.44. Their paper says 0.38. An earlier run that trained
+only a small add-on barely moved, and is kept as a record.\\[0.2em]
 None of these numbers are wearable scores.%
 }
 
@@ -706,32 +707,37 @@ and it is not the fine-tuning table below.
 Their Table~4 says that fine-tuning MedAlpaca on PMData brings the error down
 to 0.38.
 
-I fine-tuned the same model on the training examples they released. The recipe
-is the 7B one in their appendix: 3 epochs, batches of 128, learning rate
-\(2\times 10^{-5}\), and the small adapter from the MedAlpaca defaults. An
-adapter here means a small add-on, rather than retraining every weight. One
+I fine-tuned the same model on the training examples they released. One
 training example also appeared in the locked test set, so I dropped it. The
 training file has 653 examples. I did not oversample, because they never
 published the rule for it. I also skipped their 100-step warmup. With only
-653 examples at this batch size there are a handful of steps, and a warmup
-that long would never reach the learning rate.
+653 examples at batches of 128 there are 18 update steps, and a warmup that
+long would never reach the learning rate.
 
 Their 0.38 uses their own test split. My number uses the 299 days I had
 already locked. Same model, same task, same error. I am not claiming the two
 test lists are the same list.
 
-Of the fine-tuned answers, 297 of 299 could be parsed. They still say ``out of
-5,'' so the rule still records 5. Before fine-tuning, this same setup scored
-2.714. After fine-tuning it scores 2.697. The training did not change the habit.
+The first attempt trained only a small adapter, an add-on of a few million
+weights, at their learning rate of \(2\times 10^{-5}\). It barely moved. The
+adapter starts at zero, and after 18 small steps its largest weight was about
+0.0002. Scored on the raw question it said ``out of 5'' and landed at 2.697,
+the same as the model before training. That number stays as a record of a
+run that did not train.
 
-That comparison was not a fair test of the training. The adapter was trained
-on MedAlpaca's own template, which ends at ``Response,'' and then scored on
-the raw question, which ends at ``Answer: 3.'' I scored the saved adapter
-again on the template it was trained on. The first 99 answers copy the sensor
-list, so the first number is a step count and the error is about 11. I stopped
-the run there. The saved training log is empty, and this recipe only takes
-about 16 update steps, so the adapter may not have moved. I have not retrained
-it.
+Their appendix says the parameters themselves are updated. So the second run
+trains every weight: 3 epochs, batches of 128, learning rate
+\(2\times 10^{-5}\), cosine schedule. It is scored on the template it was
+trained on, which ends at ``Response.'' The paper used four large GPUs. This
+machine has one 48~GB card, so the weights are stored in a 16-bit format and
+the optimizer keeps its running averages in 8 bits. The training loss fell
+from 1.84 to 1.04 over the 18 steps.
+
+After that run, every answer reads ``The predicted stress level is N.'' With
+the sampling decoder from their appendix, three seeds, the error is 0.448,
+0.435, and 0.442. The mean is 0.442, and the spread is 0.007. Their paper says
+0.38. Greedy decoding says 3 on all 299 days, which is exactly the constant
+answer, at 0.401.
 
 \begin{center}
 {\small
@@ -741,7 +747,9 @@ it.
 \textbf{Row} & \textbf{Model} & \textbf{What was done} & \textbf{Average error} \\
 \midrule
 Their Table 4 & MedAlpaca-7B & fine-tuned on PMData & 0.38 \\
-This rerun & MedAlpaca-7B & fine-tuned, small adapter & 2.697 \\
+This rerun & MedAlpaca-7B & every weight trained, sampling & $0.442 \pm 0.007$ \\
+This rerun & MedAlpaca-7B & every weight trained, greedy & 0.401 \\
+First attempt & MedAlpaca-7B & small adapter, did not train & 2.697 \\
 \bottomrule
 \end{tabular}}
 \end{center}
@@ -755,6 +763,7 @@ with the prompting table, and it does not get compared with WESAD.
 \caption{The two tables, drawn. Left is prompting. Right is fine-tuning.
 Lower is better. The dashed line is the error from always answering 3.
 On the left, the raw list is 2.69 and the 14-day average with sampling is 0.84.
+On the right, training every weight brings the error to 0.44 with sampling.
 Llama is not on the chart. Its error is about 2{,}650, because it wrote a
 program and the scoring rule read a step count. It is in the prompting table.}
 \end{figure}
@@ -762,9 +771,10 @@ program and the scoring rule read a step count. It is in the prompting table.}
 \AskedBox{%
 \textbf{What I take from this.}
 On the raw list, with their model and a scoring rule fixed in advance, I do not
-get 0.76. The model says ``out of 5,'' and fine-tuning does not break that
-habit. On the 14-day average, with sampling, the error is 0.84, inside their
-published band and not equal to 0.76.
+get 0.76. The model says ``out of 5.'' On the 14-day average, with sampling,
+the error is 0.84, inside their published band and not equal to 0.76.
+Training every weight on their data brings the error to 0.44, near their 0.38.
+Almost every answer after training is 3, and always answering 3 scores 0.401.
 Qwen, which was not trained on their data, lands near their published prompting
 error and still loses to always answering 3.
 Llama does not answer the question that was asked.

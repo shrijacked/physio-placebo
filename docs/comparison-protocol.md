@@ -24,7 +24,8 @@ It is inside 0.76 ± 0.1. It does not replace the locked 2.689 raw-list number.
 | Row | Model | Adaptation | Split | Where the number lives |
 |---|---|---|---|---|
 | Paper Table 4 | MedAlpaca-7b | Fine-tuned on PMData | Their single-dataset test | 0.38 |
-| This arm | `medalpaca/medalpaca-7b` LoRA | `configs/healthllm_finetune.lock.yaml` | Train = released train pool minus locked eval text. Eval = the locked 299, seed 0, same scorer | `results/comparison/medalpaca_ft/` |
+| This arm | `medalpaca/medalpaca-7b` LoRA | `configs/healthllm_finetune.lock.yaml` | Train = released train pool minus locked eval text. Eval = the locked 299, seed 0, same scorer | `results/comparison/medalpaca_ft/` (did not train) |
+| Full fine-tune | `medalpaca/medalpaca-7b`, every weight | `configs/healthllm_fullft.lock.yaml` | Same train file. Eval = the locked 299 on the training template, same scorer | `results/comparison/medalpaca_fullft/run1/run.json` |
 
 Their 10% test split and our locked 299-item eval are not asserted to be the same
 split. The caption says so. The fine-tune number is comparable to our 2.689 because
@@ -52,7 +53,13 @@ Prompting, three seeds, locked 299-item eval:
 
 Fine-tune, eval seed 0:
 
-- MedAlpaca-7b LoRA: MAE **2.697** (297/299 parsed) (`results/comparison/medalpaca_ft/20261010T192207Z_f5228b8c/run.json`). Completions are still `out of 5`. Zero-shot seed 0 on the same eval was 2.714.
+- MedAlpaca-7b LoRA: MAE **2.697** (297/299 parsed) (`results/comparison/medalpaca_ft/20261010T192207Z_f5228b8c/run.json`). Completions are still `out of 5`. Zero-shot seed 0 on the same eval was 2.714. This adapter did not train. LoRA B starts at zero, and every `lora_B` weight ended near 1.9e-4, about 18 Adam steps of 2e-5. It was also scored on the raw zero-shot string, not its training template.
+
+Full fine-tune, every weight (`configs/healthllm_fullft.lock.yaml`):
+
+- 18 steps, training loss 1.84 to 1.04. bf16 weights, torchao 8-bit Adam with bf16 stochastic rounding, one A6000.
+- Sampling (temperature 0.4, top 50, top-p 0.9), seeds 0, 1, 2: MAE 0.448, 0.435, 0.442. Mean **0.442 ± 0.007**. Paper Table 4: 0.38.
+- Greedy: MAE **0.401**. Every answer is `The predicted stress level is 3.`, which is the constant-3 error on this eval.
 
 ## OSF
 

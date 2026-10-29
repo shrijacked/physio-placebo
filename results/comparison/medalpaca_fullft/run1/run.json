@@ -1,0 +1,118 @@
+{
+  "train_json": "/home/shrijak/physio-placebo/results/comparison/pmdata_stress_train/20261010T191628Z_af3d16f2/train.json",
+  "train_sha256": "b1fbdb85c395331c957a61da0380f514166c75f9448eddd0fa5917edd894175e",
+  "n_train": 653,
+  "n_steps": 18,
+  "first_loss": 1.8430221127346158,
+  "last_loss": 1.035150326215304,
+  "scores": {
+    "greedy": {
+      "n_items": 299,
+      "n_parsed": 299,
+      "n_parse_failures": 0,
+      "mae": 0.4013377926421405,
+      "parse_failure_rate": 0.0,
+      "pred_file": "results/comparison/medalpaca_fullft/run1/stress_greedy.json",
+      "pred_file_sha256": "29850850a16ae47cf6d23fbf8195a3a82c8a0b5ad876d8d5f03e5420b00d8689"
+    },
+    "sample_sd0": {
+      "n_items": 299,
+      "n_parsed": 299,
+      "n_parse_failures": 0,
+      "mae": 0.44816053511705684,
+      "parse_failure_rate": 0.0,
+      "pred_file": "results/comparison/medalpaca_fullft/run1/stress_sample_sd0.json",
+      "pred_file_sha256": "c541165ce0f36db784ce0007a724b32a84dbaf979c02a6596cd88d06d7c352a7"
+    },
+    "sample_sd1": {
+      "n_items": 299,
+      "n_parsed": 299,
+      "n_parse_failures": 0,
+      "mae": 0.43478260869565216,
+      "parse_failure_rate": 0.0,
+      "pred_file": "results/comparison/medalpaca_fullft/run1/stress_sample_sd1.json",
+      "pred_file_sha256": "f3e4ecd48c395f3f999a1c3513a495dc15efa17bf6646a76d4bd230baca6ad7f"
+    },
+    "sample_sd2": {
+      "n_items": 299,
+      "n_parsed": 299,
+      "n_parse_failures": 0,
+      "mae": 0.4414715719063545,
+      "parse_failure_rate": 0.0,
+      "pred_file": "results/comparison/medalpaca_fullft/run1/stress_sample_sd2.json",
+      "pred_file_sha256": "e33bec4f797bd88357f4b2ca3052765fca4a374f32c2db5b6b9a403b5e5a3efa"
+    }
+  },
+  "sample_mae_mean": 0.4414715719063545,
+  "created_utc": "2026-10-29T20:11:31.766720+00:00",
+  "git_sha": "unknown",
+  "config": {
+    "frozen": true,
+    "cell": "healthllm_table4_pmdata_stress_medalpaca7b_full",
+    "paper_table4_pmdata_stress_mae": 0.38,
+    "model": "medalpaca/medalpaca-7b",
+    "use_lora": false,
+    "torch_dtype": "bfloat16",
+    "optimizer": "torchao_adamw8bit",
+    "bf16_stochastic_round": true,
+    "weight_decay": 0.0,
+    "num_epochs": 3,
+    "learning_rate": 2e-05,
+    "lr_scheduler_type": "cosine",
+    "warmup_steps": 0,
+    "warmup_steps_in_paper": 100,
+    "global_batch_size": 128,
+    "per_device_batch_size": 1,
+    "gradient_accumulation_steps": 128,
+    "model_max_length": 2048,
+    "train_on_inputs": true,
+    "prompt_template": "medalpaca",
+    "gradient_checkpointing": true,
+    "oversample": false,
+    "seed": 42,
+    "eval_seeds": [
+      0,
+      1,
+      2
+    ],
+    "max_new_tokens": 128,
+    "sample_temperature": 0.4,
+    "sample_top_k": 50,
+    "sample_top_p": 0.9,
+    "deviations": [
+      {
+        "id": "one_gpu",
+        "text": "The paper trains on 4 A100 80GB. This cell runs on one RTX A6000 48GB shared with other users, so it cannot hold fp32 weights plus Adam.\n"
+      },
+      {
+        "id": "bf16_weights_8bit_adam",
+        "text": "Weights and gradients are bf16. Adam moments are 8-bit (torchao AdamW8bit). Plain bf16 rounding would drop most 2e-5 updates, so bf16 stochastic rounding is on. The paper does not say how it stored master weights.\n"
+      },
+      {
+        "id": "stress_only",
+        "text": "Table 4 fine-tunes on PMData. The released training file covers PMData stress only, so this cell trains on that file (653 rows after the one locked-eval overlap is dropped).\n"
+      },
+      {
+        "id": "warmup_0",
+        "text": "653 rows at batch 128 is about 15 optimizer steps. Warmup 100 would never reach the stated learning rate.\n"
+      },
+      {
+        "id": "no_oversample",
+        "text": "Appendix A oversamples for the merged multi-dataset run and does not publish the rule for a single-dataset cell.\n"
+      },
+      {
+        "id": "eval_split",
+        "text": "Eval is the locked 299-item split, not their 10% test split. Prompt is the MedAlpaca training template up to \"### Response:\". Score is the locked first-number MAE.\n"
+      }
+    ]
+  },
+  "config_sha256": "77d5985909b35233a703968f3c247fee845c07d4e9ac636ca9802d299bb5f23b",
+  "library_versions": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.1",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.9.0",
+    "neurokit2": "0.2.13",
+    "cvxopt": "1.3.3"
+  }
+}

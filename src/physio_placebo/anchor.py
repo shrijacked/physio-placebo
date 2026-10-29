@@ -410,6 +410,28 @@ def assert_disjoint(
         raise ValueError(f"eval text leaked into train: {len(overlap)} items")
 
 
+def medalpaca_eval_prompt(item: dict[str, Any]) -> str:
+    """Training template with the label left off.
+
+    ``medalpaca_train_text`` ends in the label sentence. Eval must stop at
+    ``### Response:`` so the model writes that sentence. The zero-shot
+    ``Answer:`` line is a different prompt and is not used here.
+    """
+    instruction = item.get("instruction")
+    sensor = item.get("input")
+    if not isinstance(instruction, str) or not isinstance(sensor, str):
+        raise ValueError("eval item needs instruction and input strings")
+    parts = MEDALPACA_PROMPT
+    return (
+        parts["primer"]
+        + parts["instruction"]
+        + instruction
+        + parts["input"]
+        + sensor
+        + parts["output"]
+    )
+
+
 def medalpaca_train_text(item: dict[str, Any]) -> str:
     """MedAlpaca default template (``prompt_templates/medalpaca.json``)."""
     instruction = item.get("instruction")

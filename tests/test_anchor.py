@@ -20,6 +20,8 @@ from physio_placebo.anchor import (
     label_distribution,
     load_eval_items,
     locked_eval_sha256,
+    medalpaca_eval_prompt,
+    medalpaca_train_text,
     medalpaca_wrap_released_question,
     medalpaca_wrapped_question,
     paper_basic_prompt,
@@ -89,6 +91,22 @@ def test_medalpaca_prompt_matches_their_generate_prompt():
     assert "Answer: 3" in wrapped
     assert parse_first_number("out of 5") == 5.0
     assert medalpaca_wrap_released_question(zero_shot_question(item_input, 3)) == wrapped
+
+
+def test_finetune_eval_prompt_is_the_training_template_without_the_label():
+    item = {
+        "instruction": (
+            "You are a personalized healthcare agent trained to predict stress "
+            "which ranges from 1 to 5 based on physiological data and user information."
+        ),
+        "input": "The recent 14-days sensor readings show: [Steps]: [100.0] steps",
+        "output": "The predicted stress level is 2.",
+    }
+    prompt = medalpaca_eval_prompt(item)
+    assert medalpaca_train_text(item).startswith(prompt)
+    assert prompt.endswith("\n\n### Response:\n")
+    assert "Answer:" not in prompt
+    assert item["output"] not in prompt
 
 
 def test_paper_basic_prompt_is_the_averaged_paragraph():

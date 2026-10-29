@@ -1,0 +1,9 @@
+{
+  "figure7": {
+    "n_items": 299,
+    "n_parsed": 299,
+    "n_parse_failures": 0,
+    "mae": 0.8528428093645485,
+    "parse_failure_rate": 0.0
+  }
+}

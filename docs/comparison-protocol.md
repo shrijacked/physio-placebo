@@ -8,13 +8,16 @@ Two tables. A row crosses tables only if the adaptation is the same.
 |---|---|---|---|---|
 | Paper Table 3 | MedAlpaca-7b | Zero-shot | Their seeds {0, 1, 2} | 0.76 ± 0.1 |
 | Locked rerun | `medalpaca/medalpaca-7b` | Zero-shot, greedy, first-number scorer | Locked 299-item eval, sha256 `fea3b879…` | `results/anchor/medalpaca/server_run/run.json` (2.689 ± 0.038) |
+| Paper basic prompt | `medalpaca/medalpaca-7b` | Table 1 14-day averages, Figure 7 frame, Figure 8 sampling (temperature 0.4) | Same 299 items, seeds {0, 1, 2} | `results/anchor/paper_basic_sample*/summary.json` (0.841 ± 0.016) |
 | Different backbone | `Qwen/Qwen3-8B` | Same locked prompts, greedy, same scorer | Same 299 items, seeds {0, 1, 2} | `results/comparison/prompt_our_models/` |
 | Different backbone | `meta-llama/Llama-3.1-8B-Instruct` | Same | Same | Same directory |
 
-The Qwen and Llama rows are the same task and the same prompt text. They are not a
+The Qwen and Llama rows are the same task and the raw-list prompt text. They are not a
 claim that we reproduced MedAlpaca. Instruct models receive that text as the user
 turn of their chat template (`enable_thinking` false on Qwen3). MedAlpaca receives
-the raw string, as in the locked anchor.
+the raw string, as in the locked anchor. The 0.841 row is a different MedAlpaca
+prompt: one average per sensor, sampled the way the paper's appendix describes.
+It is inside 0.76 ± 0.1. It does not replace the locked 2.689 raw-list number.
 
 ## Table 2 — fine-tuned, MAE, lower is better
 

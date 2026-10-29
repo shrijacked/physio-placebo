@@ -15,9 +15,11 @@ from physio_placebo.anchor import (
     train_complement,
 )
 from physio_placebo.comparison import (
+    FULLFT_LOCK_PATH,
     LOCK_PATH,
     build_locked_train_items,
     load_finetune_lock,
+    load_fullft_lock,
     train_split_payload,
 )
 
@@ -64,6 +66,20 @@ def test_lock_is_the_7b_lora_cell():
     assert lock["eval_seed"] == 0
     assert lock["do_sample"] is False
     assert LOCK_PATH.is_file()
+
+
+def test_full_finetune_lock_is_the_appendix_7b_recipe(tmp_path):
+    lock = load_fullft_lock()
+    assert FULLFT_LOCK_PATH.is_file()
+    assert lock["use_lora"] is False
+    assert lock["num_epochs"] == 3
+    assert lock["learning_rate"] == 2.0e-5
+    assert lock["global_batch_size"] == 128
+    assert lock["bf16_stochastic_round"] is True
+    bad = tmp_path / "bad.yaml"
+    bad.write_text(FULLFT_LOCK_PATH.read_text().replace("use_lora: false", "use_lora: true"))
+    with pytest.raises(ValueError, match="full fine-tune"):
+        load_fullft_lock(bad)
 
 
 @pytest.mark.skipif(

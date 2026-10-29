@@ -22,6 +22,7 @@ from physio_placebo.paths import configs_dir
 from physio_placebo.provenance import config_hash, sha256_bytes, sha256_file
 
 LOCK_PATH = configs_dir() / "healthllm_finetune.lock.yaml"
+FULLFT_LOCK_PATH = configs_dir() / "healthllm_fullft.lock.yaml"
 REQUIRED_LOCK_KEYS = (
     "model",
     "use_lora",
@@ -57,6 +58,26 @@ def load_finetune_lock(path: Path | None = None) -> dict[str, Any]:
         raise ValueError("this cell is the LoRA arm")
     if int(data["num_epochs"]) != 3:
         raise ValueError("7B appendix cell is 3 epochs")
+    if int(data["per_device_batch_size"]) * int(data["gradient_accumulation_steps"]) != int(
+        data["global_batch_size"]
+    ):
+        raise ValueError("per-device batch times accumulation must equal global batch")
+    return data
+
+
+def load_fullft_lock(path: Path | None = None) -> dict[str, Any]:
+    lock_path = path or FULLFT_LOCK_PATH
+    data = yaml.safe_load(lock_path.read_text())
+    if not isinstance(data, dict):
+        raise ValueError(f"lock file is not a mapping: {lock_path}")
+    if data.get("model") != "medalpaca/medalpaca-7b":
+        raise ValueError(f"unexpected model: {data.get('model')}")
+    if data.get("use_lora") is not False:
+        raise ValueError("this cell is the full fine-tune")
+    if int(data["num_epochs"]) != 3:
+        raise ValueError("7B appendix cell is 3 epochs")
+    if float(data["learning_rate"]) != 2.0e-5:
+        raise ValueError("appendix learning rate is 2e-5")
     if int(data["per_device_batch_size"]) * int(data["gradient_accumulation_steps"]) != int(
         data["global_batch_size"]
     ):

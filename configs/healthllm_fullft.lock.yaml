@@ -1,0 +1,64 @@
+# Locked full fine-tune cell. Do not sweep.
+# Source: Health-LLM Appendix A (arXiv 2401.06866v2): 7B, 3 epochs, batch 128,
+# Adam, learning rate 2e-5, cosine, cross-entropy, parameters updated.
+# The LoRA cell in healthllm_finetune.lock.yaml barely moved: every lora_B weight
+# ended near 1.9e-4, about 16 Adam steps of size 2e-5 from zero.
+
+frozen: true
+cell: healthllm_table4_pmdata_stress_medalpaca7b_full
+paper_table4_pmdata_stress_mae: 0.38
+
+model: medalpaca/medalpaca-7b
+use_lora: false
+torch_dtype: bfloat16
+optimizer: torchao_adamw8bit
+bf16_stochastic_round: true
+weight_decay: 0.0
+num_epochs: 3
+learning_rate: 2.0e-5
+lr_scheduler_type: cosine
+warmup_steps: 0
+warmup_steps_in_paper: 100
+global_batch_size: 128
+per_device_batch_size: 1
+gradient_accumulation_steps: 128
+model_max_length: 2048
+train_on_inputs: true
+prompt_template: medalpaca
+gradient_checkpointing: true
+oversample: false
+seed: 42
+eval_seeds: [0, 1, 2]
+max_new_tokens: 128
+sample_temperature: 0.4
+sample_top_k: 50
+sample_top_p: 0.9
+
+deviations:
+  - id: one_gpu
+    text: >
+      The paper trains on 4 A100 80GB. This cell runs on one RTX A6000 48GB
+      shared with other users, so it cannot hold fp32 weights plus Adam.
+  - id: bf16_weights_8bit_adam
+    text: >
+      Weights and gradients are bf16. Adam moments are 8-bit (torchao AdamW8bit).
+      Plain bf16 rounding would drop most 2e-5 updates, so bf16 stochastic
+      rounding is on. The paper does not say how it stored master weights.
+  - id: stress_only
+    text: >
+      Table 4 fine-tunes on PMData. The released training file covers PMData
+      stress only, so this cell trains on that file (653 rows after the one
+      locked-eval overlap is dropped).
+  - id: warmup_0
+    text: >
+      653 rows at batch 128 is about 15 optimizer steps. Warmup 100 would never
+      reach the stated learning rate.
+  - id: no_oversample
+    text: >
+      Appendix A oversamples for the merged multi-dataset run and does not
+      publish the rule for a single-dataset cell.
+  - id: eval_split
+    text: >
+      Eval is the locked 299-item split, not their 10% test split. Prompt is the
+      MedAlpaca training template up to "### Response:". Score is the locked
+      first-number MAE.

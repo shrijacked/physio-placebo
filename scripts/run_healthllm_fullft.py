@@ -115,7 +115,7 @@ def _train(model, features: list[list[int]], lock: dict, out_dir: Path) -> list[
                 "step": step,
                 "epoch": epoch,
                 "loss": total_loss / len(chunk),
-                "lr": scheduler.get_last_lr()[0],
+                "lr": float(scheduler.get_last_lr()[0]),
             }
             log.append(row)
             print(json.dumps(row), flush=True)

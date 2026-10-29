@@ -195,3 +195,12 @@ The locked 2.689 number is still the raw-string run. It has not been replaced.
 There is no evaluation script and no other prompt file. The 0.76 number is
 not recoverable from those files with this checkpoint and the first-number
 score.
+
+## Fine-tune eval was the wrong prompt
+
+The saved LoRA adapter was trained on the MedAlpaca template and then scored
+on the raw zero-shot string. That is the 2.697 number. Scoring the same
+adapter on its own template, the first 99 answers copy the sensor list.
+The first-number error on those 99 is about 10.9. The run was stopped there.
+The trainer directory is empty, so there is no saved loss curve. The recipe
+is about 16 update steps. The adapter was not retrained.

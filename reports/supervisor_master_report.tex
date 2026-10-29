@@ -724,6 +724,15 @@ Of the fine-tuned answers, 297 of 299 could be parsed. They still say ``out of
 5,'' so the rule still records 5. Before fine-tuning, this same setup scored
 2.714. After fine-tuning it scores 2.697. The training did not change the habit.
 
+That comparison was not a fair test of the training. The adapter was trained
+on MedAlpaca's own template, which ends at ``Response,'' and then scored on
+the raw question, which ends at ``Answer: 3.'' I scored the saved adapter
+again on the template it was trained on. The first 99 answers copy the sensor
+list, so the first number is a step count and the error is about 11. I stopped
+the run there. The saved training log is empty, and this recipe only takes
+about 16 update steps, so the adapter may not have moved. I have not retrained
+it.
+
 \begin{center}
 {\small
 \begin{tabular}{@{}llcc@{}}

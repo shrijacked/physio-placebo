@@ -64,6 +64,17 @@ def test_llm_engine_kwargs_omit_null_quantization():
     assert kw_vl["limit_mm_per_prompt"] == {"image": 5}
 
 
+def test_gpu_memory_utilization_comes_from_the_environment(monkeypatch):
+    from physio_placebo.scoring.vllm_client import llm_engine_kwargs
+
+    spec = {"quantization": None, "dtype": "float16", "logprobs_topk": 32}
+    monkeypatch.delenv("VLLM_GPU_MEMORY_UTILIZATION", raising=False)
+    assert "gpu_memory_utilization" not in llm_engine_kwargs(spec, {"hf_id": "Qwen/Qwen3-8B"})
+    monkeypatch.setenv("VLLM_GPU_MEMORY_UTILIZATION", "0.80")
+    kw = llm_engine_kwargs(spec, {"hf_id": "Qwen/Qwen3-8B"})
+    assert kw["gpu_memory_utilization"] == 0.80
+
+
 def test_vl_user_content_images_then_text():
     from physio_placebo.scoring.vllm_client import vl_placeholder_prefix, vl_user_content
 

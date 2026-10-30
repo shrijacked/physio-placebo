@@ -62,6 +62,11 @@ def llm_engine_kwargs(spec: dict, model_cfg: dict) -> dict[str, Any]:
         kw["max_model_len"] = int(spec["max_model_len"])
     if model_cfg.get("limit_mm_per_prompt"):
         kw["limit_mm_per_prompt"] = dict(model_cfg["limit_mm_per_prompt"])
+    # vLLM 0.29 asks for 0.92 of the card. A shared A6000 with other jobs
+    # free will not have that. Set VLLM_GPU_MEMORY_UTILIZATION to fit.
+    util = os.environ.get("VLLM_GPU_MEMORY_UTILIZATION")
+    if util:
+        kw["gpu_memory_utilization"] = float(util)
     return kw
 
 

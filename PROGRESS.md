@@ -1,23 +1,28 @@
 # PROGRESS
 
 ## Current status
-- Semester week: **Week 9 CLOSED** (2026-10-19). Tag `week-09-done`.
-  Paradigm B only, variants (i) original, (ii) neutralized, (iii) mis-signed.
-  Qwen3-8B and Llama-3.1-8B, WESAD / MAUS / CogWear, 18 cells, 0 failures.
-  Panel: `results/verbalizer_ablation/panel.json`. SensorLM (iv) was not run.
-  Week 10 has not started.
+- Semester week: **Week 10 IN PROGRESS** (2026-10-30). Weeks 1–9 are closed.
+  Tag `week-09-done` (2026-10-19). Week 10 is the SDS report card.
 - Weeks 7–8 CLOSED (2026-10-14). Tag `week-08-done`.
   Surrogate ladder scored on every frozen cell (120 cells, 0 failures, raw
   logprobs in `results/surrogates/eval/`). Classical ledger:
   `results/surrogates/ledger/20261013T193152Z/ledger.json`.
-- Comparison arm (2026-10-11, not a week close): Health-LLM PMData stress.
-  Prompting and fine-tuning are separate tables. Qwen3-8B MAE 0.795 ± 0.020.
-  Llama-3.1-8B-Instruct MAE 2654 ± 43 (first number is a step count inside
-  generated Python; scorer not retuned). MedAlpaca-7b LoRA MAE 2.697 on eval
-  seed 0, next to the paper's fine-tuned 0.38 and our zero-shot 2.689.
-- Phase: real-signal A/B/C numbers are in. Surrogates wait for Weeks 7–8.
-- Last session: 2026-09-21 — Paradigm C eval finished on the HTI A6000
-  (`eval_vllm_qwen25_vl.json`). 2 cells, 1,896 scored, 0 failures.
+- Week 9 CLOSED (2026-10-19). Paradigm B only, variants (i) original,
+  (ii) neutralized, (iii) mis-signed. Qwen3-8B and Llama-3.1-8B, WESAD / MAUS /
+  CogWear, 18 cells, 0 failures. Panel: `results/verbalizer_ablation/panel.json`.
+  SensorLM (iv) was not run.
+- Comparison arm (2026-10-11, not a week close; full fine-tune 2026-10-30):
+  Health-LLM PMData stress. Prompting and fine-tuning are separate tables.
+  Qwen3-8B MAE 0.795 ± 0.020. Llama-3.1-8B-Instruct MAE 2654 ± 43 (first number
+  is a step count inside generated Python; scorer not retuned). MedAlpaca-7b
+  LoRA MAE 2.697 (adapter did not train). Full fine-tune, every weight, sampling
+  MAE 0.442 ± 0.007, next to the paper's 0.38 and our zero-shot 2.689. The
+  14-day-average prompting rerun is 0.841 ± 0.016, inside the paper's 0.76 ± 0.1.
+- Phase: SDS card. Pre-registered macro-F1 card, plus a labelled
+  post-registration secondary layer (balanced accuracy, logprob AUROC, matched
+  chance floors). Real-signal A and C rows still need a GPU re-score.
+- Last session: 2026-10-30 — read-only audit of Weeks 1–9 before the SDS card.
+  Findings are in the decisions log (2026-10-30).
 - Living supervisor report: `reports/supervisor_master_report.tex` /
   `.pdf`. Update it when a week is tagged done; do not write unclosed weeks.
 
@@ -160,7 +165,18 @@
         (`results/eval_grid/eval_vllm_qwen25_vl.json`, 1896 scored / 0 fail).
         WESAD instruction 4-shot **0.412 [0.410, 0.414]**;
         MAUS **0.400 [0.399, 0.400]**. Both sit on chance (near-constant class).
-- [ ] Weeks 7–15: not started
+- [x] Weeks 7–8 — surrogate ladder + information-preservation ledger
+      (**CLOSED 2026-10-14**, tag `week-08-done`)
+  - [x] Five null rungs plus the label-preserving permutation on every frozen
+        A/B/C cell (120 cells, 0 failures, raw logprobs in
+        `results/surrogates/eval/`)
+  - [x] Classical LOSO logreg ledger
+        (`results/surrogates/ledger/20261013T193152Z/ledger.json`)
+- [x] Week 9 — verbalizer-leakage ablation (**CLOSED 2026-10-19**, tag `week-09-done`)
+  - [x] Variants (i) original, (ii) neutralized, (iii) mis-signed. Both text
+        models, three datasets, 18 cells, 0 failures
+        (`results/verbalizer_ablation/panel.json`). SensorLM (iv) not run.
+- [ ] Weeks 10–15: Week 10 (SDS card) in progress. Weeks 11–15 not started.
 
 ## Open blockers
 - ~~**GPU hardware**~~ **RESOLVED 2026-09-20**: account `shrijak` on Plaksha HTI
@@ -187,6 +203,30 @@
 - ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-10-30: **Read-only audit before the SDS card.** Macro-F1 from the A/B
+  argmax mostly tracks how often the model says B: always-A on WESAD is 0.412
+  and always-B is 0.230, while the filed chance is the classical permutation
+  mean (WESAD 0.419). Qwen WESAD A `bin_mean` Gaussian noise is 0.482
+  [0.438, 0.525] against a matched floor of 0.499. Qwen WESAD B Gaussian is
+  0.292 (B on 92% of minutes); filed SDS on that rung is about 1.77.
+  Saved logprobs say more than the argmax: Qwen WESAD B (i) macro-F1 0.581 but
+  AUROC 0.937 (B on 71% of minutes); Llama WESAD B macro-F1 0.278 but AUROC
+  0.819; Qwen2.5-VL WESAD C same-activity-other-person macro-F1 0.652, AUROC
+  0.794. Real-signal A and C rows were never saved. An adjective-vote baseline
+  with no LLM scores WESAD (i) macro-F1 0.736, balanced accuracy 0.778, AUROC
+  0.857, above Qwen's 0.581; Spearman(Qwen margin, vote) is 0.84 on WESAD and
+  0.88–0.94 on MAUS and CogWear. Per-window IAAFT keeps level and spectrum
+  (corr with the real window: `eda_level_mean` and `eda_level_std` 1.000,
+  `eda_tonic_mean` 0.998, `resp_amp_mean` 0.933, `hrv_mean_hr` 0.771), so it is
+  not an empty null. Paradigms A and C show one channel; HRV-only logreg on
+  WESAD is 0.783, not 0.918, and three summary stats of the 128 `bin_mean` ECG
+  values score F1 0.786 / AUROC 0.907. MAUS PPG and CogWear BVP prompt vectors
+  are about AUROC 0.5. Identical prompts return 2–4 distinct logprobs, so AUROC
+  on near-constant cells is spurious. Qwen MAUS (i) 0.485 sits under a matched
+  floor of 0.499 (p95 0.519), so P2 "holds" there only under the filed floor.
+  Secondary analyses that use these facts are specified in
+  `docs/analysis-addendum-2026-10-30.md` and labelled post-registration.
+  Macro-F1 SDS stays the primary, filed analysis.
 - 2026-10-19: **Week 9 closed.** Original / neutralized / mis-signed on the
   frozen Paradigm B prompts, both text models, three datasets, rows saved.
   Qwen WESAD loses 17% of its above-chance margin when the adjectives go

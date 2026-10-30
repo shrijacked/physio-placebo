@@ -5,7 +5,7 @@
 **Prof-facing proposal (verbatim, do not edit without approval):** `docs/proposal/independent_study_proposal.tex` / `.pdf`
 **Provenance / full analysis:** `docs/TOURNAMENT_REPORT.md`
 **Semester clock:** Week 1 starts on ______ (fill in once the prof approves) · 15 weeks total
-**Doc last updated:** 2026-08-10
+**Doc last updated:** 2026-10-30
 
 ---
 
@@ -162,14 +162,14 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 - [x] Paradigm C on WESAD + MAUS with Qwen2.5-VL-7B, real signal · **Done means:** `results/eval_grid/eval_vllm_qwen25_vl.json` (2026-09-21)
 
 ### Weeks 7–8 — surrogate ladder
-- [ ] Implement all 5 surrogates + the separate label-preserving condition exactly per §5.4 · **Done means:** each surrogate unit-tested (moments/spectrum/label-alignment assertions)
-- [ ] Run ladder identically across all paradigms/models/datasets · **Done means:** full 3×2×3×6 grid populated
-- [ ] Information-preservation ledger: classical LR on every surrogate · **Done means:** ledger table committed alongside the grid
+- [x] Implement all 5 surrogates + the separate label-preserving condition exactly per §5.4 · **Done means:** `tests/test_surrogates.py`; tag `week-08-done` (2026-10-14)
+- [x] Run ladder identically across all paradigms/models/datasets · **Done means:** `results/surrogates/eval/` (120 cells, 0 failures). Paradigm C is Qwen2.5-VL on WESAD and MAUS only, so the grid is not a full 3×2×3.
+- [x] Information-preservation ledger: classical LR on every surrogate · **Done means:** `results/surrogates/ledger/20261013T193152Z/ledger.json`
 - ⚠ Watch: if the label-broken subject permutation still scores high, check the condition resampling — that is a bug signature, not a finding.
 
 ### Week 9 — verbalizer-leakage ablation (the core)
-- [ ] Variant (i) original adjectives · (ii) neutralized · (iii) adversarially mis-signed · (iv) SensorLM templates (if approved) · **Done means:** ablation panel with CIs for all variants on Paradigm B, all datasets
-- [ ] Item-level flip analysis for variant (iii) · **Done means:** flip-rate per dataset committed (feeds prediction #3)
+- [x] Variant (i) original adjectives · (ii) neutralized · (iii) adversarially mis-signed · (iv) SensorLM templates (if approved) · **Done means:** `results/verbalizer_ablation/panel.json` (2026-10-19), variants (i)–(iii) on Paradigm B, both text models, all three datasets. (iv) not run (no prof sign-off).
+- [x] Item-level flip analysis for variant (iii) · **Done means:** flip rates with CIs in `results/verbalizer_ablation/panel.json`
 
 ### Week 10 — ★ MINIMUM VIABLE RESULT ⚑ GATE
 - [ ] **The SDS report card:** 3 paradigms × 2 open models × 3 datasets × 6 signal conditions, macro-F1 under strict LOSO, paired-over-subjects bootstrap CIs + Wilcoxon, classical-baseline delta, verbalizer-ablation panel · **Done means:** one self-contained document (tables + figures) that would stand as a workshop paper in either result direction
@@ -203,14 +203,14 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 
 ## 10. Status board  *(update every session)*
 
-**Current week:** pre-semester (Phase 0) · **Overall:** 🟢 on track
+**Current week:** Week 10 (SDS report card) · **Overall:** Weeks 1–9 closed (`week-09-done`, 2026-10-19)
 
 | | |
 |---|---|
-| **Done (latest first)** | 2026-08-10 · Independent Study Registration form filled from this plan + Amol's ref structure (grading adapted, not copied); PDF exported. 2026-08-10 · SensorLM/LSM-2 openness verified (code-only / paper-only; no weights) — reply sent to prof; verbalizer variant (iv) proposed. 2026-08-10 · Proposal PDF finalized (colored, named) and shared with prof. 2026-07-28 · Idea selection completed; winner + runner-up fixed. |
-| **In progress** | Awaiting student ID No / course-no confirmation for the registration form; awaiting prof approval + start date. |
-| **Blocked** | Registration form PDF ready except ID No (blank until confirmed). |
-| **Next 3 actions** | 1) Confirm ID No + Course No (CS4002 vs CS4003) + Major/Category → regenerate form PDF. 2) Get prof approval + start date → fill in semester clock. 3) GPU (reopened 2026-09-16): ≥16 GB card for vLLM grid + MedAlpaca anchor (§12). |
+| **Done (latest first)** | 2026-10-19 · Week 9 verbalizer panel (`results/verbalizer_ablation/panel.json`). 2026-10-14 · Weeks 7–8 surrogate ladder + ledger (`results/surrogates/`). 2026-09-21 · Weeks 4–6 real-signal A/B/C grids. 2026-08-10 · Proposal PDF shared with prof. |
+| **In progress** | Week 10 SDS card: pre-registered macro-F1, plus a labelled post-registration secondary layer. Real-signal A/C per-item rows still need a GPU re-score. |
+| **Blocked** | Nothing on the Mac-side card. The A/C re-score needs the HTI A6000 (`10.1.45.49`). SensorLM variant (iv) still waits on prof sign-off. |
+| **Next 3 actions** | 1) Commit the analysis addendum before any SDS code. 2) Build the card from saved surrogate and Week 9 rows. 3) Re-score real A and C on the A6000 with per-item logprobs saved. |
 
 ## 11. Decision log  *(append-only; date every entry)*
 

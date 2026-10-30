@@ -7,10 +7,9 @@ alwaysApply: true
 
 Never start Week N+1 (code, docs-as-done, tags, or "let's proceed") until **every** exit criterion for Week N in `CURSOR_SEMESTER_AGENT.md` is actually true — real data, real run, real artifact. Partial weeks are not done.
 
-- Current freeze: **Weeks 1–6 closed** (Week 6: 2026-09-21, tag `week-06-done`).
-- **Current week is Weeks 7–8 — NOT STARTED.** Surrogate ladder + information
-  ledger. Do not implement until the user asks. Do not start Week 9 until
-  `week-08-done`.
+- Current freeze: **Weeks 1–9 closed** (Week 9: 2026-10-19, tag `week-09-done`).
+- **Current week is Week 10 — IN PROGRESS.** SDS report card. Do not start
+  Week 11 until `week-10-done`.
 - Catch-up on an earlier incomplete week is allowed. Skipping forward is not.
 
 If the user asks to jump ahead, refuse, name the open exit criterion, and stay on that week.

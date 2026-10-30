@@ -97,7 +97,7 @@ not installed, MedAlpaca weights not in the HF cache). Options:
       `data/raw/pmdata/pmdata.zip` (sha256 recorded on completion).
 - [x] GPU box (2026-09-20): Plaksha HTI `10.1.45.49`, NVIDIA RTX A6000 48 GB,
       driver/CUDA 580.178.04 / 13.0 after admin reboot. Used for the primary MedAlpaca
-      run. Same box is intended for the Week 4–10 vLLM grid (not started).
+      run. Same box was used for the Weeks 4–9 vLLM grid.
 - [x] OpenAI key provided 2026-08-30 — fallback attempted; **abandoned 2026-09-16** (rate
       limits, not credits).
 - [x] OSF model-deviation **update public 2026-09-20** on https://osf.io/62r5t

@@ -405,12 +405,14 @@ def _secondary_row(cell, rung, surr, real_scored, deleted_std, rows_note, setup_
     ba_ci = side["ba_ci"]
     surr_var = item_variation_ok(surr_scored["margin"], deleted_std)
     auc_ci = side["auc_ci"]
-    if side["real_var"] and surr_var and auc_ci is not None:
-        sds_auc = _secondary_ratio(real_scored["auroc"], surr_scored["auroc"], 0.5, auc_ci.lo)
+    if auc_ci is not None:
         auc_ci_text = [auc_ci.point, auc_ci.lo, auc_ci.hi]
     else:
-        sds_auc = NO_VARIATION
         auc_ci_text = NO_VARIATION
+    if side["real_var"] and surr_var and auc_ci is not None:
+        sds_auc = _secondary_ratio(real_scored["auroc"], surr_scored["auroc"], 0.5, auc_ci.lo)
+    else:
+        sds_auc = NO_VARIATION
     row.update(
         {
             "ba_real": real_scored["ba"],
@@ -596,6 +598,30 @@ def render_markdown(card: dict) -> str:
                 f"{_num(row['vote_ba'])} | {_num(row['vote_auroc'])} | "
                 f"{_num(row['agreement'])} | {_num(row['spearman'])} |"
             )
+    lines += [
+        "",
+        "## Real recording, per setup",
+        "",
+        "post-registration (addendum 2026-10-30). One row per setup, from the real minutes.",
+        "",
+        "| Model | Dataset | View | BA | AUROC | Matched floor | Matched gate |",
+        "|---|---|---|---:|---|---:|---|",
+    ]
+    seen: set[tuple] = set()
+    for row in card["secondary"]:
+        if row["rung"] != "gaussian":
+            continue
+        identity = (row["model"], row["dataset"], row["paradigm"], scheme_dir(row.get("scheme")))
+        if identity in seen:
+            continue
+        seen.add(identity)
+        interval = row.get("auroc_ci")
+        auroc_text = _ci(interval) if isinstance(interval, list) else str(interval)
+        lines.append(
+            f"| {row['model']} | {row['dataset']} | {row['paradigm']} {scheme_dir(row.get('scheme'))} | "
+            f"{_num(row.get('ba_real'))} | {auroc_text} | {_num(row.get('matched_floor_mean'))} | "
+            f"{row.get('matched_gate')} |"
+        )
     lines += [
         "",
         "## Secondary layer",

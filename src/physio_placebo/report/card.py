@@ -205,7 +205,7 @@ def build_card(root: Path, *, real_rows_dir: Path | None = None) -> dict:
     secondary = []
     determinism = []
     deleted_std: dict[tuple, float] = {}
-    real_cache: dict[int, dict] = {}
+    real_cache: dict[tuple, dict] = {}
 
     real_cells = _real_cells(root)
     loaded_surr: dict[tuple, dict] = {}
@@ -244,7 +244,7 @@ def build_card(root: Path, *, real_rows_dir: Path | None = None) -> dict:
                 _primary_row(cell, rung, surr, m_real, ci_lo, m_chance, defined, real_rows, real_scored)
             )
             secondary.append(
-                _secondary_row(cell, rung, surr, real_scored, noise, rows_note, real_cache)
+                _secondary_row(cell, rung, surr, real_scored, noise, rows_note, key, real_cache)
             )
 
     _apply_holm(primary)
@@ -359,11 +359,14 @@ def _primary_row(cell, rung, surr, m_real, ci_lo, m_chance, defined, real_rows, 
     return row
 
 
-def _real_side(cell, real_scored, deleted_std, cache: dict[int, dict]) -> dict:
-    """Floor and intervals of the real rows. Shared by every rung of one cell."""
-    key = id(real_scored)
-    if key in cache:
-        return cache[key]
+def _real_side(setup_key: tuple, real_scored, deleted_std, cache: dict[tuple, dict]) -> dict:
+    """Floor and intervals of the real rows. Shared by every rung of one setup.
+
+    The key is the setup, not ``id(real_scored)``. A later setup can reuse a
+    freed object's id, and that would hand it the previous setup's floor.
+    """
+    if setup_key in cache:
+        return cache[setup_key]
     y, yhat, subjects = real_scored["y"], real_scored["yhat"], real_scored["subjects"]
     floor = matched_permutation_floor(subjects, y, yhat)
     ba_ci = subject_bootstrap_ci(subjects, y, yhat, metric=balanced_accuracy)
@@ -371,11 +374,11 @@ def _real_side(cell, real_scored, deleted_std, cache: dict[int, dict]) -> dict:
     auc_ci = None
     if real_var and real_scored["auroc"] == real_scored["auroc"]:
         auc_ci = subject_bootstrap_ci(subjects, y, real_scored["margin"], metric=auroc)
-    cache[key] = {"floor": floor, "ba_ci": ba_ci, "real_var": real_var, "auc_ci": auc_ci}
-    return cache[key]
+    cache[setup_key] = {"floor": floor, "ba_ci": ba_ci, "real_var": real_var, "auc_ci": auc_ci}
+    return cache[setup_key]
 
 
-def _secondary_row(cell, rung, surr, real_scored, deleted_std, rows_note, real_cache) -> dict:
+def _secondary_row(cell, rung, surr, real_scored, deleted_std, rows_note, setup_key, real_cache) -> dict:
     row = {
         "model": cell["model"],
         "dataset": cell["dataset"],
@@ -397,7 +400,7 @@ def _secondary_row(cell, rung, surr, real_scored, deleted_std, rows_note, real_c
         )
         return row
     surr_scored = _score_rows(surr["rows"])
-    side = _real_side(cell, real_scored, deleted_std, real_cache)
+    side = _real_side(setup_key, real_scored, deleted_std, real_cache)
     floor = side["floor"]
     ba_ci = side["ba_ci"]
     surr_var = item_variation_ok(surr_scored["margin"], deleted_std)

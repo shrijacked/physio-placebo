@@ -24,9 +24,12 @@
   `results/sds_card/20261030T151137Z/` and differs only in the recorded real
   AUROC intervals. The earlier directory stays. Real A/C rows:
   `results/eval_grid_rows/20261030T142039Z/`. Largest re-score move is 0.009.
-- Last session: 2026-10-30 — A6000 re-score finished (0 failures) and the card
-  was rebuilt. OSF posting of `docs/analysis-addendum-2026-10-30.md` is still
-  manual and has not been done. The prof check-in has not been held.
+- Last session: 2026-10-31 — the real AUROC intervals are in
+  `results/sds_card/20261030T204738Z/`. OSF posting of
+  `docs/analysis-addendum-2026-10-30.md` and the fp16 sentence in
+  `docs/osf-prereg.md` is still manual and has not been done. The prof
+  check-in has not been held. The A6000 checkout needs `src/` synced before
+  the next GPU run.
 - Living supervisor report: `reports/supervisor_master_report.tex` /
   `.pdf`. Update it when a week is tagged done; do not write unclosed weeks.
 
@@ -219,6 +222,18 @@
 - ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-10-31: **Second audit.** The WESAD plot picks A on 99.9% of minutes and
+  still ranks stress minutes: AUROC 0.746 [0.643, 0.845], within-subject mean
+  0.784 for 11 of 13 people. The MAUS plot point is 0.497, and its interval
+  stays undefined because those margins miss the variation gate. The card was
+  dropping the real interval whenever the replacement was flat. That recording
+  is fixed. Rebuilt card `results/sds_card/20261030T204738Z/` supersedes
+  `20261030T151137Z` and differs only in those intervals. The report captions
+  match it. The OSF local addendum now says the executed grid ran fp16. The
+  A6000 checkout still has the old `src/` and needs a sync before the next GPU
+  run. gstack-review of `origin/main...HEAD` found no checklist issues.
+  `review/specialists/` is not on disk, so those passes were not run, and
+  `slop:diff` is unavailable. Week 11 not started.
 - 2026-10-31: **Audit fixes.** Card cache is keyed on the setup, not `id()`.
   Snapshot lookup reads the commit directory when the cache is incomplete
   (`results/eval_grid_rows/20261030T142039Z/provenance_addendum.json`).

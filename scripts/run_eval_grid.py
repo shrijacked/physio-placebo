@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 from physio_placebo.paths import REPO_ROOT
@@ -95,7 +96,14 @@ def main() -> None:
         "cells": rows,
         "note": "Eval subjects only. Prompt-dev subjects are excluded.",
     }
-    out.write_text(json.dumps(payload, indent=2, default=str) + "\n")
+    partial = out.with_name(out.name + ".partial")
+    partial.write_text(json.dumps(payload, indent=2, default=str) + "\n")
+    try:
+        os.link(partial, out)
+    except FileExistsError:
+        partial.unlink(missing_ok=True)
+        raise SystemExit(f"refusing to overwrite {out}") from None
+    partial.unlink()
     print(json.dumps({"n_cells": len(rows), "wrote": str(out)}, indent=2))
 
 

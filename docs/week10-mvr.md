@@ -1,6 +1,8 @@
 # Week 10 — SDS card
 
-Source of the numbers below: `results/sds_card/20261030T151137Z/card.md`.
+Source of the numbers below: `results/sds_card/20261030T204738Z/card.md`.
+That card supersedes `results/sds_card/20261030T151137Z/` and differs only in
+the recorded real AUROC intervals. The earlier directory stays.
 Real-signal rows for paradigms A and C are in
 `results/eval_grid_rows/20261030T142039Z/` (A6000, commit `2151061`,
 `gpu_memory_utilization` 0.80 because other jobs held about 6 GiB). 0 scoring
@@ -79,8 +81,29 @@ paired interval for Qwen on WESAD with 128 ECG averages, real minus Gaussian
 noise, is 0.116 [0.048, 0.180]. It excludes zero. The filed SDS for that cell
 stays 0.644, because SDS uses the locked September score, not the re-score.
 
+### What the re-score answered
+
+The plot model picks one letter on nearly every minute, so its macro-F1 sits
+on the common-class line. The letter probabilities are a separate question.
+Numbers below are from `results/sds_card/20261030T204738Z/card.md`.
+
+- WESAD plot, real-recording table: AUROC 0.746 [0.643, 0.845]. The same
+  saved rows (`eval_vllm_qwen25_vl.json`) have a within-subject mean of
+  0.784, above 0.5 for 11 of 13 people, while the model picks A on 99.9% of
+  minutes.
+- MAUS plot, secondary layer: AUROC 0.497. The real-recording interval is
+  `undefined (no item-level variation)` because those margins do not clear
+  the variation gate.
+- Qwen raw trace, WESAD, 128 averages: AUROC 0.641 [0.570, 0.710].
+- Llama raw trace, WESAD, 128 averages: AUROC 0.588 [0.525, 0.656].
+- Llama sentences, WESAD: AUROC 0.819 [0.697, 0.903].
+
 ## Limitations
 
+SDS on AUROC is undefined when a replacement makes the answer near-constant.
+That is the rule fixed on 30 October, and it is not changed here. A
+near-constant replacement is also the case where the replacement removed the
+signal, so the ratio the rule withholds is the one that would have said so.
 Subject is the resampling unit, and CogWear eval is eight people. Identical
 prompts still return a few distinct logprobs, so AUROC on a flat line or a
 deleted signal is `undefined (no item-level variation)`. Surrogate

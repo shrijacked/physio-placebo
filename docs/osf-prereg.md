@@ -16,14 +16,18 @@
 > (submitted 15:02 UTC, approved; schema response `6aaff4804f661ffb39d0ab73`).
 > The filed Models section below is still the 2026-08-30 text.
 >
-> **Local addendum, not yet posted (2026-10-11, updated 2026-10-30):** a comparison
+> **Local addendum, not yet posted (2026-10-11, updated 2026-10-31):** a comparison
 > arm was added for Health-LLM (CHIL 2024) PMData stress. It does not change the
 > hypotheses, the surrogate ladder, the verbalizer ablation, or the WESAD / MAUS /
 > CogWear grid. Prompting and fine-tuning are separate tables. The fine-tune arm is
 > LoRA on `medalpaca/medalpaca-7b` (`configs/healthllm_finetune.lock.yaml`; that
 > adapter did not train, MAE 2.697) and a full fine-tune of every weight
 > (`configs/healthllm_fullft.lock.yaml`, sampling MAE 0.442 ± 0.007 on the locked
-> 299-item eval). Posting this paragraph to OSF is still a manual step.
+> 299-item eval). The executed grid ran fp16 on a 48 GB A6000, because vLLM 0.29
+> has no bitsandbytes path; the posted deviation above still says 4-bit, and the
+> scoring rule is unchanged. The other text to post is
+> `docs/analysis-addendum-2026-10-30.md`. Posting this paragraph to OSF is still
+> a manual step.
 
 ## Title
 

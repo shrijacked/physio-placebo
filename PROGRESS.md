@@ -19,8 +19,10 @@
   MAE 0.442 ± 0.007, next to the paper's 0.38 and our zero-shot 2.689. The
   14-day-average prompting rerun is 0.841 ± 0.016, inside the paper's 0.76 ± 0.1.
 - Phase: Week 10 closed. Final card
-  `results/sds_card/20261030T151137Z/` (75 of 100 null cells undefined, 25
-  ratios, 0 pending paired intervals). Real A/C rows:
+  `results/sds_card/20261030T204738Z/` (75 of 100 null cells undefined, 25
+  ratios, 0 pending paired intervals). It supersedes
+  `results/sds_card/20261030T151137Z/` and differs only in the recorded real
+  AUROC intervals. The earlier directory stays. Real A/C rows:
   `results/eval_grid_rows/20261030T142039Z/`. Largest re-score move is 0.009.
 - Last session: 2026-10-30 — A6000 re-score finished (0 failures) and the card
   was rebuilt. OSF posting of `docs/analysis-addendum-2026-10-30.md` is still
@@ -185,7 +187,9 @@
   - [x] Real A and C rows re-scored on the A6000
         (`results/eval_grid_rows/20261030T142039Z/`, 0 failures, commit
         `2151061`, gpu memory fraction 0.80).
-  - [x] Final card `results/sds_card/20261030T151137Z/`. 75/100 null cells
+  - [x] Final card `results/sds_card/20261030T204738Z/`. It supersedes
+        `results/sds_card/20261030T151137Z/` and differs only in the recorded
+        real AUROC intervals. The earlier directory stays. 75/100 null cells
         `undefined (validity gate)`, 25 ratios. All 20 determinism flags ok
         (largest absolute move 0.009). Summary `docs/week10-mvr.md`.
 - [ ] Weeks 11–15: not started.
@@ -381,8 +385,10 @@
   gap +1.929, artifact `results/anchor/medalpaca/server_run/`.
 - Verbalizer ablation (Week 9) — **RESOLVED 2026-10-19**. Surrogate cells stay in
   `results/surrogates/eval/`. A/B/C real-signal numbers stay in `results/eval_grid/`.
-- Week 10 SDS card — **RESOLVED 2026-10-30**. Final card
-  `results/sds_card/20261030T151137Z/`. Real A/C rows
+- Week 10 SDS card — **RESOLVED 2026-10-31**. Final card
+  `results/sds_card/20261030T204738Z/`, which supersedes
+  `results/sds_card/20261030T151137Z/` and differs only in the recorded real
+  AUROC intervals. The earlier directory stays. Real A/C rows
   `results/eval_grid_rows/20261030T142039Z/`.
 - Surrogate input-matched ceilings — not fit. Regenerating surrogate windows
   would overwrite locked feature parquets.

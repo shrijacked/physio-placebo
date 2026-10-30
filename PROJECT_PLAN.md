@@ -172,7 +172,7 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 - [x] Item-level flip analysis for variant (iii) · **Done means:** flip rates with CIs in `results/verbalizer_ablation/panel.json`
 
 ### Week 10 — ★ MINIMUM VIABLE RESULT ⚑ GATE
-- [x] **The SDS report card:** 3 paradigms × 2 open models × 3 datasets × 6 signal conditions, macro-F1 under strict LOSO, paired-over-subjects bootstrap CIs + Wilcoxon, classical-baseline delta, verbalizer-ablation panel · **Done means:** `results/sds_card/20261030T151137Z/` and `docs/week10-mvr.md` (2026-10-30). Paradigm C is Qwen2.5-VL on WESAD and MAUS only. 75/100 null cells are undefined under the validity gate.
+- [x] **The SDS report card:** 3 paradigms × 2 open models × 3 datasets × 6 signal conditions, macro-F1 under strict LOSO, paired-over-subjects bootstrap CIs + Wilcoxon, classical-baseline delta, verbalizer-ablation panel · **Done means:** `results/sds_card/20261030T204738Z/` and `docs/week10-mvr.md` (2026-10-31). That card supersedes `results/sds_card/20261030T151137Z/` and differs only in the recorded real AUROC intervals. The earlier directory stays. Paradigm C is Qwen2.5-VL on WESAD and MAUS only. 75/100 null cells are undefined under the validity gate.
 - [ ] Check-in with prof scheduled and held; outcome logged in §11
 - ⚑ **Gate:** everything after Week 10 is upside; nothing after this point may jeopardize the MVR artifact.
 
@@ -207,7 +207,7 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 
 | | |
 |---|---|
-| **Done (latest first)** | 2026-10-30 · Week 10 SDS card (`results/sds_card/20261030T151137Z/`). 2026-10-19 · Week 9 verbalizer panel. 2026-10-14 · Weeks 7–8 surrogate ladder. |
+| **Done (latest first)** | 2026-10-31 · Week 10 SDS card (`results/sds_card/20261030T204738Z/`, supersedes `20261030T151137Z`, real AUROC intervals only). 2026-10-19 · Week 9 verbalizer panel. 2026-10-14 · Weeks 7–8 surrogate ladder. |
 | **In progress** | Nothing in the week plan. Week 11 is stretch and has not been opened. |
 | **Blocked** | Prof check-in for the Week 10 card has not been held. SensorLM variant (iv) still waits on prof sign-off. The OSF analysis addendum is local only. |
 | **Next 3 actions** | 1) Hold the Week 10 check-in and log it in §11. 2) Post `docs/analysis-addendum-2026-10-30.md` to OSF. 3) Do not start Week 11 until asked. |

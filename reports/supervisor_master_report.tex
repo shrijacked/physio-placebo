@@ -66,7 +66,7 @@
 \definecolor{Ok}{HTML}{1F6B4A}
 \definecolor{Muted}{HTML}{5C6B70}
 
-\newcommand{\ReportDate}{30 October 2026}
+\newcommand{\ReportDate}{31 October 2026}
 \newcommand{\ReportThrough}{Week 10}
 \newcommand{\ReportNext}{Week 11, not started}
 
@@ -155,9 +155,10 @@ that minute of physiology.
 
 On the stress recordings, a simple logistic regression on ordinary heart and
 skin features scores 0.92. The best language model, on the real minute, scores
-0.60. A plot of the trace does no better than guessing, which is about 0.41
-here, because always picking the common class is not a coin flip when the
-classes are uneven. Noise does not always land on that line. On the averaged
+0.60. The letter a plot of the trace picks does no better than guessing, which
+is about 0.41 here, because always picking the common class is not a coin
+flip when the classes are uneven. On WESAD the plot's probabilities still
+rank the minutes. Noise does not always land on that line. On the averaged
 heart trace, Qwen's noise score is 0.48. Qwen said ``stress'' on about a
 third of those minutes, and chance for that answer rate on this score is
 about 0.50. A flat line and a blank
@@ -384,8 +385,9 @@ CogWear (10 people) & 0.569 & 0.560 & 0.397 & 0.541 & Barely \\
 WESAD is the dataset that can answer the question. The linear model is far
 above guessing, so there is something for a language model to miss. MAUS and
 CogWear are weak even for the linear model. On those two, a language-model
-score near 0.4 does not mean much. When I later compress each result into one
-ratio, those two will often be left blank, and I will show the raw gap instead.
+score near 0.4 does not mean much. Each result is compressed into one ratio
+in the section below. Those two are often left blank, and the raw gap is
+shown instead.
 
 \begin{figure}[!ht]
 \centering
@@ -393,8 +395,7 @@ ratio, those two will often be left blank, and I will show the raw gap instead.
 \caption{The best simple model against the best language-model score on the
 real recording. Each language-model bar is that model's best of the three
 ways of showing a minute. WESAD is the only dataset where the simple model
-is far above guessing. The score is the average of the two class hit rates,
-explained above.}
+is far above guessing. The score is macro-F1, explained above.}
 \end{figure}
 
 \section{Language models on the real recording}
@@ -477,14 +478,17 @@ MAUS & four example drawings & 0.400 [0.399, 0.400] & 990 \\
 }
 \end{center}
 
-Both sit on guessing. The ranges are tight because the model almost always
-picks the same class. The prompt was not revised after these scores.
+The letter it picks is the common one, so both sit on guessing. The ranges
+are tight because the model almost always picks that letter. On WESAD its
+probabilities still order stress minutes above calm ones: AUROC 0.75
+[0.64, 0.85], above chance for 11 of 13 people. On MAUS the same
+probabilities are 0.50. The prompt was not revised after these scores.
 
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=\textwidth,height=2.15in,keepaspectratio]{figures/fig_paradigm_c.pdf}
 \caption{Guessing, Qwen's best number version, Qwen's sentences, and the
-vision model. The drawing does not beat guessing on WESAD or on MAUS.}
+vision model. The drawing does not beat guessing on the letter it picks.}
 \end{figure}
 
 \section{Replacing the recording}
@@ -883,8 +887,9 @@ swapped. The sentence test above is the second of the three filed
 predictions. The third, flipped words changing more than 40\% of minutes,
 is now scored as well.
 
-The ratio is now computed, outside this PDF, in
-\texttt{results/sds\_card/}. In words, it is how much of the gap between the
+The ratio is in the table and the two figures below.
+The numbers are from \texttt{results/sds\_card/}\allowbreak\texttt{20261030T204738Z/}.
+In words, it is how much of the gap between the
 real recording and the locked chance floor disappears when the recording is
 replaced:
 \[
@@ -939,7 +944,7 @@ is printed.}
 \includegraphics[width=\textwidth]{figures/fig_auroc_vs_f1.pdf}
 \caption{The ordering of the two letters, against macro-F1, on the real
 recording. A point high and to the left is a model that ranks the minutes
-well and still picks the common letter too often.}
+well and still picks one letter too often.}
 \end{figure}
 
 \section{Where the work stands}
@@ -952,7 +957,7 @@ well and still picks the common letter too often.}
 \midrule
 Three public datasets, cut into minutes & Done. Nothing dropped for missing samples. \\
 A simple model on the same features & Done. WESAD reaches 0.92. The other two are weak. \\
-Language models on the real recording & Done. Best score is 0.60. Drawings sit on guessing. \\
+Language models on the real recording & Done. Best score is 0.60. Drawings pick the common letter; on WESAD their probabilities still rank stress minutes (AUROC 0.75). \\
 Replacing the recording & Done. On WESAD the linear model collapses on noise. A phase scramble does not, because it keeps the level of the trace. \\
 \textcolor{Ask}{The comparison from the last meeting} & \textcolor{Ask}{Done. Section~\ref{sec:asked}. Separate dataset, separate score.} \\
 Removing and flipping the judgment words & Done. Qwen on WESAD loses 17\% of its margin when the words go, and 63\% of minutes flip when the words reverse. \\
@@ -973,6 +978,7 @@ One ratio per setup & Done. Seventy-five of one hundred null cells are blank, be
 \midrule
 23 October 2026 & Through Week 9. \\
 30 October 2026 & Week 10 ratio. The score is macro-F1. A phase scramble keeps the level of the trace. \\
+31 October 2026 & The plot's chosen letter is guessing. On WESAD its probabilities still rank stress minutes (AUROC 0.75). The score caption, the ratio sentence, and the drawing caption are corrected. \\
 \bottomrule
 \end{tabular}
 }

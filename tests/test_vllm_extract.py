@@ -75,6 +75,77 @@ def test_gpu_memory_utilization_comes_from_the_environment(monkeypatch):
     assert kw["gpu_memory_utilization"] == 0.80
 
 
+def _incomplete_hub(monkeypatch):
+    """The A6000 cache: weights are present, LICENSE/README are not.
+
+    huggingface_hub then raises IncompleteSnapshotError, which subclasses
+    LocalEntryNotFoundError. The lookup used to treat that as an empty cache.
+    """
+    import sys
+    import types
+
+    errors = types.ModuleType("huggingface_hub.errors")
+
+    class LocalEntryNotFoundError(Exception):
+        pass
+
+    class IncompleteSnapshotError(LocalEntryNotFoundError):
+        pass
+
+    errors.LocalEntryNotFoundError = LocalEntryNotFoundError
+    errors.IncompleteSnapshotError = IncompleteSnapshotError
+    hub = types.ModuleType("huggingface_hub")
+
+    def snapshot_download(repo_id, local_files_only=False):
+        raise IncompleteSnapshotError(
+            "incomplete: .gitattributes, LICENSE, README.md are missing"
+        )
+
+    hub.snapshot_download = snapshot_download
+    monkeypatch.setitem(sys.modules, "huggingface_hub", hub)
+    monkeypatch.setitem(sys.modules, "huggingface_hub.errors", errors)
+
+
+def _write_snapshot(root, hf_id, sha):
+    folder = root / ("models--" + hf_id.replace("/", "--"))
+    snap = folder / "snapshots" / sha
+    snap.mkdir(parents=True)
+    (snap / "config.json").write_text("{}\n")
+    refs = folder / "refs"
+    refs.mkdir()
+    (refs / "main").write_text(sha + "\n")
+
+
+def test_incomplete_snapshot_reports_the_commit(tmp_path, monkeypatch):
+    sha = "b968826d9c46dd6066d109eabc6255188de91218"
+    _write_snapshot(tmp_path, "Qwen/Qwen3-8B", sha)
+    monkeypatch.setenv("HF_HUB_CACHE", str(tmp_path))
+    _incomplete_hub(monkeypatch)
+    from physio_placebo.scoring.vllm_client import hf_snapshot_id
+
+    assert hf_snapshot_id("Qwen/Qwen3-8B") == sha
+
+
+def test_several_snapshots_are_named_and_not_chosen(tmp_path, monkeypatch):
+    _write_snapshot(tmp_path, "Qwen/Qwen3-8B", "aaa")
+    extra = tmp_path / "models--Qwen--Qwen3-8B" / "snapshots" / "bbb"
+    extra.mkdir()
+    (extra / "config.json").write_text("{}\n")
+    monkeypatch.setenv("HF_HUB_CACHE", str(tmp_path))
+    _incomplete_hub(monkeypatch)
+    from physio_placebo.scoring.vllm_client import hf_snapshot_id
+
+    assert hf_snapshot_id("Qwen/Qwen3-8B") == "ambiguous:aaa,bbb"
+
+
+def test_missing_snapshot_stays_not_in_cache(tmp_path, monkeypatch):
+    monkeypatch.setenv("HF_HUB_CACHE", str(tmp_path))
+    _incomplete_hub(monkeypatch)
+    from physio_placebo.scoring.vllm_client import hf_snapshot_id
+
+    assert hf_snapshot_id("Qwen/Qwen3-8B") == "not-in-hf-cache"
+
+
 def test_vl_user_content_images_then_text():
     from physio_placebo.scoring.vllm_client import vl_placeholder_prefix, vl_user_content
 

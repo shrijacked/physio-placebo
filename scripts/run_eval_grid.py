@@ -89,6 +89,9 @@ def main() -> None:
     if args.client == "vllm":
         config["llm_runtime"] = llm_runtime_versions()
         config["hf_snapshot"] = getattr(client, "hf_snapshot", "not-loaded")
+        config["gpu_memory_utilization"] = os.environ.get("VLLM_GPU_MEMORY_UTILIZATION")
+    else:
+        config["gpu_memory_utilization"] = None
     payload = {
         **run_metadata(config),
         "frozen": True,

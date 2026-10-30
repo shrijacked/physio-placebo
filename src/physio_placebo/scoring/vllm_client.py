@@ -21,8 +21,41 @@ def load_model_spec() -> dict:
     return yaml.safe_load((configs_dir() / "models.yaml").read_text())
 
 
+def _hub_cache_dir() -> Path:
+    raw = os.environ.get("HF_HUB_CACHE") or os.environ.get("HUGGINGFACE_HUB_CACHE")
+    if raw:
+        return Path(raw)
+    home = os.environ.get("HF_HOME")
+    if home:
+        return Path(home) / "hub"
+    return Path.home() / ".cache" / "huggingface" / "hub"
+
+
+def _local_snapshot_ids(hf_id: str) -> list[str]:
+    snaps = _hub_cache_dir() / ("models--" + hf_id.replace("/", "--")) / "snapshots"
+    if not snaps.is_dir():
+        return []
+    return sorted(path.name for path in snaps.iterdir() if path.is_dir())
+
+
+def _snapshot_from_disk(hf_id: str) -> str:
+    """One commit directory, or an explicit ambiguity. Never pick among several."""
+    found = _local_snapshot_ids(hf_id)
+    if len(found) == 1:
+        return found[0]
+    if len(found) > 1:
+        return "ambiguous:" + ",".join(found)
+    return "not-in-hf-cache"
+
+
 def hf_snapshot_id(hf_id: str) -> str:
-    """Directory name of the local Hugging Face snapshot. No download."""
+    """Directory name of the local Hugging Face snapshot. No download.
+
+    An incomplete snapshot (weights present, LICENSE and README absent) makes
+    ``snapshot_download(local_files_only=True)`` raise IncompleteSnapshotError.
+    That class subclasses LocalEntryNotFoundError, so the weights are still
+    on disk. Read the snapshot directory in that case.
+    """
     try:
         from huggingface_hub import snapshot_download
     except ImportError:
@@ -34,7 +67,7 @@ def hf_snapshot_id(hf_id: str) -> str:
     try:
         path = snapshot_download(hf_id, local_files_only=True)
     except LocalEntryNotFoundError:
-        return "not-in-hf-cache"
+        return _snapshot_from_disk(hf_id)
     return Path(path).name
 
 

@@ -55,6 +55,7 @@ def test_save_rows_writes_logprobs_and_refuses_a_second_write(tmp_path):
     subprocess.run(cmd, check=True, cwd=REPO_ROOT)
     out = tmp_path / "eval_constant_qwen3_8b.json"
     payload = json.loads(out.read_text())
+    assert payload["config"]["gpu_memory_utilization"] is None
     saved = payload["cells"][0]["rows"]
     assert saved
     assert set(saved[0]["logprobs"]) == {"A", "B"}

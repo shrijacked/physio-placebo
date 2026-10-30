@@ -27,8 +27,11 @@ which is both plot cells and most raw-series cells. Where a raw-series ratio
 is defined, it is usually not below 0.3. The cell that matters, Qwen on WESAD
 with 128 averages of the chest ECG (real macro-F1 0.595), has SDS 0.644 on
 Gaussian noise, 0.344 on phase randomization, 0.450 on the wrong person in the
-wrong activity, and 1.041 on a flat line and on a deleted signal. Four of the
-70 raw-or-plot null cells are below 0.3. P1 does not hold as a general claim.
+wrong activity, and 1.041 on a flat line and on a deleted signal. The four raw-or-plot
+null cells below 0.3 are all Qwen on MAUS with negative values (−0.065 to
+−0.194). The real score for those setups sits under a chance floor matched
+to Qwen's answer rate, so they are not evidence for P1. P1 does not hold
+as a general claim.
 
 **P2 (neutralizing the adjectives costs more than half the margin).** Unchanged
 from Week 9. Qwen on WESAD loses 17%, so it does not hold there. Qwen on MAUS

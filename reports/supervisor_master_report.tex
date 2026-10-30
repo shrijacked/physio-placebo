@@ -158,8 +158,9 @@ skin features scores 0.92. The best language model, on the real minute, scores
 0.60. A plot of the trace does no better than guessing, which is about 0.41
 here, because always picking the common class is not a coin flip when the
 classes are uneven. Noise does not always land on that line. On the averaged
-heart trace, Qwen's noise score is 0.48, which is what a model that answers
-both letters about equally often gets from this score. A flat line and a blank
+heart trace, Qwen's noise score is 0.48. Qwen said ``stress'' on about a
+third of those minutes, and chance for that answer rate on this score is
+about 0.50. A flat line and a blank
 prompt do sit on guessing, and so does another person who was doing something
 else. A scrambled trace that keeps the spectrum still carries the answer for
 the linear model, because several of the features are the level of the trace
@@ -875,7 +876,7 @@ that for Llama. Counting the judgment words, with no language model, already
 scores 0.74 on WESAD, above Qwen's 0.58, and Qwen's margin tracks that count
 (Spearman 0.84). SensorLM's statistical sentences were not part of this run.
 
-\section{Remaining work}
+\section{One ratio per setup}
 
 The replacement charts already show what happens when the recording is
 swapped. The sentence test above is the second of the three filed
@@ -894,11 +895,52 @@ left blank. Seventy-five of the one hundred null cells are blank for that
 reason. Where a ratio is printed, it is the filed one, including values above
 1 and below 0. Those happen when the replacement scores on the wrong side of
 the chance floor, which this score does easily when the model changes how
-often it says the rare class. The raw-number and plot rows have been scored again, with the probability of
+often it says the rare class.
+
+The raw-number and plot rows have been scored again, with the probability of
 each letter saved. The new scores sit within 0.009 of the September ones.
 The largest move is Qwen on CogWear, every nth sample, 0.576 to 0.585. The
 sentence rows were already saved. None of the twenty real setups moved enough
 to treat the September number as a different run.
+
+The one cell that clears chance on the raw trace is Qwen on WESAD, reading
+the heart trace as 128 averages. The ratio there is not below 0.3.
+
+\begin{center}
+{\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\rowcolor{TableHead}
+\textbf{Replacement} & \textbf{Ratio} & \textbf{Real minus replacement} \\
+\midrule
+Gaussian noise & 0.644 & 0.116 [0.048, 0.180] \\
+Phase-randomized & 0.344 & 0.064 [0.010, 0.121] \\
+Wrong person, wrong activity & 0.450 & 0.082 [0.026, 0.145] \\
+Flat line & 1.041 & 0.186 [0.141, 0.239] \\
+Nothing left & 1.041 & 0.186 [0.141, 0.239] \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+A ratio above 1 means the replacement scored below the chance floor. The
+bracket is the paired interval from redrawing people.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_sds_heatmap.pdf}
+\caption{The filed ratio for every null replacement. A blank cell is
+undefined: the real recording never cleared the chance floor, so no ratio
+is printed.}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_auroc_vs_f1.pdf}
+\caption{The ordering of the two letters, against macro-F1, on the real
+recording. A point high and to the left is a model that ranks the minutes
+well and still picks the common letter too often.}
+\end{figure}
 
 \section{Where the work stands}
 
@@ -917,6 +959,22 @@ Removing and flipping the judgment words & Done. Qwen on WESAD loses 17\% of its
 One ratio per setup & Done. Seventy-five of one hundred null cells are blank, because the real score never cleared chance. Where a ratio is printed, the main WESAD number-trace cell is 0.34 to 1.04, not below 0.3. \\
 \bottomrule
 \end{tabularx}
+}
+\end{center}
+
+\section*{Revision log}
+
+\begin{center}
+{\small
+\begin{tabular}{@{}lL{11.2cm}@{}}
+\toprule
+\rowcolor{TableHead}
+\textbf{Date} & \textbf{What the report covered} \\
+\midrule
+23 October 2026 & Through Week 9. \\
+30 October 2026 & Week 10 ratio. The score is macro-F1. A phase scramble keeps the level of the trace. \\
+\bottomrule
+\end{tabular}
 }
 \end{center}
 

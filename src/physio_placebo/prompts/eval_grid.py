@@ -125,7 +125,7 @@ def run_eval_cell(
     }
 
 
-def run_model_eval(client: LogprobClient, model_key: str) -> list[dict]:
+def run_model_eval(client: LogprobClient, model_key: str, *, save_rows: bool = False) -> list[dict]:
     lock = load_frozen_prompts()
     winners = [w for w in lock["winners"] if w["model"] == model_key]
     if not winners:
@@ -145,6 +145,7 @@ def run_model_eval(client: LogprobClient, model_key: str) -> list[dict]:
                 model_key=model_key,
                 paradigm=w["paradigm"],
                 scheme=w["scheme"],
+                save_rows=save_rows,
             )
         )
     return rows

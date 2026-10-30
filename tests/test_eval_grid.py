@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
+import json
+import subprocess
+import sys
+
 from physio_placebo.data.loso import prompt_dev_split
 from physio_placebo.features.matrix import load_locked_feature_matrix
+from physio_placebo.paths import REPO_ROOT
 from physio_placebo.prompts.eval_grid import run_eval_cell
 from physio_placebo.prompts.freeze import frozen_choice
 from physio_placebo.scoring.client import ConstantClient
@@ -29,3 +34,32 @@ def test_maus_b_eval_excludes_prompt_dev_and_emits_ci():
     assert rows["n_scored"] > 0
     assert rows["n_failures"] == 0
     assert rows["ci_lo"] <= rows["macro_f1"] <= rows["ci_hi"]
+
+
+def test_save_rows_writes_logprobs_and_refuses_a_second_write(tmp_path):
+    cmd = [
+        sys.executable,
+        "scripts/run_eval_grid.py",
+        "--client",
+        "constant",
+        "--model",
+        "qwen3_8b",
+        "--dataset",
+        "cogwear",
+        "--paradigm",
+        "B",
+        "--save-rows",
+        "--out-dir",
+        str(tmp_path),
+    ]
+    subprocess.run(cmd, check=True, cwd=REPO_ROOT)
+    out = tmp_path / "eval_constant_qwen3_8b.json"
+    payload = json.loads(out.read_text())
+    saved = payload["cells"][0]["rows"]
+    assert saved
+    assert set(saved[0]["logprobs"]) == {"A", "B"}
+    first = out.read_bytes()
+    again = subprocess.run(cmd, cwd=REPO_ROOT, capture_output=True, text=True)
+    assert again.returncode != 0
+    assert "refusing to overwrite" in again.stderr + again.stdout
+    assert out.read_bytes() == first

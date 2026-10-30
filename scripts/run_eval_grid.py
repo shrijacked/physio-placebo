@@ -3,6 +3,11 @@
     python scripts/run_eval_grid.py --client constant --model qwen3_8b --paradigm B
     python scripts/run_eval_grid.py --client vllm --model qwen3_8b
     python scripts/run_eval_grid.py --client vllm --model qwen25_vl --paradigm C
+    python scripts/run_eval_grid.py --client vllm --model qwen3_8b --paradigm A --save-rows \\
+        --out-dir results/eval_grid_rows/<stamp>
+
+``--save-rows`` keeps the per-minute logprobs. The writer refuses to replace
+an existing output file.
 """
 
 from __future__ import annotations
@@ -14,7 +19,7 @@ from pathlib import Path
 from physio_placebo.paths import REPO_ROOT
 from physio_placebo.prompts.eval_grid import run_eval_cell, run_model_eval
 from physio_placebo.prompts.freeze import load_frozen_prompts, load_frozen_prompts_c
-from physio_placebo.provenance import run_metadata
+from physio_placebo.provenance import llm_runtime_versions, run_metadata
 from physio_placebo.scoring.client import ConstantClient
 
 
@@ -36,6 +41,7 @@ def main() -> None:
     ap.add_argument("--dataset", default=None)
     ap.add_argument("--paradigm", choices=("A", "B", "C"), default=None)
     ap.add_argument("--out-dir", default=None)
+    ap.add_argument("--save-rows", action="store_true")
     args = ap.parse_args()
 
     use_c = args.paradigm == "C" or args.model == "qwen25_vl"
@@ -43,6 +49,12 @@ def main() -> None:
     lock_name = "configs/frozen_prompts_c.lock.yaml" if use_c else "configs/frozen_prompts.lock.yaml"
     if not lock.get("frozen"):
         raise SystemExit(f"{lock_name} is not frozen")
+
+    dest = Path(args.out_dir) if args.out_dir else REPO_ROOT / "results" / "eval_grid"
+    dest.mkdir(parents=True, exist_ok=True)
+    out = dest / f"eval_{args.client}_{args.model}.json"
+    if out.exists():
+        raise SystemExit(f"refusing to overwrite {out}")
 
     client = _client(args.client, args.model)
     if args.dataset or args.paradigm:
@@ -61,21 +73,28 @@ def main() -> None:
                     model_key=args.model,
                     paradigm=w["paradigm"],
                     scheme=w["scheme"],
+                    save_rows=args.save_rows,
                 )
             )
     else:
-        rows = run_model_eval(client, args.model)
+        rows = run_model_eval(client, args.model, save_rows=args.save_rows)
 
-    dest = Path(args.out_dir) if args.out_dir else REPO_ROOT / "results" / "eval_grid"
-    dest.mkdir(parents=True, exist_ok=True)
+    config = {
+        "client": args.client,
+        "model": args.model,
+        "n_cells": len(rows),
+        "save_rows": bool(args.save_rows),
+    }
+    if args.client == "vllm":
+        config["llm_runtime"] = llm_runtime_versions()
+        config["hf_snapshot"] = getattr(client, "hf_snapshot", "not-loaded")
     payload = {
-        **run_metadata({"client": args.client, "model": args.model, "n_cells": len(rows)}),
+        **run_metadata(config),
         "frozen": True,
         "lock": lock_name,
         "cells": rows,
-        "note": "Eval subjects only. Prompt-dev subjects are excluded. Do not start Week 7.",
+        "note": "Eval subjects only. Prompt-dev subjects are excluded.",
     }
-    out = dest / f"eval_{args.client}_{args.model}.json"
     out.write_text(json.dumps(payload, indent=2, default=str) + "\n")
     print(json.dumps({"n_cells": len(rows), "wrote": str(out)}, indent=2))
 

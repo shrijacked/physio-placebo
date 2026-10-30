@@ -8,6 +8,7 @@ by every script that writes an artifact.
 from __future__ import annotations
 
 import hashlib
+import importlib
 import json
 import subprocess
 from datetime import UTC, datetime
@@ -67,6 +68,19 @@ def library_versions() -> dict[str, str]:
         "neurokit2": neurokit2.__version__,
         "cvxopt": cvxopt.__version__,
     }
+
+
+def llm_runtime_versions() -> dict[str, str]:
+    """vLLM, torch, and transformers, when this process can import them."""
+    versions: dict[str, str] = {}
+    for name in ("vllm", "torch", "transformers"):
+        try:
+            module = importlib.import_module(name)
+        except ImportError:
+            versions[name] = "not-installed"
+        else:
+            versions[name] = str(getattr(module, "__version__", "unknown"))
+    return versions
 
 
 def utc_stamp() -> str:

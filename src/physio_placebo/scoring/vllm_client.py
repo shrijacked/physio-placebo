@@ -5,6 +5,7 @@ from __future__ import annotations
 import io
 import os
 from collections.abc import Sequence
+from pathlib import Path
 from typing import Any
 
 import yaml
@@ -18,6 +19,23 @@ from physio_placebo.scoring.vllm_extract import extract_label_logprobs, single_t
 
 def load_model_spec() -> dict:
     return yaml.safe_load((configs_dir() / "models.yaml").read_text())
+
+
+def hf_snapshot_id(hf_id: str) -> str:
+    """Directory name of the local Hugging Face snapshot. No download."""
+    try:
+        from huggingface_hub import snapshot_download
+    except ImportError:
+        return "huggingface_hub-not-installed"
+    try:
+        from huggingface_hub.errors import LocalEntryNotFoundError
+    except ImportError:  # huggingface_hub < 0.25
+        from huggingface_hub.utils import LocalEntryNotFoundError
+    try:
+        path = snapshot_download(hf_id, local_files_only=True)
+    except LocalEntryNotFoundError:
+        return "not-in-hf-cache"
+    return Path(path).name
 
 
 def prepare_vllm_runtime() -> None:
@@ -100,6 +118,7 @@ class VLLMLogprobClient:
         self._llm = llm
         self._tokenizer = tokenizer
         self._token_ids: dict[str, int] | None = None
+        self.hf_snapshot = "not-loaded"
 
     def load(self) -> None:
         prepare_vllm_runtime()
@@ -110,6 +129,7 @@ class VLLMLogprobClient:
         if self._tokenizer is None:
             self._tokenizer = self._llm.get_tokenizer()
         self._token_ids = {t: single_token_id(self._tokenizer, t) for t in self.tokens}
+        self.hf_snapshot = hf_snapshot_id(self.model_cfg["hf_id"])
 
     def _wrap_chat(self, prompt: str) -> str:
         tok = self._tokenizer

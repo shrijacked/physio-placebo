@@ -21,7 +21,7 @@ MAUS / CogWear macro-F1 grid stays our own experiment.
 ## Health-LLM, the paper we match
 
 Read from the arXiv HTML (v2) and from the released repo at
-`configs/data/third_party/Health-LLM`.
+`data/third_party/Health-LLM`.
 
 **Prompting (Table 3).** PMData stress, zero-shot MedAlpaca-7b, MAE **0.76 ± 0.1**
 over seeds {0, 1, 2}. Our locked rerun is MAE **2.689 ± 0.038**

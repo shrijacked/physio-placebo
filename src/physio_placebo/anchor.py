@@ -25,9 +25,10 @@ SPLIT_MANIFEST = REPO_ROOT / "results" / "anchor" / "split_manifest.json"
 
 
 def resolve_healthllm_root() -> Path:
-    """Released clone lives under ``configs/data/...`` in this checkout.
+    """Released clone lives under ``data/third_party/Health-LLM``.
 
-    ``data/third_party/Health-LLM`` is checked first so a future symlink still wins.
+    ``configs/data/...`` is checked second so a checkout that still has the
+    archives in the old place still resolves.
     """
     candidates = (
         REPO_ROOT / "data" / "third_party" / "Health-LLM",

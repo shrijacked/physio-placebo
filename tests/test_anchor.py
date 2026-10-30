@@ -67,7 +67,6 @@ def test_medalpaca_prompt_matches_their_generate_prompt():
     template = json.loads(
         (
             Path(__file__).resolve().parents[1]
-            / "configs"
             / "data"
             / "third_party"
             / "Health-LLM"

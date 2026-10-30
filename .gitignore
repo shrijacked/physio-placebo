@@ -19,6 +19,8 @@ dist/
 # everything is re-derivable from scripts + committed manifests (checksums recorded).
 # Leading slash is required so src/physio_placebo/data/ (the Python package) is tracked.
 /data/
+# A previous session left the archives under configs/data/. They belong at data/.
+/configs/data/
 # IEEE DataPort drop at repo root (canonical copy lives under data/raw/maus/)
 /MAUS/
 

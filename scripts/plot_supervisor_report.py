@@ -356,7 +356,7 @@ def fig_surrogate_qwen() -> None:
         (axes[1], "B", "none", "Feature sentences"),
     ):
         ys, errs, colors = [], [], []
-        for i, (label, kind) in enumerate(order):
+        for _label, kind in order:
             if kind is None:
                 ys.append(real[paradigm])
                 errs.append(real_err[paradigm])

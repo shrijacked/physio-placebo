@@ -5,9 +5,9 @@ from __future__ import annotations
 import numpy as np
 import yaml
 
+from physio_placebo.data.windows import SubjectWindows, load_subject_windows
 from physio_placebo.paradigms.downsample import apply_scheme
 from physio_placebo.paths import configs_dir, data_processed
-from physio_placebo.data.windows import SubjectWindows, load_subject_windows
 
 
 def load_sweep_spec() -> dict:

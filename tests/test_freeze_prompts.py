@@ -99,5 +99,8 @@ def test_committed_c_lockfile_is_frozen():
     assert lock["frozen"] is True
     assert len(lock["winners"]) == 2
     assert {w["dataset"] for w in lock["winners"]} == {"wesad", "maus"}
-    assert all(w["paradigm"] == "C" and w["template_id"] == "instruction" and w["n_shot"] == 4 for w in lock["winners"])
+    assert all(
+        w["paradigm"] == "C" and w["template_id"] == "instruction" and w["n_shot"] == 4
+        for w in lock["winners"]
+    )
     assert frozen_choice("wesad", "qwen25_vl", "C", None)["n_shot"] == 4

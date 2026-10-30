@@ -215,13 +215,22 @@
 - ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-10-31: **Audit fixes.** Card cache is keyed on the setup, not `id()`.
+  Snapshot lookup reads the commit directory when the cache is incomplete
+  (`results/eval_grid_rows/20261030T142039Z/provenance_addendum.json`).
+  The supervisor report has a ratio section with the two card figures.
+  The earlier claim that a full gstack-review had already run was wrong;
+  the review of `origin/main...HEAD` ran on this date. Week 11 not started.
 - 2026-10-30: **Week 10 closed.** A6000 re-score of real A and C at
   `gpu_memory_utilization` 0.80 (vLLM 0.29's 0.92 would not start; other jobs
   held about 6 GiB). Snapshots: Qwen3-8B `b968826d9c46`, Llama-3.1-8B-Instruct
   `0e9e39f249a1`, Qwen2.5-VL-7B-Instruct `cc594898137f`. The saved run metadata
-  says `not-in-hf-cache` because `snapshot_download(local_files_only=True)`
-  did not see that cache. Final card `results/sds_card/20261030T151137Z/`.
-  Tag `week-10-done`. Week 11 not started.
+  says `not-in-hf-cache` because the snapshot is missing LICENSE, README, and
+  `.gitattributes`, and IncompleteSnapshotError was treated as an empty cache.
+  Sidecar: `results/eval_grid_rows/20261030T142039Z/provenance_addendum.json`.
+  Final card `results/sds_card/20261030T151137Z/`.
+  Tag `week-10-done` moved on 2026-10-31 onto the audit-fix commit.
+  Week 11 not started.
 - 2026-10-30: **SDS card built, week not tagged.** Partial card
   `results/sds_card/20261030T110645Z/`: 75 of 100 null cells undefined, 25
   ratios, including values outside [0, 1]. Summary `docs/week10-mvr.md`.

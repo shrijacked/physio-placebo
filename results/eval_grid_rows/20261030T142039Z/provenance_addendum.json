@@ -1,0 +1,14 @@
+{
+  "recorded_utc": "2026-10-30T20:19:11Z",
+  "run_dir": "results/eval_grid_rows/20261030T142039Z",
+  "note": "The three run files say hf_snapshot not-in-hf-cache because of the bug below. This file does not change those runs.",
+  "gpu_memory_utilization": 0.8,
+  "gpu_memory_source": "vLLM log line: non-default args included gpu_memory_utilization 0.8, and CUDA graph profiling printed Desired GPU memory utilization is (0.8, 37.92 GiB).",
+  "root_cause": "huggingface_hub 1.32.0 snapshot_download(local_files_only=True) raised IncompleteSnapshotError: the cached snapshot for revision main, commit b968826d9c46dd6066d109eabc6255188de91218, is missing .gitattributes, LICENSE, and README.md. IncompleteSnapshotError subclasses LocalEntryNotFoundError, and hf_snapshot_id treated every LocalEntryNotFoundError as an empty cache. refs/main was present and named that commit. HF_HOME, HF_HUB_CACHE, and HF_HUB_OFFLINE were unset.",
+  "snapshots": {
+    "Qwen/Qwen3-8B": "b968826d9c46dd6066d109eabc6255188de91218",
+    "meta-llama/Llama-3.1-8B-Instruct": "0e9e39f249a16976918f6564b8830bc894c89659",
+    "Qwen/Qwen2.5-VL-7B-Instruct": "cc594898137f460bfe9f0759e9844b3ce807cfb5"
+  },
+  "snapshot_source": "Directory names under ~/.cache/huggingface/hub/models--*/snapshots on the A6000, listed 2026-10-30."
+}

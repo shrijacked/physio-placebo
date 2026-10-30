@@ -66,7 +66,7 @@
 \definecolor{Ok}{HTML}{1F6B4A}
 \definecolor{Muted}{HTML}{5C6B70}
 
-\newcommand{\ReportDate}{23 October 2026}
+\newcommand{\ReportDate}{30 October 2026}
 \newcommand{\ReportThrough}{Week 9}
 \newcommand{\ReportNext}{Week 10, the one ratio per setup, not started}
 
@@ -157,14 +157,19 @@ On the stress recordings, a simple logistic regression on ordinary heart and
 skin features scores 0.92. The best language model, on the real minute, scores
 0.60. A plot of the trace does no better than guessing, which is about 0.41
 here, because always picking the common class is not a coin flip when the
-classes are uneven. Noise, a flat line, a blank prompt, and another person who
-was doing something else all fall back to that line. A scrambled trace that
-keeps the spectrum still carries the answer, and so does a recording from a
-different person who was under the same kind of stress. When the model is
-reading sentences, it follows whatever class information those sentences still
-contain. That sentence test has now been run. On WESAD, Qwen loses little when
-the judgment words are removed, and loses a great deal when those words are
-flipped. The numbers are in the sentence section below.
+classes are uneven. Noise does not always land on that line. On the averaged
+heart trace, Qwen's noise score is 0.48, which is what a model that answers
+both letters about equally often gets from this score. A flat line and a blank
+prompt do sit on guessing, and so does another person who was doing something
+else. A scrambled trace that keeps the spectrum still carries the answer for
+the linear model, because several of the features are the level of the trace
+and the size of its wiggles, which a phase scramble does not remove. A
+recording from a different person who was under the same kind of stress carries
+it too. When the model is reading sentences, it follows whatever class
+information those sentences still contain. That sentence test has now been run.
+On WESAD, Qwen loses little when the judgment words are removed, and loses a
+great deal when those words are flipped. The numbers are in the sentence
+section below.
 
 A second experiment was requested at the last meeting: a comparison with a
 recent paper on matched terms. Same public data, same kind of model, prompting
@@ -203,13 +208,15 @@ the person, so one long recording does not dominate the interval.
 
 \section{The score}
 
-Every wearable score in this report is an average of two hit rates: how often
-the calm minutes are caught, and how often the hard minutes are caught.
-Averaging them matters. On WESAD most minutes are calm, so a model that always
-says ``calm'' looks almost fine if you only count overall accuracy. It looks
-ordinary once calm and stress are weighted the same. That ordinary score is
-about 0.41. I call it guessing. It is not 0.50, because the two classes are
-not the same size.
+Every wearable score in the tables is macro-F1: the average of the two
+per-class F1 scores, not the average of the two hit rates. The hit-rate
+average is balanced accuracy, and it is exactly 0.5 for any answer that
+ignores the label. Macro-F1 is not. On WESAD most minutes are calm, so always
+saying ``calm'' scores about 0.41, and always saying ``stress'' scores about
+0.23. A model that says each letter about half the time lands near 0.48. I
+still call 0.41 guessing when I mean the common-class answer. It is not 0.50,
+because the two classes are not the same size, and because this score moves
+when the model changes how often it says the rare class.
 
 The logistic regression is the one place a model is fit on these recordings.
 It is trained on everyone except the person being scored, tested on that
@@ -563,12 +570,15 @@ so the features come out empty. Deleting the signal leaves no features on any
 dataset.
 
 The WESAD column is the one that says something. Noise, a flat line, and the
-wrong person in the wrong activity all fall to 0.41, which is guessing. A
-phase-randomized heart trace is still at 0.88. Another person doing the same
-thing is at 0.95. On this dataset the class lives mostly in the spectrum, and
-in the kind of person, rather than in the shape of one individual's pulse.
-MAUS and CogWear never had a strong linear score, and swapping the trace does
-not create one.
+wrong person in the wrong activity all fall to 0.41, which is the common-class
+score. A phase-randomized trace is still at 0.88. Another person doing the
+same thing is at 0.95. That is not because the class lives in the spectrum.
+Phase randomization keeps the value distribution of each minute, so the level
+of skin conductance and the size of the wiggles stay put. Those are the
+features the linear model is using. The correlation between a real WESAD
+minute and its phase-randomized copy is 1.00 for the skin-conductance level
+and 0.77 for mean heart rate. MAUS and CogWear never had a strong linear
+score, and swapping the trace does not create one.
 
 \begin{figure}[!ht]
 \centering
@@ -579,10 +589,12 @@ The dashed line is guessing on WESAD.}
 \end{figure}
 
 The same replacements then went to the language models. The chart is Qwen on
-WESAD, which is the only place a language model had clearly cleared guessing
-on the real recording. I did run Llama on the replacements as well. Its ranges
-on the real recording already touch guessing or sit under it, and the
-replacements do not produce a pattern worth a second chart.
+WESAD, which is the only place a language model had clearly cleared the
+common-class line on the real recording. I did run Llama on the replacements
+as well. Its macro-F1 on the real WESAD sentences is 0.28, under the
+common-class line, because it answers ``stress'' on almost every minute. The
+ordering in its probabilities is not empty: the margin between the two letters
+has an AUROC of 0.82 on those same minutes. Macro-F1 does not show that.
 
 \begin{figure}[!ht]
 \centering
@@ -596,17 +608,20 @@ the person. The legend is on the figure.}
 
 The right-hand panel is the sentence condition. On the real recording Qwen
 scores 0.58. Sentences built from a phase-randomized trace score 0.70, above
-the real recording. Sentences from another stressed person score 0.83.
-Sentences built from noise fall to about 0.29, below guessing. A flat line and
-an empty prompt sit on guessing.
+the real recording. That rise is a shift in how often Qwen says ``stress'',
+not a better reading of the minute. The ordering of the two letters is weaker
+on the scrambled trace (AUROC 0.87) than on the real one (AUROC 0.94).
+Sentences from another stressed person score 0.83, and the ordering stays high
+(AUROC 0.92). Sentences built from noise fall to about 0.29, below the
+common-class line, and the ordering goes to chance. A flat line and an empty
+prompt sit on the common-class score. The left-hand chart, the raw trace, is
+the one where noise does not: Qwen's noise score there is 0.48.
 
-The left-hand chart moves less. The raw trace was only modestly above guessing
-to begin with, and several replacements stay in that same band.
-
-On WESAD this agrees with the logistic regression. When the sentences still
-contain the class, Qwen scores well even if the
-waveform is no longer that person's. When the sentences are noise, or gone,
-Qwen falls to guessing or below it.
+On the sentences, this agrees with the linear model in one respect. When the
+sentences still contain the class, Qwen scores well even if the waveform is
+no longer that person's. When the sentences are noise, or gone, Qwen falls to
+the common-class line or below it. The raw trace is a smaller effect, and
+noise there does not fall to 0.41.
 
 \FloatBarrier
 
@@ -850,10 +865,15 @@ Llama & 3\% [1, 6] & 27\% [15, 40] & 8\% [0, 18] \\
 
 Qwen on WESAD loses about 17\% of its margin when the words are removed. The
 plan said more than half, so that prediction does not hold there. On MAUS the
-whole margin goes, so it does hold. CogWear's original wording was not clearly
-above the floor, so that prediction is not scored. Flipping the words changes
-more than 40\% of Qwen's minutes on all three datasets. It does not do that
-for Llama. SensorLM's statistical sentences were not part of this run.
+whole margin goes against the filed chance floor, so the filed prediction
+holds. A chance floor matched to how often Qwen says the hard class on MAUS is
+0.499, and the original wording scores 0.485, under that floor. The MAUS
+result holds only under the filed floor. CogWear's original wording was not
+clearly above the floor, so that prediction is not scored. Flipping the words
+changes more than 40\% of Qwen's minutes on all three datasets. It does not do
+that for Llama. Counting the judgment words, with no language model, already
+scores 0.74 on WESAD, above Qwen's 0.58, and Qwen's margin tracks that count
+(Spearman 0.84). SensorLM's statistical sentences were not part of this run.
 
 \section{Remaining work}
 
@@ -862,15 +882,22 @@ swapped. The sentence test above is the second of the three filed
 predictions. The third, flipped words changing more than 40\% of minutes,
 is now scored as well.
 
-What remains is one ratio per setup. In words, it is how much of the gap
-between the real recording and guessing disappears when the recording is
+The ratio is now computed, outside this PDF, in
+\texttt{results/sds\_card/}. In words, it is how much of the gap between the
+real recording and the locked chance floor disappears when the recording is
 replaced:
 \[
-\frac{\text{real} - \text{replacement}}{\text{real} - \text{guessing}}.
+\frac{\text{real} - \text{replacement}}{\text{real} - \text{chance}}.
 \]
-If the real recording was never convincingly above guessing, I will leave the
-ratio blank and show the gap on its own. MAUS and CogWear are where that will
-happen. The ratio is not in this report.
+If the real recording was never convincingly above that floor, the ratio is
+left blank. Seventy-five of the one hundred null cells are blank for that
+reason. Where a ratio is printed, it is the filed one, including values above
+1 and below 0. Those happen when the replacement scores on the wrong side of
+the chance floor, which this score does easily when the model changes how
+often it says the rare class. The item-level intervals for the raw numbers and
+the plots are not in the card yet. Those rows were not saved. They still have
+to be re-scored on the lab machine. The sentence rows were saved, and their
+intervals are in.
 
 \section{Where the work stands}
 
@@ -883,10 +910,10 @@ happen. The ratio is not in this report.
 Three public datasets, cut into minutes & Done. Nothing dropped for missing samples. \\
 A simple model on the same features & Done. WESAD reaches 0.92. The other two are weak. \\
 Language models on the real recording & Done. Best score is 0.60. Drawings sit on guessing. \\
-Replacing the recording & Done. On WESAD, noise collapses and the spectrum does not. \\
+Replacing the recording & Done. On WESAD the linear model collapses on noise. A phase scramble does not, because it keeps the level of the trace. \\
 \textcolor{Ask}{The comparison from the last meeting} & \textcolor{Ask}{Done. Section~\ref{sec:asked}. Separate dataset, separate score.} \\
 Removing and flipping the judgment words & Done. Qwen on WESAD loses 17\% of its margin when the words go, and 63\% of minutes flip when the words reverse. \\
-One ratio per setup & Not started. Next. \\
+One ratio per setup & Computed. In \texttt{results/sds\_card/}. Not copied into this PDF. Raw-number and plot rows still need a re-score. \\
 \bottomrule
 \end{tabularx}
 }

@@ -18,11 +18,14 @@
   LoRA MAE 2.697 (adapter did not train). Full fine-tune, every weight, sampling
   MAE 0.442 ± 0.007, next to the paper's 0.38 and our zero-shot 2.689. The
   14-day-average prompting rerun is 0.841 ± 0.016, inside the paper's 0.76 ± 0.1.
-- Phase: SDS card. Pre-registered macro-F1 card, plus a labelled
-  post-registration secondary layer (balanced accuracy, logprob AUROC, matched
-  chance floors). Real-signal A and C rows still need a GPU re-score.
-- Last session: 2026-10-30 — read-only audit of Weeks 1–9 before the SDS card.
-  Findings are in the decisions log (2026-10-30).
+- Phase: SDS card, partial. Pre-registered macro-F1 card is in
+  `results/sds_card/20261030T110645Z/` (75 of 100 null cells undefined, 25
+  ratios). Real-signal A and C rows still need the A6000 re-score
+  (`scripts/rescore_real_ac.sh`). Do not tag `week-10-done` until that
+  directory is committed and the card is rebuilt.
+- Last session: 2026-10-30 — SDS card built from saved grids. Summary in
+  `docs/week10-mvr.md`. OSF posting of `docs/analysis-addendum-2026-10-30.md`
+  is still manual and has not been done.
 - Living supervisor report: `reports/supervisor_master_report.tex` /
   `.pdf`. Update it when a week is tagged done; do not write unclosed weeks.
 
@@ -176,7 +179,17 @@
   - [x] Variants (i) original, (ii) neutralized, (iii) mis-signed. Both text
         models, three datasets, 18 cells, 0 failures
         (`results/verbalizer_ablation/panel.json`). SensorLM (iv) not run.
-- [ ] Weeks 10–15: Week 10 (SDS card) in progress. Weeks 11–15 not started.
+- [ ] Week 10 — SDS report card (**IN PROGRESS**, not tagged)
+  - [x] Analysis addendum committed before the SDS code
+        (`docs/analysis-addendum-2026-10-30.md`, commit `7d8b16e`). Not posted
+        to OSF yet.
+  - [x] Partial card from saved grids
+        (`results/sds_card/20261030T110645Z/`). 75/100 null cells
+        `undefined (validity gate)`, 25 ratios. A/C paired intervals are
+        `pending real rows`.
+  - [ ] Re-score real A and C on the A6000 with `scripts/rescore_real_ac.sh`
+        and rebuild the card. Then tag `week-10-done`.
+- [ ] Weeks 11–15: not started.
 
 ## Open blockers
 - ~~**GPU hardware**~~ **RESOLVED 2026-09-20**: account `shrijak` on Plaksha HTI
@@ -203,6 +216,12 @@
 - ~~MAUS access~~ **RESOLVED 2026-09-16** via IEEE DataPort download (user).
 
 ## Decisions log
+- 2026-10-30: **SDS card built, week not tagged.** Partial card
+  `results/sds_card/20261030T110645Z/`: 75 of 100 null cells undefined, 25
+  ratios, including values outside [0, 1]. Summary `docs/week10-mvr.md`.
+  `week-10-done` waits on `scripts/rescore_real_ac.sh` and a rebuild. The
+  analysis addendum is not posted to OSF. Deleted September briefing files
+  were restored rather than committed as deletions.
 - 2026-10-30: **Read-only audit before the SDS card.** Macro-F1 from the A/B
   argmax mostly tracks how often the model says B: always-A on WESAD is 0.412
   and always-B is 0.230, while the filed chance is the classical permutation
@@ -347,7 +366,13 @@
   gap +1.929, artifact `results/anchor/medalpaca/server_run/`.
 - Verbalizer ablation (Week 9) — **RESOLVED 2026-10-19**. Surrogate cells stay in
   `results/surrogates/eval/`. A/B/C real-signal numbers stay in `results/eval_grid/`.
-  Week 10 SDS card is not started.
+- Week 10 SDS card — **PARTIAL 2026-10-30**. `results/sds_card/20261030T110645Z/`.
+  Real A and C per-item rows are not saved. `scripts/rescore_real_ac.sh` is the
+  A6000 command. Do not tag `week-10-done` until the rebuild.
+- Surrogate input-matched ceilings — not fit. Regenerating surrogate windows
+  would overwrite locked feature parquets.
+- `docs/analysis-addendum-2026-10-30.md` is local. Posting it to OSF is manual
+  and has not been done.
 - `pip install -e .` required `required_permissions=all` in this sandbox (a `.pth` write);
   fresh-clone install on a second machine still unverified (GPU box required again).
 - Health-LLM releases **no evaluation code** (verified 2026-08-27: no `eval/` dir;

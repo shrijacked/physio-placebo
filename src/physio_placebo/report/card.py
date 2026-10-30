@@ -771,7 +771,7 @@ def _scatter(card: dict, path: Path) -> None:
         seen.add(row["model"])
         ax.scatter(f1, row["auroc_real"], color=colors.get(row["model"], "#0F4C5C"), s=18, label=label)
     ax.axhline(0.5, color="#8A9397", lw=0.8, ls="--")
-    ax.set_xlabel("macro-F1 (filed real, or surrogate point on the y of the pair)")
+    ax.set_xlabel("locked real macro-F1")
     ax.set_ylabel("AUROC of the logprob margin")
     ax.set_title("post-registration (addendum 2026-10-30)")
     if seen:

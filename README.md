@@ -22,7 +22,8 @@ is at chance on the argmax (WESAD 0.412 [0.410, 0.414]; MAUS 0.400 [0.399, 0.400
 **Weeks 7–8 are closed:** surrogate ladder in `results/surrogates/eval/`
 (tag `week-08-done`). **Week 9 is closed:** verbalizer panel in
 `results/verbalizer_ablation/panel.json` (tag `week-09-done`).
-**Week 10 (SDS card) is in progress.** The OpenAI
+**Week 10 is closed** (tag `week-10-done`): the SDS card is in
+`results/sds_card/20261030T151137Z/`. The OpenAI
 API path was abandoned 2026-09-16 (rate-limit wall).
 
 Locked numbers and blockers live in [`PROGRESS.md`](PROGRESS.md). The design is in

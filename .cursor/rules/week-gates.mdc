@@ -7,9 +7,9 @@ alwaysApply: true
 
 Never start Week N+1 (code, docs-as-done, tags, or "let's proceed") until **every** exit criterion for Week N in `CURSOR_SEMESTER_AGENT.md` is actually true — real data, real run, real artifact. Partial weeks are not done.
 
-- Current freeze: **Weeks 1–9 closed** (Week 9: 2026-10-19, tag `week-09-done`).
-- **Current week is Week 10 — IN PROGRESS.** SDS report card. Do not start
-  Week 11 until `week-10-done`.
+- Current freeze: **Weeks 1–10 closed** (Week 10: 2026-10-30, tag `week-10-done`).
+- **Week 11 has not started.** Cross-dataset generalization is stretch.
+  Do not start it until the user asks.
 - Catch-up on an earlier incomplete week is allowed. Skipping forward is not.
 
 If the user asks to jump ahead, refuse, name the open exit criterion, and stay on that week.

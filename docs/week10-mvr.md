@@ -1,18 +1,11 @@
-# Week 10 — SDS card, partial
+# Week 10 — SDS card
 
-Week 10 is not closed. The real-signal rows for paradigms A and C were never
-saved, so the paired intervals and the AUROC for those cells are
-`pending real rows`. Re-score them on the A6000 with
-`scripts/rescore_real_ac.sh`, then rebuild:
-
-```bash
-python scripts/build_sds_card.py --real-rows-dir results/eval_grid_rows/<stamp>
-```
-
-Do not tag `week-10-done` until that directory is in the repo and every null
-SDS cell is still either a ratio or `undefined (validity gate)`.
-
-Source of the numbers below: `results/sds_card/20261030T110645Z/card.md`.
+Source of the numbers below: `results/sds_card/20261030T151137Z/card.md`.
+Real-signal rows for paradigms A and C are in
+`results/eval_grid_rows/20261030T142039Z/` (A6000, commit `2151061`,
+`gpu_memory_utilization` 0.80 because other jobs held about 6 GiB). 0 scoring
+failures. Every null SDS cell is a ratio or `undefined (validity gate)`.
+No paired interval is still pending.
 Primary metric is the filed macro-F1. Anything labelled balanced accuracy,
 AUROC, matched floor, adjective vote, or input-matched ceiling is
 post-registration (`docs/analysis-addendum-2026-10-30.md`). That addendum is
@@ -73,6 +66,15 @@ Phase randomization is still a filed null, and it is labelled "keeps level and
 spectrum." Correlation with the real WESAD minute is 1.000 for
 `eda_level_mean` and `eda_level_std`, 0.998 for `eda_tonic_mean`, and 0.771
 for `hrv_mean_hr`.
+
+## Re-score
+
+The second pass of the real minutes agrees with the September numbers. The
+largest absolute move in macro-F1 is 0.009 (Qwen, CogWear, every nth sample:
+0.576 to 0.585). All 20 real cells are inside 0.02, so none is flagged. The
+paired interval for Qwen on WESAD with 128 ECG averages, real minus Gaussian
+noise, is 0.116 [0.048, 0.180]. It excludes zero. The filed SDS for that cell
+stays 0.644, because SDS uses the locked September score, not the re-score.
 
 ## Limitations
 

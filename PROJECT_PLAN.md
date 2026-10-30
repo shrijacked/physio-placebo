@@ -172,7 +172,7 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 - [x] Item-level flip analysis for variant (iii) · **Done means:** flip rates with CIs in `results/verbalizer_ablation/panel.json`
 
 ### Week 10 — ★ MINIMUM VIABLE RESULT ⚑ GATE
-- [ ] **The SDS report card:** 3 paradigms × 2 open models × 3 datasets × 6 signal conditions, macro-F1 under strict LOSO, paired-over-subjects bootstrap CIs + Wilcoxon, classical-baseline delta, verbalizer-ablation panel · **Done means:** one self-contained document (tables + figures) that would stand as a workshop paper in either result direction
+- [x] **The SDS report card:** 3 paradigms × 2 open models × 3 datasets × 6 signal conditions, macro-F1 under strict LOSO, paired-over-subjects bootstrap CIs + Wilcoxon, classical-baseline delta, verbalizer-ablation panel · **Done means:** `results/sds_card/20261030T151137Z/` and `docs/week10-mvr.md` (2026-10-30). Paradigm C is Qwen2.5-VL on WESAD and MAUS only. 75/100 null cells are undefined under the validity gate.
 - [ ] Check-in with prof scheduled and held; outcome logged in §11
 - ⚑ **Gate:** everything after Week 10 is upside; nothing after this point may jeopardize the MVR artifact.
 
@@ -203,14 +203,14 @@ OSF pre-registration (Week 3) covers: SDS definition, the surrogate ladder, the 
 
 ## 10. Status board  *(update every session)*
 
-**Current week:** Week 10 (SDS report card) · **Overall:** Weeks 1–9 closed (`week-09-done`, 2026-10-19)
+**Current week:** Week 10 closed (`week-10-done`, 2026-10-30). Week 11 not started.
 
 | | |
 |---|---|
-| **Done (latest first)** | 2026-10-19 · Week 9 verbalizer panel (`results/verbalizer_ablation/panel.json`). 2026-10-14 · Weeks 7–8 surrogate ladder + ledger (`results/surrogates/`). 2026-09-21 · Weeks 4–6 real-signal A/B/C grids. 2026-08-10 · Proposal PDF shared with prof. |
-| **In progress** | Week 10 SDS card: pre-registered macro-F1, plus a labelled post-registration secondary layer. Real-signal A/C per-item rows still need a GPU re-score. |
-| **Blocked** | Nothing on the Mac-side card. The A/C re-score needs the HTI A6000 (`10.1.45.49`). SensorLM variant (iv) still waits on prof sign-off. |
-| **Next 3 actions** | 1) Commit the analysis addendum before any SDS code. 2) Build the card from saved surrogate and Week 9 rows. 3) Re-score real A and C on the A6000 with per-item logprobs saved. |
+| **Done (latest first)** | 2026-10-30 · Week 10 SDS card (`results/sds_card/20261030T151137Z/`). 2026-10-19 · Week 9 verbalizer panel. 2026-10-14 · Weeks 7–8 surrogate ladder. |
+| **In progress** | Nothing in the week plan. Week 11 is stretch and has not been opened. |
+| **Blocked** | Prof check-in for the Week 10 card has not been held. SensorLM variant (iv) still waits on prof sign-off. The OSF analysis addendum is local only. |
+| **Next 3 actions** | 1) Hold the Week 10 check-in and log it in §11. 2) Post `docs/analysis-addendum-2026-10-30.md` to OSF. 3) Do not start Week 11 until asked. |
 
 ## 11. Decision log  *(append-only; date every entry)*
 

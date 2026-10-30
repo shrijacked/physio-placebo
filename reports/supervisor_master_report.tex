@@ -67,11 +67,11 @@
 \definecolor{Muted}{HTML}{5C6B70}
 
 \newcommand{\ReportDate}{30 October 2026}
-\newcommand{\ReportThrough}{Week 9}
-\newcommand{\ReportNext}{Week 10, the one ratio per setup, not started}
+\newcommand{\ReportThrough}{Week 10}
+\newcommand{\ReportNext}{Week 11, not started}
 
 \hypersetup{
-  pdftitle={physio-placebo: independent study report through Week 9},
+  pdftitle={physio-placebo: independent study report through Week 10},
   pdfauthor={Shrijak Kumar},
   pdfsubject={Independent study report},
   linkcolor=Accent,
@@ -894,10 +894,11 @@ left blank. Seventy-five of the one hundred null cells are blank for that
 reason. Where a ratio is printed, it is the filed one, including values above
 1 and below 0. Those happen when the replacement scores on the wrong side of
 the chance floor, which this score does easily when the model changes how
-often it says the rare class. The item-level intervals for the raw numbers and
-the plots are not in the card yet. Those rows were not saved. They still have
-to be re-scored on the lab machine. The sentence rows were saved, and their
-intervals are in.
+often it says the rare class. The raw-number and plot rows have been scored again, with the probability of
+each letter saved. The new scores sit within 0.009 of the September ones.
+The largest move is Qwen on CogWear, every nth sample, 0.576 to 0.585. The
+sentence rows were already saved. None of the twenty real setups moved enough
+to treat the September number as a different run.
 
 \section{Where the work stands}
 
@@ -913,7 +914,7 @@ Language models on the real recording & Done. Best score is 0.60. Drawings sit o
 Replacing the recording & Done. On WESAD the linear model collapses on noise. A phase scramble does not, because it keeps the level of the trace. \\
 \textcolor{Ask}{The comparison from the last meeting} & \textcolor{Ask}{Done. Section~\ref{sec:asked}. Separate dataset, separate score.} \\
 Removing and flipping the judgment words & Done. Qwen on WESAD loses 17\% of its margin when the words go, and 63\% of minutes flip when the words reverse. \\
-One ratio per setup & Computed. In \texttt{results/sds\_card/}. Not copied into this PDF. Raw-number and plot rows still need a re-score. \\
+One ratio per setup & Done. Seventy-five of one hundred null cells are blank, because the real score never cleared chance. Where a ratio is printed, the main WESAD number-trace cell is 0.34 to 1.04, not below 0.3. \\
 \bottomrule
 \end{tabularx}
 }
